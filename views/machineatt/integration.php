@@ -14,14 +14,20 @@ use yii\widgets\ActiveForm;
 
         <?= $form->field($model, 'start_date')->widget(DatePicker::className(),[
             'pluginOptions'=>[
+                'todayHighlight' => true,
+                'todayBtn' => true,
+                'autoclose'=>true,                
                 'format'=>'yyyy-mm-dd',
-                'todayHightLight'=>True,
+               
             ],
         ]) ?>
         <?= $form->field($model, 'end_date')->widget(DatePicker::className(),[
             'pluginOptions'=>[
+                'autoclose'=>true,
+                'todayHighlight' => true,
+                'todayBtn' => true,
                 'format'=>'yyyy-mm-dd',
-                'todayHightLight'=>True,
+                
             ],
         ]) ?>
     
@@ -32,6 +38,10 @@ use yii\widgets\ActiveForm;
 
 </div><!-- integration -->
 
-<?if (isset($integrated_log)){
-    var_dump($integrated_log);
+<?php 
+if (isset($integrated_log)){
+    //var_dump($integrated_log);
+    foreach ($integrated_log as $dtlog){
+        echo $dtlog['reg_number']."|".$dtlog['date_att']." | ".$dtlog['punch_in']." s/d".$dtlog['punch_out']."<br>";
+    }
 }

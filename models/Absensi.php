@@ -9,12 +9,14 @@ use Yii;
  *
  * @property string $tgl
  * @property string $emp_id
- * @property string $jam_in
- * @property string $jam_out
- * @property string $ket_absen
- * @property int $timestamp_diff
- * @property string $status
- * @property string $loc_code
+ * @property string|null $jam_in
+ * @property string|null $jam_out
+ * @property string|null $ket_absen
+ * @property int|null $timestamp_diff
+ * @property string|null $status
+ * @property string|null $loc_code
+ * @property string|null $datetime_in
+ * @property string|null $datetime_out
  */
 class Absensi extends \yii\db\ActiveRecord
 {
@@ -33,12 +35,13 @@ class Absensi extends \yii\db\ActiveRecord
     {
         return [
             [['tgl', 'emp_id'], 'required'],
-            [['tgl', 'jam_in', 'jam_out'], 'safe'],
+            [['tgl', 'jam_in', 'jam_out', 'datetime_out'], 'safe'],
             [['timestamp_diff'], 'integer'],
             [['status'], 'string'],
             [['emp_id'], 'string', 'max' => 15],
             [['ket_absen'], 'string', 'max' => 3],
             [['loc_code'], 'string', 'max' => 20],
+            [['datetime_in'], 'string', 'max' => 45],
             [['tgl', 'emp_id'], 'unique', 'targetAttribute' => ['tgl', 'emp_id']],
         ];
     }
@@ -57,6 +60,8 @@ class Absensi extends \yii\db\ActiveRecord
             'timestamp_diff' => 'Timestamp Diff',
             'status' => 'Status',
             'loc_code' => 'Loc Code',
+            'datetime_in' => 'Datetime In',
+            'datetime_out' => 'Datetime Out',
         ];
     }
 }

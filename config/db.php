@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=lsf_payroll',
+    'dsn' => 'mysql:host=localhost;dbname=ldp_dw_payroll',
     'username' => 'superhakam',
     'password' => 'superhakam',
     'charset' => 'utf8',

@@ -3,6 +3,14 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
+use kartik\select2;
+use app\components\ListJabatan;
+use kartik\select2\Select2 as Select2Select2;
+use kartik\select2\Select2KrajeeAsset;
+
+$jabatan = New ListJabatan;
+
+
 /* @var $this yii\web\View */
 /* @var $model app\models\Employee */
 /* @var $form yii\widgets\ActiveForm */
@@ -18,7 +26,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'no_rekening')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'kd_jabatan')->textInput() ?>
+    <?= $form->field($model, 'kd_jabatan')->widget(Select2::className(),[
+        'data'=>$jabatan->getJabatanList(),
+    ]) ?>
 
     <?= $form->field($model, 'gaji_pokok')->textInput(['maxlength' => true]) ?>
 

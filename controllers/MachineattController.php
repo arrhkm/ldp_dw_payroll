@@ -18,6 +18,7 @@ use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
 use app\models\Employee;
 use app\models\Kartu;
+use phpDocumentor\Reflection\Types\Null_;
 
 /**
  * MachineattController implements the CRUD actions for MachineAtt model.
@@ -259,7 +260,6 @@ class MachineattController extends Controller
 
             foreach ($emp_array as $myEmp){
                 //------------------------------------------
-                
                 foreach ($list_day as $listday){ 
                     //echo "-----------------------------------------------------------------------------------------<br>";
                     $iter = New LogIntegration($myLog, $myEmp['id_employee'], $myEmp['cards'], $listday);
@@ -317,7 +317,20 @@ class MachineattController extends Controller
                 if ($absen->exists()){
                     $updateAbsen = Absensi::findOne(['emp_id'=>$iLog['reg_number'], 'tgl'=>$iLog['date_att']]);
                     $updateAbsen->jam_in = date("H:i:s", strtotime($iLog['punch_in']));
-                    $updateAbsen->jam_in = date("H:i:s", strtotime($iLog['punch_out']));
+                    $updateAbsen->jam_out = date("H:i:s", strtotime($iLog['punch_out']));
+                    //$updateAbsen->datetime_in = date("Y-m-d H:i:s", strtotime($iLog['punch_in']));
+                    //$updateAbsen->datetime_out = date("Y-m-d H:i:s", strtotime($iLog['punch_out']));
+                    if (isset($iLog['punch_in'])){
+                        $updateAbsen->datetime_in = date("Y-m-d H:i:s", strtotime($iLog['punch_in']));
+                    }else {
+                        $updateAbsen->datetime_in = Null;
+                    }
+                    
+                    if (isset($iLog['punch_out'])){
+                        $updateAbsen->datetime_out = date("Y-m-d H:i:s", strtotime($iLog['punch_out']));
+                    }else {
+                        $updateAbsen->datetime_out = Null;
+                    }
                     $updateAbsen->save();
                 }else {
                     $insertUbsen = New Absensi();
@@ -325,6 +338,17 @@ class MachineattController extends Controller
                     $insertUbsen->tgl = $iLog['date_att'];
                     $insertUbsen->jam_in = date("H:i:s",strtotime($iLog['punch_in']));
                     $insertUbsen->jam_out = date("H:i:s", strtotime($iLog['punch_out']));
+                    if (isset($iLog['punch_in'])){
+                        $insertUbsen->datetime_in = date("Y-m-d H:i:s", strtotime($iLog['punch_in']));
+                    }else {
+                        $insertUbsen->datetime_in = Null;
+                    }
+                    if (isset($iLog['punch_out'])){
+                        $insertUbsen->datetime_out = date("Y-m-d H:i:s", strtotime($iLog['punch_out']));
+                    }else {
+                        $insertUbsen->datetime_out = Null;
+                    }
+                    
                     $insertUbsen->save();
                 }
             }

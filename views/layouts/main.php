@@ -43,7 +43,7 @@ AppAsset::register($this);
             ['label' => 'Home', 'url'=>['/site/index/']],
             //['label' => 'App Old', 'url' =>['<a href=www.google.com>']],
             ['label' => 'Employee', 'url' => ['#'], 'items'=>[
-                ['label' => 'Master', 'url' => ['/employee/']],
+                ['label' => 'Master EMployee', 'url' => ['/employee/']],
                 ['label' => 'Insetif Rresiko', 'url' => ['/iresiko/']],
                 ['label' => 'Foreman', 'url' => ['/foreman']],
                 ['label' => 'Anggota Foreman', 'url' => ['/childforeman']],
@@ -55,6 +55,10 @@ AppAsset::register($this);
                 
             ]],
             ['label' => 'Tarif Masakerja', 'url'=>['/tarifmasakerja/']],
+            ['label' => 'Configure', 'url'=>['#'], 'items'=>[
+                ['label' => 'Jabatan', 'url'=>['/jabatan/']],
+                //['label' => 'Insert Tunjangan', 'url'=>['/tunjangan/']],
+            ]],
             ['label' => 'Tunjangan', 'url'=>['#'], 'items'=>[
                 ['label' => 'Jenis Tunjangan', 'url'=>['/jenistunjangan/']],
                 ['label' => 'Insert Tunjangan', 'url'=>['/tunjangan/']],
