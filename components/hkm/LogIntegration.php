@@ -1,7 +1,7 @@
 <?php
 namespace app\components\hkm;
 
-
+use phpDocumentor\Reflection\Types\Null_;
 
 /**
  * Description of LogIntegration
@@ -48,7 +48,7 @@ class LogIntegration {
         //foreach ($card as $dtcard){
         foreach ($this->card as $dtcard){
             foreach ($this->log as $vlog){
-                if (($vlog['id']==$dtcard['no_kartu'])){ //Jika id log mesin sama dengan id log employee
+                if (($vlog['pin']==$dtcard['pin'])){ //Jika id log mesin sama dengan id log employee
                     //if ($vlog['id_attmachine']==$dtcard['id_attmachine']){
                         $x = $this->timestampTodate($vlog['timestamp']);// conversi log time ke date                
                         if ($x==$this->date_integration){
@@ -67,8 +67,8 @@ class LogIntegration {
             $this->out = max($log_emp_day);        
             $this->in = min($log_emp_day);
         }else {
-            $this->in= Null;
-            $this->out= Null;
+            $this->in= '';
+            $this->out= '';
         }
         
         //return $log_emp_day;

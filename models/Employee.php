@@ -2,39 +2,43 @@
 
 namespace app\models;
 
+use app\commands\SmartIncrementKeyDb;
 use Yii;
 
 /**
  * This is the model class for table "employee".
  *
- * @property string $emp_id
- * @property string $emp_name
- * @property string $no_rekening
- * @property int $kd_jabatan
- * @property string $gaji_pokok
- * @property string $gaji_lembur
- * @property string $pot_jamsos
- * @property string $t_jabatan
- * @property string $t_masakerja
- * @property string $t_insentif
- * @property string $pot_telat
- * @property string $uang_makan
- * @property string $start_work
- * @property string $start_contract
- * @property string $end_contract
- * @property int $lama_contract
- * @property string $emp_group
+ * @property int $id
+ * @property string $reg_number
+ * @property string|null $no_bpjstk
+ * @property string|null $no_bpjskes
+ * @property string|null $date_of_hired
+ * @property string|null $type
+ * @property bool|null $is_permanent
+ * @property int|null $id_jobtitle
+ * @property int|null $id_division
+ * @property int|null $id_jobrole
+ * @property int|null $id_department
+ * @property int|null $id_coreperson
+ * @property string|null $email
+ * @property int|null $id_location
+ * @property bool|null $is_active
+ * @property int|null $id_job_alocation
+ * @property string|null $name
  *
- * @property Forman[] $formen
- * @property Formanhasemployee[] $formanhasemployees
- * @property Forman[] $formen0
- * @property IkutProject[] $ikutProjects
- * @property Project[] $kdProjects
- * @property InsentifResiko[] $insentifResikos
- * @property JmHasEmployee[] $jmHasEmployees
+ * @property Contract $contract
+ * @property ContractHistories[] $contractHistories
+ * @property Coreperson $coreperson
+ * @property Department $department
+ * @property Division $division
+ * @property JobAlocation $jobAlocation
+ * @property Jobrole $jobrole
+ * @property Jobtitle $jobtitle
+ * @property Location $location
  */
 class Employee extends \yii\db\ActiveRecord
 {
+    use SmartIncrementKeyDb;
     /**
      * {@inheritdoc}
      */
@@ -49,15 +53,25 @@ class Employee extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['emp_id', 'emp_name', 'no_rekening', 'kd_jabatan', 'gaji_pokok', 'gaji_lembur', 'pot_jamsos', 't_jabatan', 't_masakerja', 't_insentif', 'pot_telat', 'uang_makan', 'start_work', 'emp_group'], 'required'],
-            [['kd_jabatan', 'lama_contract'], 'integer'],
-            [['gaji_pokok', 'gaji_lembur', 'pot_jamsos', 't_jabatan', 't_masakerja', 't_insentif', 'pot_telat', 'uang_makan'], 'number'],
-            [['start_work', 'start_contract', 'end_contract'], 'safe'],
-            [['emp_id'], 'string', 'max' => 11],
-            [['emp_name'], 'string', 'max' => 32],
-            [['no_rekening'], 'string', 'max' => 15],
-            [['emp_group'], 'string', 'max' => 10],
-            [['emp_id'], 'unique'],
+            [['reg_number'], 'required'],
+            [['date_of_hired'], 'safe'],
+            [['is_permanent', 'is_active'], 'boolean'],
+            [['id_jobtitle', 'id_division', 'id_jobrole', 'id_department', 'id_coreperson', 'id_location', 'id_job_alocation'], 'default', 'value' => null],
+            [['id_jobtitle', 'id_division', 'id_jobrole', 'id_department', 'id_coreperson', 'id_location', 'id_job_alocation'], 'integer'],
+            [['reg_number'], 'string', 'max' => 9],
+            [['no_bpjstk', 'no_bpjskes'], 'string', 'max' => 20],
+            [['type'], 'string', 'max' => 7],
+            [['email'], 'string', 'max' => 100],
+            [['name'], 'string', 'max' => 50],
+            [['id_job_alocation'], 'unique'],
+            [['reg_number'], 'unique'],
+            [['id_coreperson'], 'exist', 'skipOnError' => true, 'targetClass' => Coreperson::className(), 'targetAttribute' => ['id_coreperson' => 'id']],
+            [['id_department'], 'exist', 'skipOnError' => true, 'targetClass' => Department::className(), 'targetAttribute' => ['id_department' => 'id']],
+            [['id_division'], 'exist', 'skipOnError' => true, 'targetClass' => Division::className(), 'targetAttribute' => ['id_division' => 'id']],
+            [['id_job_alocation'], 'exist', 'skipOnError' => true, 'targetClass' => JobAlocation::className(), 'targetAttribute' => ['id_job_alocation' => 'id']],
+            [['id_jobrole'], 'exist', 'skipOnError' => true, 'targetClass' => Jobrole::className(), 'targetAttribute' => ['id_jobrole' => 'id']],
+            [['id_jobtitle'], 'exist', 'skipOnError' => true, 'targetClass' => Jobtitle::className(), 'targetAttribute' => ['id_jobtitle' => 'id']],
+            [['id_location'], 'exist', 'skipOnError' => true, 'targetClass' => Location::className(), 'targetAttribute' => ['id_location' => 'id']],
         ];
     }
 
@@ -67,79 +81,113 @@ class Employee extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'emp_id' => 'Emp ID',
-            'emp_name' => 'Emp Name',
-            'no_rekening' => 'No Rekening',
-            'kd_jabatan' => 'Kd Jabatan',
-            'gaji_pokok' => 'Gaji Pokok',
-            'gaji_lembur' => 'Gaji Lembur',
-            'pot_jamsos' => 'Pot Jamsos',
-            't_jabatan' => 'T Jabatan',
-            't_masakerja' => 'T Masakerja',
-            't_insentif' => 'T Insentif',
-            'pot_telat' => 'Pot Telat',
-            'uang_makan' => 'Uang Makan',
-            'start_work' => 'Start Work',
-            'start_contract' => 'Start Contract',
-            'end_contract' => 'End Contract',
-            'lama_contract' => 'Lama Contract',
-            'emp_group' => 'Emp Group',
+            'id' => 'ID',
+            'reg_number' => 'Reg Number',
+            'no_bpjstk' => 'No Bpjstk',
+            'no_bpjskes' => 'No Bpjskes',
+            'date_of_hired' => 'Date Of Hired',
+            'type' => 'Type',
+            'is_permanent' => 'Is Permanent',
+            'id_jobtitle' => 'Id Jobtitle',
+            'id_division' => 'Id Division',
+            'id_jobrole' => 'Id Jobrole',
+            'id_department' => 'Id Department',
+            'id_coreperson' => 'Id Coreperson',
+            'email' => 'Email',
+            'id_location' => 'Id Location',
+            'is_active' => 'Is Active',
+            'id_job_alocation' => 'Id Job Alocation',
+            'name' => 'Name',
         ];
     }
 
     /**
+     * Gets query for [[Contract]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getFormen()
+    public function getContract()
     {
-        return $this->hasMany(Forman::className(), ['emp_id' => 'emp_id']);
+        return $this->hasOne(Contract::className(), ['id_employee' => 'id']);
     }
 
     /**
+     * Gets query for [[ContractHistories]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getFormanhasemployees()
+    public function getContractHistories()
     {
-        return $this->hasMany(Formanhasemployee::className(), ['emp_id' => 'emp_id']);
+        return $this->hasMany(ContractHistories::className(), ['id_employee' => 'id']);
     }
 
     /**
+     * Gets query for [[Coreperson]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getFormen0()
+    public function getCoreperson()
     {
-        return $this->hasMany(Forman::className(), ['id' => 'forman_id'])->viaTable('formanhasemployee', ['emp_id' => 'emp_id']);
+        return $this->hasOne(Coreperson::className(), ['id' => 'id_coreperson']);
     }
 
     /**
+     * Gets query for [[Department]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getIkutProjects()
+    public function getDepartment()
     {
-        return $this->hasMany(IkutProject::className(), ['emp_id' => 'emp_id']);
+        return $this->hasOne(Department::className(), ['id' => 'id_department']);
     }
 
     /**
+     * Gets query for [[Division]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getKdProjects()
+    public function getDivision()
     {
-        return $this->hasMany(Project::className(), ['kd_project' => 'kd_project'])->viaTable('ikut_project', ['emp_id' => 'emp_id']);
+        return $this->hasOne(Division::className(), ['id' => 'id_division']);
     }
 
     /**
+     * Gets query for [[JobAlocation]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getInsentifResikos()
+    public function getJobAlocation()
     {
-        return $this->hasMany(InsentifResiko::className(), ['employee_emp_id' => 'emp_id']);
+        return $this->hasOne(JobAlocation::className(), ['id' => 'id_job_alocation']);
     }
 
     /**
+     * Gets query for [[Jobrole]].
+     *
      * @return \yii\db\ActiveQuery
      */
-    public function getJmHasEmployees()
+    public function getJobrole()
     {
-        return $this->hasMany(JmHasEmployee::className(), ['employee_emp_id' => 'emp_id']);
+        return $this->hasOne(Jobrole::className(), ['id' => 'id_jobrole']);
+    }
+
+    /**
+     * Gets query for [[Jobtitle]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getJobtitle()
+    {
+        return $this->hasOne(Jobtitle::className(), ['id' => 'id_jobtitle']);
+    }
+
+    /**
+     * Gets query for [[Location]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLocation()
+    {
+        return $this->hasOne(Location::className(), ['id' => 'id_location']);
     }
 }

@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Employee */
 
-$this->title = $model->emp_id;
+$this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Employees', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -16,8 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->emp_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->emp_id], [
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
@@ -29,23 +29,23 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'emp_id',
-            'emp_name',
-            'no_rekening',
-            'kd_jabatan',
-            'gaji_pokok',
-            'gaji_lembur',
-            'pot_jamsos',
-            't_jabatan',
-            't_masakerja',
-            't_insentif',
-            'pot_telat',
-            'uang_makan',
-            'start_work',
-            'start_contract',
-            'end_contract',
-            'lama_contract',
-            'emp_group',
+            'id',
+            'reg_number',
+            'no_bpjstk',
+            'no_bpjskes',
+            'date_of_hired',
+            'type',
+            'is_permanent:boolean',
+            'id_jobtitle',
+            'id_division',
+            'id_jobrole',
+            'id_department',
+            'id_coreperson',
+            'email:email',
+            'id_location',
+            'is_active:boolean',
+            'id_job_alocation',
+            'name',
         ],
     ]) ?>
 

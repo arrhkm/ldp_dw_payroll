@@ -43,8 +43,9 @@ AppAsset::register($this);
             ['label' => 'Home', 'url'=>['/site/index/']],
             //['label' => 'App Old', 'url' =>['<a href=www.google.com>']],
             ['label' => 'Employee', 'url' => ['#'], 'items'=>[
-                ['label' => 'Master EMployee', 'url' => ['/employee/']],
-                ['label' => 'Insetif Rresiko', 'url' => ['/iresiko/']],
+                ['label' => 'Master EMployee', 'url' => ['/employee']],
+                ['label' => 'Person', 'url' => ['/coreperson']],
+                ['label' => 'Insetif Rresiko', 'url' => ['/iresiko']],
                 ['label' => 'Foreman', 'url' => ['/foreman']],
                 ['label' => 'Anggota Foreman', 'url' => ['/childforeman']],
                 ['label' => 'Ubah Gaji', 'url' => ['/employee/ubahgaji']],
@@ -69,9 +70,10 @@ AppAsset::register($this);
                 
             ]],
             ['label' => 'Attendance', 'url'=>['#'], 'items'=>[
-                ['label' => 'Machine Att', 'url'=>['/machineatt']],
-                ['label' => 'Integrasi', 'url'=>['/machineatt/integrasi']],
-                ['label'=>'Absensi', 'url'=>['/absensi/']],
+                ['label' => 'Machine', 'url'=>['/attmachine']],
+                ['label' => 'Integrasi', 'url'=>['/attmachine/integration']],
+                ['label' => 'card', 'url'=>['/cardlog']],
+                ['label'=>'Absensi', 'url'=>['/attendance']],
                 ['label'=>'Set Pulang', 'url'=>['/absensi/setpulang']],
 
             ]],

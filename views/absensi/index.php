@@ -34,6 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
             //'timestamp_diff:datetime',
             //'status',
             //'loc_code',
+            'datetime_in',
+            'datetime_out',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

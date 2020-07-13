@@ -11,15 +11,16 @@ use app\models\Employee;
  */
 class EmployeeSearch extends Employee
 {
+    public $person_name;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['emp_id', 'emp_name', 'no_rekening', 'start_work', 'start_contract', 'end_contract', 'emp_group'], 'safe'],
-            [['kd_jabatan', 'lama_contract'], 'integer'],
-            [['gaji_pokok', 'gaji_lembur', 'pot_jamsos', 't_jabatan', 't_masakerja', 't_insentif', 'pot_telat', 'uang_makan'], 'number'],
+            [['id', 'id_jobtitle', 'id_division', 'id_jobrole', 'id_department', 'id_coreperson', 'id_location', 'id_job_alocation'], 'integer'],
+            [['reg_number', 'no_bpjstk', 'no_bpjskes', 'date_of_hired', 'type', 'email', 'name', 'person_name'], 'safe'],
+            [['is_permanent', 'is_active'], 'boolean'],
         ];
     }
 
@@ -42,6 +43,7 @@ class EmployeeSearch extends Employee
     public function search($params)
     {
         $query = Employee::find();
+        $query->joinWith('coreperson');
 
         // add conditions that should always apply here
 
@@ -59,25 +61,26 @@ class EmployeeSearch extends Employee
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'kd_jabatan' => $this->kd_jabatan,
-            'gaji_pokok' => $this->gaji_pokok,
-            'gaji_lembur' => $this->gaji_lembur,
-            'pot_jamsos' => $this->pot_jamsos,
-            't_jabatan' => $this->t_jabatan,
-            't_masakerja' => $this->t_masakerja,
-            't_insentif' => $this->t_insentif,
-            'pot_telat' => $this->pot_telat,
-            'uang_makan' => $this->uang_makan,
-            'start_work' => $this->start_work,
-            'start_contract' => $this->start_contract,
-            'end_contract' => $this->end_contract,
-            'lama_contract' => $this->lama_contract,
+            'id' => $this->id,
+            'date_of_hired' => $this->date_of_hired,
+            'is_permanent' => $this->is_permanent,
+            'id_jobtitle' => $this->id_jobtitle,
+            'id_division' => $this->id_division,
+            'id_jobrole' => $this->id_jobrole,
+            'id_department' => $this->id_department,
+            'id_coreperson' => $this->id_coreperson,
+            'id_location' => $this->id_location,
+            'is_active' => $this->is_active,
+            'id_job_alocation' => $this->id_job_alocation,
         ]);
 
-        $query->andFilterWhere(['like', 'emp_id', $this->emp_id])
-            ->andFilterWhere(['like', 'emp_name', $this->emp_name])
-            ->andFilterWhere(['like', 'no_rekening', $this->no_rekening])
-            ->andFilterWhere(['like', 'emp_group', $this->emp_group]);
+        $query->andFilterWhere(['ilike', 'reg_number', $this->reg_number])
+            ->andFilterWhere(['ilike', 'no_bpjstk', $this->no_bpjstk])
+            ->andFilterWhere(['ilike', 'no_bpjskes', $this->no_bpjskes])
+            ->andFilterWhere(['ilike', 'type', $this->type])
+            ->andFilterWhere(['ilike', 'email', $this->email])
+            ->andFilterWhere(['ilike', 'coreperson.name', $this->person_name])
+            ->andFilterWhere(['ilike', 'name', $this->name]);
 
         return $dataProvider;
     }

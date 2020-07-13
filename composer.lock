@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f2e50cf7e652c2c21c1ea7629998117c",
+    "content-hash": "e0055df4cd619b6f8fd77f0c095f2e42",
     "packages": [
         {
             "name": "bluem/tree",
@@ -572,16 +572,16 @@
         },
         {
             "name": "kartik-v/yii2-widget-select2",
-            "version": "v2.1.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-widget-select2.git",
-                "reference": "b8cdb76b8dcc363e1e25b8f04f69aeabe98c6be3"
+                "reference": "d44105a4cbb5f69737a5c9a02d4456e1037b8ad3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/b8cdb76b8dcc363e1e25b8f04f69aeabe98c6be3",
-                "reference": "b8cdb76b8dcc363e1e25b8f04f69aeabe98c6be3",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-select2/zipball/d44105a4cbb5f69737a5c9a02d4456e1037b8ad3",
+                "reference": "d44105a4cbb5f69737a5c9a02d4456e1037b8ad3",
                 "shasum": ""
             },
             "require": {
@@ -622,7 +622,13 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2019-11-15T16:16:16+00:00"
+            "funding": [
+                {
+                    "url": "https://opencollective.com/yii2-widget-select2",
+                    "type": "open_collective"
+                }
+            ],
+            "time": "2020-05-23T11:50:39+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-timepicker",
@@ -4988,7 +4994,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "kartik-v/yii2-widget-timepicker": 20
+        "kartik-v/yii2-widget-timepicker": 20,
+        "kartik-v/yii2-widget-select2": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

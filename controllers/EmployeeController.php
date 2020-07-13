@@ -2,18 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\Coreperson;
 use Yii;
 use app\models\Employee;
 use app\models\EmployeeSearch;
+use PHPUnit\Framework\Constraint\ArrayHasKey;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
-use app\models\ImportForm;
-use yii\web\UploadedFile;
-use moonland\phpexcel\Excel;
-//use yii\data\ArrayDataProvider;
-use app\models\UbahGaji;
+use yii\helpers\ArrayHelper;
 
 /**
  * EmployeeController implements the CRUD actions for Employee model.
@@ -52,7 +49,7 @@ class EmployeeController extends Controller
 
     /**
      * Displays a single Employee model.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -63,10 +60,6 @@ class EmployeeController extends Controller
         ]);
     }
 
-   
-        
-   
-
     /**
      * Creates a new Employee model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -75,20 +68,24 @@ class EmployeeController extends Controller
     public function actionCreate()
     {
         $model = new Employee();
+        $model->id = $model->getLastId();
+        
+        
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->emp_id]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'employee_list'=> $this->getEmployeeUnList(),
         ]);
     }
 
     /**
      * Updates an existing Employee model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -97,18 +94,19 @@ class EmployeeController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->emp_id]);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'employee_list'=>$this->getEmployeeUnList(),
         ]);
     }
 
     /**
      * Deletes an existing Employee model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -119,74 +117,10 @@ class EmployeeController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionUbahgaji()
-    {
-        $model = new UbahGaji();
-
-        if ($model->load(Yii::$app->request->post())){
-            
-            $employee = Employee::find()->filterWhere(['gaji_pokok'=>$model->gaji_lama])->all();
-            if (isset($employee)){
-
-                foreach ($employee as $data) {
-                    $emp = $this->findModel($data['emp_id']);
-                    $emp->gaji_pokok = $model->gaji_baru;
-                    $emp->save();
-                }
-            }
-            return $this->render('ubahgaji', [
-                'employee'=>$employee, 
-                'model'=>$model,
-                    'update'=>'Ubah Gaji',
-            ]);
-              
-
-        } 
-
-        return $this->render('ubahgaji',[
-            'model'=>$model,
-            'update'=>'Ubah Gaji',
-        ]);
-
-    }
-
-    public function actionUbahjamsostek()
-    {
-        $model = new UbahGaji();
-
-        if ($model->load(Yii::$app->request->post())){
-            //if(Employee::find()->filterWhere(['gaji_pokok'=>$model->gaji_lama])->exist()){
-                $employee = Employee::find()->filterWhere(['pot_jamsos'=>$model->gaji_lama])->all();
-                if (isset($employee)){
-
-                    foreach ($employee as $data) {
-                        $emp = $this->findModel($data['emp_id']);
-                        $emp->pot_jamsos = $model->gaji_baru;
-                        $emp->save();
-                    }
-                }
-                return $this->render('ubahjamsostek', [
-                    'employee'=>$employee, 
-                    'model'=>$model,
-                    'update'=>'Ubah Jamsostek',
-                ]);
-            //}
-
-            
-
-        } 
-
-        return $this->render('ubahjamsostek',[
-            'model'=>$model,
-            'update'=>'Ubah Jamsostek',
-        ]);
-
-    }
-
     /**
      * Finds the Employee model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $id
+     * @param integer $id
      * @return Employee the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -197,5 +131,24 @@ class EmployeeController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function getEmployeeUnList(){
+        $person =  Employee::find()->with('coreperson')->all();
+        $id = [];
+        foreach ($person as $persons){
+            array_push($id, $persons['id_coreperson']);
+        }
+        $person_list = Coreperson::find()->where(['NOT IN','id', $id])->all();
+        $employee_list = ArrayHelper::map($person_list, 'id','name');
+        return $employee_list;
+    }
+
+    public function getEmployeeList(){
+        $employee = Employee::find()->with(['coreperson'])->asArray()->all();
+        
+       
+        
+        return ArrayHelper::map($employee, 'id','name');
     }
 }

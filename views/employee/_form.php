@@ -2,14 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
-use kartik\select2;
-use app\components\ListJabatan;
-use kartik\select2\Select2 as Select2Select2;
-use kartik\select2\Select2KrajeeAsset;
-
-$jabatan = New ListJabatan;
-
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Employee */
@@ -20,41 +13,39 @@ $jabatan = New ListJabatan;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'emp_id')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'reg_number')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'emp_name')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'no_bpjstk')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'no_rekening')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'no_bpjskes')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'kd_jabatan')->widget(Select2::className(),[
-        'data'=>$jabatan->getJabatanList(),
-    ]) ?>
+    <?= $form->field($model, 'date_of_hired')->textInput() ?>
 
-    <?= $form->field($model, 'gaji_pokok')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'type')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'gaji_lembur')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'is_permanent')->checkbox() ?>
 
-    <?= $form->field($model, 'pot_jamsos')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'id_jobtitle')->textInput() ?>
 
-    <?= $form->field($model, 't_jabatan')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'id_division')->textInput() ?>
 
-    <?= $form->field($model, 't_masakerja')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'id_jobrole')->textInput() ?>
 
-    <?= $form->field($model, 't_insentif')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'id_department')->textInput() ?>
 
-    <?= $form->field($model, 'pot_telat')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'id_coreperson')->widget(Select2::className(),[
+        'data'=>$employee_list,
+    ]); ?>
 
-    <?= $form->field($model, 'uang_makan')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'start_work')->textInput() ?>
+    <?= $form->field($model, 'id_location')->textInput() ?>
 
-    <?= $form->field($model, 'start_contract')->textInput() ?>
+    <?= $form->field($model, 'is_active')->checkbox() ?>
 
-    <?= $form->field($model, 'end_contract')->textInput() ?>
+    <?= $form->field($model, 'id_job_alocation')->textInput() ?>
 
-    <?= $form->field($model, 'lama_contract')->textInput() ?>
-
-    <?= $form->field($model, 'emp_group')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

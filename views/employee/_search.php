@@ -15,39 +15,39 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'emp_id') ?>
+    <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'emp_name') ?>
+    <?= $form->field($model, 'reg_number') ?>
 
-    <?= $form->field($model, 'no_rekening') ?>
+    <?= $form->field($model, 'no_bpjstk') ?>
 
-    <?= $form->field($model, 'kd_jabatan') ?>
+    <?= $form->field($model, 'no_bpjskes') ?>
 
-    <?= $form->field($model, 'gaji_pokok') ?>
+    <?= $form->field($model, 'date_of_hired') ?>
 
-    <?php // echo $form->field($model, 'gaji_lembur') ?>
+    <?php // echo $form->field($model, 'type') ?>
 
-    <?php // echo $form->field($model, 'pot_jamsos') ?>
+    <?php // echo $form->field($model, 'is_permanent')->checkbox() ?>
 
-    <?php // echo $form->field($model, 't_jabatan') ?>
+    <?php // echo $form->field($model, 'id_jobtitle') ?>
 
-    <?php // echo $form->field($model, 't_masakerja') ?>
+    <?php // echo $form->field($model, 'id_division') ?>
 
-    <?php // echo $form->field($model, 't_insentif') ?>
+    <?php // echo $form->field($model, 'id_jobrole') ?>
 
-    <?php // echo $form->field($model, 'pot_telat') ?>
+    <?php // echo $form->field($model, 'id_department') ?>
 
-    <?php // echo $form->field($model, 'uang_makan') ?>
+    <?php // echo $form->field($model, 'id_coreperson') ?>
 
-    <?php // echo $form->field($model, 'start_work') ?>
+    <?php // echo $form->field($model, 'email') ?>
 
-    <?php // echo $form->field($model, 'start_contract') ?>
+    <?php // echo $form->field($model, 'id_location') ?>
 
-    <?php // echo $form->field($model, 'end_contract') ?>
+    <?php // echo $form->field($model, 'is_active')->checkbox() ?>
 
-    <?php // echo $form->field($model, 'lama_contract') ?>
+    <?php // echo $form->field($model, 'id_job_alocation') ?>
 
-    <?php // echo $form->field($model, 'emp_group') ?>
+    <?php // echo $form->field($model, 'name') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
