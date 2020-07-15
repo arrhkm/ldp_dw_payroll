@@ -2,20 +2,19 @@
 
 namespace app\controllers;
 
-use app\models\Coreperson;
 use Yii;
-use app\models\Employee;
-use app\models\EmployeeSearch;
-use PHPUnit\Framework\Constraint\ArrayHasKey;
+use app\models\Timeshift;
+use app\models\TimeshiftDetil;
+use app\models\TimeshiftSearch;
+use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\ArrayHelper;
 
 /**
- * EmployeeController implements the CRUD actions for Employee model.
+ * TimeshiftController implements the CRUD actions for Timeshift model.
  */
-class EmployeeController extends Controller
+class TimeshiftController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -33,12 +32,12 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Lists all Employee models.
+     * Lists all Timeshift models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new EmployeeSearch();
+        $searchModel = new TimeshiftSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -48,29 +47,37 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Displays a single Employee model.
+     * Displays a single Timeshift model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
     {
+        //Tsd
+        $Tsd = TimeshiftDetil::find()->where(['id_timeshift'=>$id])->orderBy(['num_day'=>'ASC'])->all();
+        $Provider = New ArrayDataProvider([
+            'allModels'=>$Tsd,
+            'pagination'=>[
+                'pageSize'=>7,
+            ]
+        ]);
+
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'Provider'=>$Provider,
         ]);
     }
 
     /**
-     * Creates a new Employee model.
+     * Creates a new Timeshift model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Employee();
-        $model->id = $model->getLastId();
-        
-        
+        $model = new Timeshift();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -78,12 +85,48 @@ class EmployeeController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'employee_list'=> $this->getEmployeeUnList(),
+        ]);
+    }
+
+    public function actionAdddetil($id){
+        $model = $this->findModel($id);
+        $modelDetil = New TimeshiftDetil();
+        $modelDetil->id = $modelDetil->getLastId();
+        $modelDetil->id_timeshift = $model->id;
+        //$modelDetil->id_outservice = $model->id;
+        if ($modelDetil->load(Yii::$app->request->post()) && $modelDetil->save()){
+            return $this->redirect(['view', 'id'=>$model->id]);
+        }
+        
+        return $this->render('_form_detil', [
+            'model'=>$model,
+            'modelDetil'=>$modelDetil,
+        ]);
+    }
+
+    public function actionDeletedetil($id){
+        $modelDetil = TimeshiftDetil::findOne($id);
+        $model = $this->findModel($modelDetil->id_timeshift);
+        if ($modelDetil->delete()){
+            return $this->redirect(['view', 'id'=>$model->id]);
+        }
+    }
+
+    public function actionUpdatedetil($id){
+        $modelDetil = TimeshiftDetil::findOne($id);
+        $model = $this->findModel($modelDetil->id_timeshift);
+        if ($modelDetil->load(Yii::$app->request->post()) && $modelDetil->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('updatedetil', [
+            'model' => $model,
+            'modelDetil'=>$modelDetil,
         ]);
     }
 
     /**
-     * Updates an existing Employee model.
+     * Updates an existing Timeshift model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -99,12 +142,11 @@ class EmployeeController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'employee_list'=>$this->getEmployeeList(),//getEmployeeUnList(),
         ]);
     }
 
     /**
-     * Deletes an existing Employee model.
+     * Deletes an existing Timeshift model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -118,37 +160,18 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Finds the Employee model based on its primary key value.
+     * Finds the Timeshift model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Employee the loaded model
+     * @return Timeshift the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Employee::findOne($id)) !== null) {
+        if (($model = Timeshift::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function getEmployeeUnList(){
-        $person =  Employee::find()->with('coreperson')->all();
-        $id = [];
-        foreach ($person as $persons){
-            array_push($id, $persons['id_coreperson']);
-        }
-        $person_list = Coreperson::find()->where(['NOT IN','id', $id])->all();
-        $employee_list = ArrayHelper::map($person_list, 'id','name');
-        return $employee_list;
-    }
-
-    public function getEmployeeList(){
-        $employee = Employee::find()->with(['coreperson'])->asArray()->all();
-        
-       
-        
-        return ArrayHelper::map($employee, 'id','name');
     }
 }

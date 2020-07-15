@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Periode;
+use app\models\Period;
 
 /**
- * PeriodeSearch represents the model behind the search form of `app\models\Periode`.
+ * PeriodSearch represents the model behind the search form of `app\models\Period`.
  */
-class PeriodeSearch extends Periode
+class PeriodSearch extends Period
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,9 @@ class PeriodeSearch extends Periode
     public function rules()
     {
         return [
-            [['id', 'pot_jamsos'], 'integer'],
+            [['id'], 'integer'],
             [['period_name', 'start_date', 'end_date'], 'safe'],
+            [['pot_jamsos'], 'boolean'],
         ];
     }
 
@@ -40,7 +41,7 @@ class PeriodeSearch extends Periode
      */
     public function search($params)
     {
-        $query = Periode::find();
+        $query = Period::find();
 
         // add conditions that should always apply here
 
@@ -64,7 +65,7 @@ class PeriodeSearch extends Periode
             'pot_jamsos' => $this->pot_jamsos,
         ]);
 
-        $query->andFilterWhere(['like', 'period_name', $this->period_name]);
+        $query->andFilterWhere(['ilike', 'period_name', $this->period_name]);
 
         return $dataProvider;
     }

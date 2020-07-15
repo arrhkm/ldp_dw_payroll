@@ -2,20 +2,17 @@
 
 namespace app\controllers;
 
-use app\models\Coreperson;
 use Yii;
-use app\models\Employee;
-use app\models\EmployeeSearch;
-use PHPUnit\Framework\Constraint\ArrayHasKey;
+use app\models\Period;
+use app\models\PeriodSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\ArrayHelper;
 
 /**
- * EmployeeController implements the CRUD actions for Employee model.
+ * PeriodController implements the CRUD actions for Period model.
  */
-class EmployeeController extends Controller
+class PeriodController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -33,12 +30,12 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Lists all Employee models.
+     * Lists all Period models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new EmployeeSearch();
+        $searchModel = new PeriodSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -48,7 +45,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Displays a single Employee model.
+     * Displays a single Period model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -61,29 +58,28 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Creates a new Employee model.
+     * Creates a new Period model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Employee();
+        $model = new Period();
         $model->id = $model->getLastId();
-        
-        
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $model->period_name = $model->end_date;
+        if ($model->load(Yii::$app->request->post())){
+            $model->period_name = $model->end_date;
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
-            'employee_list'=> $this->getEmployeeUnList(),
         ]);
     }
 
     /**
-     * Updates an existing Employee model.
+     * Updates an existing Period model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -93,18 +89,19 @@ class EmployeeController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->period_name = $model->end_date;
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'employee_list'=>$this->getEmployeeList(),//getEmployeeUnList(),
         ]);
     }
 
     /**
-     * Deletes an existing Employee model.
+     * Deletes an existing Period model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -118,37 +115,18 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Finds the Employee model based on its primary key value.
+     * Finds the Period model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Employee the loaded model
+     * @return Period the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Employee::findOne($id)) !== null) {
+        if (($model = Period::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function getEmployeeUnList(){
-        $person =  Employee::find()->with('coreperson')->all();
-        $id = [];
-        foreach ($person as $persons){
-            array_push($id, $persons['id_coreperson']);
-        }
-        $person_list = Coreperson::find()->where(['NOT IN','id', $id])->all();
-        $employee_list = ArrayHelper::map($person_list, 'id','name');
-        return $employee_list;
-    }
-
-    public function getEmployeeList(){
-        $employee = Employee::find()->with(['coreperson'])->asArray()->all();
-        
-       
-        
-        return ArrayHelper::map($employee, 'id','name');
     }
 }

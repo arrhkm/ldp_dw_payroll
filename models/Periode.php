@@ -8,16 +8,16 @@ use Yii;
 /**
  * This is the model class for table "periode".
  *
- * @property int $kd_periode
- * @property string $nama_periode
- * @property string $tgl_awal
- * @property string $tgl_akhir
- * @property int $potongan_jamsos
+ * @property int $id
+ * @property string $period_name
+ * @property string $sart_date
+ * @property string $end_date
+ * @property int $pot_jamsos
  */
 class Periode extends \yii\db\ActiveRecord
 {
     use SmartIncrementKeyDb;
-    /*public static function getLastId($index_name='kd_periode')
+    /*public static function getLastId($index_name='id')
     {
         //put your code here
         $index = "MAX(".$index_name.")";
@@ -40,11 +40,11 @@ class Periode extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['kd_periode', 'nama_periode', 'tgl_awal', 'tgl_akhir'], 'required'],
-            [['kd_periode', 'potongan_jamsos'], 'integer'],
-            [['tgl_awal', 'tgl_akhir'], 'safe'],
-            [['nama_periode'], 'string', 'max' => 32],
-            [['kd_periode'], 'unique'],
+            [['id', 'period_name', 'sart_date', 'end_date'], 'required'],
+            [['id', 'pot_jamsos'], 'integer'],
+            [['sart_date', 'end_date'], 'safe'],
+            [['period_name'], 'string', 'max' => 32],
+            [['id'], 'unique'],
         ];
     }
 
@@ -54,11 +54,11 @@ class Periode extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'kd_periode' => 'Kd Periode',
-            'nama_periode' => 'Nama Periode',
-            'tgl_awal' => 'Tgl Awal',
-            'tgl_akhir' => 'Tgl Akhir',
-            'potongan_jamsos' => 'Potongan Jamsos',
+            'id' => 'Kd Periode',
+            'period_name' => 'Nama Periode',
+            'start_date' => 'Tgl Awal',
+            'end_date' => 'Tgl Akhir',
+            'pot_jamsos' => 'Potongan Jamsos',
         ];
     }
 }

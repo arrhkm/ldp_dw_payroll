@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Periode;
+use app\models\TimeshiftOption;
 
 /**
- * PeriodeSearch represents the model behind the search form of `app\models\Periode`.
+ * TimeshiftOptionSearch represents the model behind the search form of `app\models\TimeshiftOption`.
  */
-class PeriodeSearch extends Periode
+class TimeshiftOptionSearch extends TimeshiftOption
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,7 @@ class PeriodeSearch extends Periode
     public function rules()
     {
         return [
-            [['id', 'pot_jamsos'], 'integer'],
-            [['period_name', 'start_date', 'end_date'], 'safe'],
+            [['id', 'id_timeshift', 'id_employee'], 'integer'],
         ];
     }
 
@@ -40,7 +39,7 @@ class PeriodeSearch extends Periode
      */
     public function search($params)
     {
-        $query = Periode::find();
+        $query = TimeshiftOption::find();
 
         // add conditions that should always apply here
 
@@ -59,12 +58,9 @@ class PeriodeSearch extends Periode
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-            'pot_jamsos' => $this->pot_jamsos,
+            'id_timeshift' => $this->id_timeshift,
+            'id_employee' => $this->id_employee,
         ]);
-
-        $query->andFilterWhere(['like', 'period_name', $this->period_name]);
 
         return $dataProvider;
     }

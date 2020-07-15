@@ -1,3 +1,5 @@
-1. membenahi tabel depatement
-2. membuat sistem timeshift karyawan harian
+Tgl 13-07-2020
+1. membenahi tabel depatement ->Ok
+2. membuat sistem timeshift karyawan harian -->baru time shift 
 3. membuat hitungan payroll 
+
