@@ -34,12 +34,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{view} {update} {delete} {schedule}',
+                'template'=>'{view} {update} {delete} {schedule} {timeshift} {integration} {payroll}',
                 'buttons'=>[
                     'schedule' => function($url, $model) {
                         return Html::a('<span class="glyphicon glyphicon-cloud-download">Schedule</span>', ['schedule', 'id' => $model['id']], ['title' => 'Schedule', 'class' => '',]);
+                    },
+                    'timeshift' => function($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-cloud-download">timeshift</span>', ['timeshiftemployee', 'id' => $model['id']], ['title' => 'timeshift', 'class' => '',]);
+                    },
+                    'integration'=>function($url, $model){
+                        return Html::a('<span class="glyphicon glyphicon-cloud-download">integration</span>', ['integration', 'id'=>$model['id']], ['title'=>'integration', 'class'=>'',]);
+                    },
+                    'payroll'=>function($url, $model){
+                        return Html::a('Payroll', ['pilihgroup', 'id'=>$model['id']]);
                     }
-                    
+
                 ],
         
             ],

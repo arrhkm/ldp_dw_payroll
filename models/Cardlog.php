@@ -34,7 +34,7 @@ class Cardlog extends \yii\db\ActiveRecord
             [['id'], 'required'],
             [['id', 'pin', 'id_attmachine', 'id_employee'], 'default', 'value' => null],
             [['id', 'pin', 'id_attmachine', 'id_employee'], 'integer'],
-            [['pin', 'id_employee', 'id_attmachine'], 'unique', 'targetAttribute' => ['pin', 'id_employee', 'id_attmachine']],
+            [['id_employee'], 'unique'],
             [['id'], 'unique'],
             [['id_attmachine'], 'exist', 'skipOnError' => true, 'targetClass' => Attmachine::className(), 'targetAttribute' => ['id_attmachine' => 'id']],
             [['id_employee'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['id_employee' => 'id']],

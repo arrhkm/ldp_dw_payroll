@@ -4,20 +4,20 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Periode */
+/* @var $model app\models\TimeshiftEmployee */
 
-$this->title = $model->kd_periode;
-$this->params['breadcrumbs'][] = ['label' => 'Periodes', 'url' => ['index']];
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Timeshift Employees', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="periode-view">
+<div class="timeshift-employee-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->kd_periode], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->kd_periode], [
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
@@ -29,11 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'kd_periode',
-            'nama_periode',
-            'tgl_awal',
-            'tgl_akhir',
-            'potongan_jamsos',
+            'id',
+            'date_shift',
+            'id_period',
+            'id_employee',
+            'start_hour',
+            'duration_hour',
+            'is_dayoff:boolean',
         ],
     ]) ?>
 

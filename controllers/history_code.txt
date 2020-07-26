@@ -1,5 +1,25 @@
 Tgl 13-07-2020
 1. membenahi tabel depatement ->Ok
 2. membuat sistem timeshift karyawan harian -->baru time shift 
-3. membuat hitungan payroll 
+
+14-07-2020 
+3. Membuat Integrasi attendance  baru
+ 
+-----------------------
+16-07-2020
+3. membuat integrasi attendance baru
+4. membuat hitungan payroll 
+- ganti pita printer EPSON LX310 siwi
+
+
+20-07-2020
+3. membuat integrasi baru fix 
+4. membuat hitungan payroll
+5.Perbaiki Printer Epson LFE (Mega)
+- perbaiki jaringan printer Pak Jonny Asra
+
+22-07-2020
+3. Integrasi absensi fix
+4. Hitungan payroll
+- Backup Inbox Mail Sarin 
 

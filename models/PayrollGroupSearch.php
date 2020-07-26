@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Periode;
+use app\models\PayrollGroup;
 
 /**
- * PeriodeSearch represents the model behind the search form of `app\models\Periode`.
+ * PayrollGroupSearch represents the model behind the search form of `app\models\PayrollGroup`.
  */
-class PeriodeSearch extends Periode
+class PayrollGroupSearch extends PayrollGroup
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class PeriodeSearch extends Periode
     public function rules()
     {
         return [
-            [['id', 'pot_jamsos'], 'integer'],
-            [['period_name', 'start_date', 'end_date'], 'safe'],
+            [['id'], 'integer'],
+            [['name'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class PeriodeSearch extends Periode
      */
     public function search($params)
     {
-        $query = Periode::find();
+        $query = PayrollGroup::find();
 
         // add conditions that should always apply here
 
@@ -59,12 +59,9 @@ class PeriodeSearch extends Periode
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-            'pot_jamsos' => $this->pot_jamsos,
         ]);
 
-        $query->andFilterWhere(['like', 'period_name', $this->period_name]);
+        $query->andFilterWhere(['ilike', 'name', $this->name]);
 
         return $dataProvider;
     }

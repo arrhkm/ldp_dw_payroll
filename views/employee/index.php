@@ -32,12 +32,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute'=>'person_name',
                 'value'=>'coreperson.name',
             ],
-           
+            'basic_salary',
             'no_bpjstk',
             'no_bpjskes',
             'date_of_hired',
             
-            //'type',
+            'type',
             //'is_permanent:boolean',
             //'id_jobtitle',
             //'id_division',
@@ -46,9 +46,10 @@ $this->params['breadcrumbs'][] = $this->title;
             //'id_coreperson',
             //'email:email',
             //'id_location',
-            //'is_active:boolean',
+            'is_active:boolean',
             //'id_job_alocation',
-            //'name',
+            'name',
+            
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

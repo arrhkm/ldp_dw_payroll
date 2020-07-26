@@ -61,7 +61,7 @@ class EmployeeSearch extends Employee
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
+            'employee.id' => $this->id,
             'date_of_hired' => $this->date_of_hired,
             'is_permanent' => $this->is_permanent,
             'id_jobtitle' => $this->id_jobtitle,

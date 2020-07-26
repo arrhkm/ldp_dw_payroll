@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Coreperson;
 use app\models\Employee;
 use app\models\ModelFormTimeshiftEmployee;
 use Yii;
@@ -83,21 +84,20 @@ class TimeshiftoptionController extends Controller
     public function actionTimeshiftoptionemployee(){
         $modelForm = New ModelFormTimeshiftEmployee();
 
-        $employee_list = Employee::find()
-        ->where([
-            'is_active'=>true,
-            
-            ])
-            ->all();
+        $employee_list = Employee::find()->where(['is_active'=>true])->all();
+        
         $modelTimeshift = Timeshift::find()->all();
         $timeshift_list = ArrayHelper::map($modelTimeshift, 'id', 'name');
-            $data_employee = ArrayHelper::map($employee_list, 'id', 'reg_number');
+        $data_employee = ArrayHelper::map($employee_list, 'id', 'name');
         if ($modelForm->load(Yii::$app->request->post()) && $modelForm->validate()){
             //Input data default Timeshift karyawan 
+            //foreach ($modelForm->id_employee as $ids){
             foreach ($modelForm->id_employee as $ids){
-                $timeshif = TimeshiftOption::find()->where(['id_employee'=>$ids, 'id_timeshift'=>$modelForm->id_timeshift]);
+                $timeshif = TimeshiftOption::find()->where(['id_employee'=>$ids]);//, 'id_timeshift'=>$modelForm->id_timeshift]);
                 if ($timeshif->exists()){
-                    $t_ops = TimeshiftOption::find()->where(['id_timeshift'=>$modelForm->id_timeshift, 'id_employee'=>$ids]);
+                    $t_ops = $timeshif->one();//TimeshiftOption::find()->where(['id_timeshift'=>$modelForm->id_timeshift, 'id_employee'=>$ids]);
+                    $t_ops->id_timeshift = $modelForm->id_timeshift;
+                    $t_ops->save();
                 }else {
                     $t_ops = New TimeshiftOption();
                     $t_ops->id = $t_ops->getLastId();

@@ -4,26 +4,20 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\PeriodeSearch */
+/* @var $model app\models\PayrollGroupSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="periode-search">
+<div class="payroll-group-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'kd_periode') ?>
+    <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'nama_periode') ?>
-
-    <?= $form->field($model, 'tgl_awal') ?>
-
-    <?= $form->field($model, 'tgl_akhir') ?>
-
-    <?= $form->field($model, 'potongan_jamsos') ?>
+    <?= $form->field($model, 'name') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

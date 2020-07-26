@@ -227,12 +227,10 @@ class AttmachineController extends Controller
             //$cards = array();
 
 
-            //Cari Employe yang punya kartu absensi  
-            
+            //Cari Employe yang aktif yang punya kartu absensi              
               
-            foreach (Employee::find()->all() as $emp) {
-            //foreach (Employee::find()->where(['id'=>161])->all() as $emp) {
-            // $customer is a attcard object with the 'employee' relation populated
+            foreach (Employee::find()->where(['is_active'=>True])->all() as $emp) {
+                //PIN dari masing2 employee bersifat uniq dan harus sama di semua mesin.
                 $_card = Cardlog::find()->select(['pin', 'id_employee'])->where(['id_employee'=>$emp->id])->all();
                 array_push($emp_array, [                    
                     'reg_number'=>$emp->reg_number,
@@ -245,7 +243,7 @@ class AttmachineController extends Controller
             //-------------end loop employe yang punya kartu -----------------
 
             foreach ($emp_array as $myEmp){
-                //------------------------------------------
+                //-----------------Matching data employee yg sudah punya kartu dg Log yang sudah diambil --------------------
                 
                 foreach ($list_day as $listday){ 
                     //echo "-----------------------------------------------------------------------------------------<br>";

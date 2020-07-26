@@ -17,6 +17,8 @@ use kartik\select2\Select2;
 
     <?= $form->field($model, 'no_bpjstk')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'basic_salary')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'no_bpjskes')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'date_of_hired')->textInput() ?>
