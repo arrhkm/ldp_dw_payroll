@@ -71,16 +71,17 @@ AppAsset::register($this);
                 ['label' => 'Periode', 'url'=>['/period/']],
                 ['label'=>'Insentif', 'url'=>['/insentif/']],
             ]],
-            /*['label' => 'Payroll', 'url'=>['#'], 'items'=>[
-                ['label'=>'Payroll Group', 'url'=>['/payrollgroup/']],
-            ]],*/
-            ['label' => 'S P L', 'url'=>['#'], 'items'=>[
-                ['label' => 'Surat Perintah Lembur(SPL)', 'url'=>['/spl/']],
+            ['label' => 'Insentif', 'url'=>['#'], 'items'=>[
+                ['label'=>'Insentif Employee', 'url'=>['/insentif/']],
+            ]],
+            ['label' => 'S P K L', 'url'=>['#'], 'items'=>[
+                ['label' => 'Surat Perintah Lembur(SPL)', 'url'=>['/spkl/']],
                 
             ]],
             ['label' => 'Attendance', 'url'=>['#'], 'items'=>[
                 ['label' => 'Timeshift', 'url'=>['/timeshift']],
-                ['label' => 'Setup Timeshift Employee', 'url'=>['/timeshiftoption']],
+                ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],
+                ['label' => 'Setup Timeshift Employee', 'url'=>['/timeshiftemployee']],
                 ['label' => 'Machine', 'url'=>['/attmachine']],
                 //['label' => 'Integrasi', 'url'=>['/attmachine/integration']],
                 ['label' => 'card', 'url'=>['/cardlog']],

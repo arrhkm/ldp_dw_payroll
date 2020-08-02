@@ -31,8 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'id_timeshift',
             'timeshift.name',
             'id_employee',
-            'employee.reg_number',
-            'employee.coreperson.name',
+            
+            [
+                'attribute'=>'employee',
+                'value'=>'employee.name',
+            ],
+            [
+                'attribute'=>'reg_number',
+                'value'=>'employee.reg_number',
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

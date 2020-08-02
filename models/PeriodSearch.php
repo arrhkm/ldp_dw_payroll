@@ -42,6 +42,7 @@ class PeriodSearch extends Period
     public function search($params)
     {
         $query = Period::find();
+        $query->orderBy(['start_date'=>SORT_DESC]);
 
         // add conditions that should always apply here
 
@@ -69,4 +70,5 @@ class PeriodSearch extends Period
 
         return $dataProvider;
     }
+    
 }

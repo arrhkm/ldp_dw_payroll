@@ -14,10 +14,14 @@ class TimeshiftOptionSearch extends TimeshiftOption
     /**
      * {@inheritdoc}
      */
+    public $employee;
+    public $reg_number;
+    
     public function rules()
     {
         return [
             [['id', 'id_timeshift', 'id_employee'], 'integer'],
+            [['employee', 'reg_number'], 'safe'],
         ];
     }
 
@@ -40,6 +44,7 @@ class TimeshiftOptionSearch extends TimeshiftOption
     public function search($params)
     {
         $query = TimeshiftOption::find();
+        $query->joinWith('employee');
 
         // add conditions that should always apply here
 
@@ -61,6 +66,9 @@ class TimeshiftOptionSearch extends TimeshiftOption
             'id_timeshift' => $this->id_timeshift,
             'id_employee' => $this->id_employee,
         ]);
+
+        $query->andFilterWhere(['ilike','employee.name', $this->employee])
+            ->andFilterWhere(['ilike','employee.reg_number', $this->reg_number]);
 
         return $dataProvider;
     }

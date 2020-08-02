@@ -46,6 +46,35 @@ $this->params['breadcrumbs'][] = $this->title;
             'start_hour',
             'duration_hour',
             'num_day',
+            [
+                'label'=>'Hari',
+                'value'=>function($model){
+                    switch ($model->num_day) {
+                        case 1:
+                            return  "Senin";
+                            break;
+                        case 2:
+                            return  "Selasa";
+                            break;
+                        case 3:
+                            return  "Rabu";
+                            break;
+                        case 4:
+                            return  "Kamis";
+                            break;
+                        case 5:
+                            return  "Jumat";
+                            break;
+                        case 6:
+                            return  "Sabtu";
+                        break;
+                        case 7:
+                            return  "Minggu";
+                            break;
+                    }
+
+                }
+            ],
             'is_dayoff',
             ['class' => 'yii\grid\ActionColumn',
                 'template'=>'{update} {delete}',

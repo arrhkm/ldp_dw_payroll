@@ -85,7 +85,6 @@ class InsentifController extends Controller
         $emp_list = $emp->getEmployeeActive();
         $master_insentif = ArrayHelper::map(InsentifMaster::find()->all(), 'id','name');
         
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }

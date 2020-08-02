@@ -6,12 +6,15 @@ use app\components\hkm\DateRange;
 use app\components\hkm\IntegrasiClass;
 use app\components\hkm\IntegrateAttendance;
 use app\components\hkm\LogIntegration;
+use app\components\hkm\NameDay;
 use app\components\hkm\payroll\GajiPokok;
-
+use app\components\hkm\payroll\InsentifEmployee;
+use app\components\hkm\payroll\MasaKerja;
 use app\models\Attendance;
 use app\models\Cardlog;
 //use app\models\DownloadMachineForm;
 use app\models\Employee;
+use app\models\InsentifMaster;
 use app\models\Log;
 use app\models\ModelFormPayroll;
 use app\models\PayrollGroup;
@@ -21,7 +24,9 @@ use app\models\Period;
 use app\models\PeriodSearch;
 use app\models\TimeshiftDetil;
 use app\models\TimeshiftEmployee;
+use app\models\TimeshiftEmployeeSearch;
 use app\models\TimeshiftOption;
+use DateTime;
 use yii\data\ArrayDataProvider;
 use yii\db\Query;
 use yii\web\Controller;
@@ -198,7 +203,18 @@ class PeriodController extends Controller
 
     }
 
+    public function actionRemovetimeshift($id){
+        //$this->findModel($id)->delete();
+        TimeshiftEmployee::deleteAll(['id_period'=>$id]);
+
+        return $this->redirect(['index']);
+    }
+
     public function actionTimeshiftemployee($id){
+
+        $searchTimeshiftEmployee = NEW TimeshiftEmployeeSearch();
+        $dataProviderTimeshiftEmployee = $searchTimeshiftEmployee->searchByPeriod(Yii::$app->request->queryParams,$id);
+
         $timeshift_employee = TimeshiftEmployee::find()->with('employee')
         //->where(['id_employee'=>48])
         ->orderBy(['id_employee'=>SORT_DESC, 'date_shift'=>SORT_ASC])->all();
@@ -211,7 +227,8 @@ class PeriodController extends Controller
         ]);
 
         return $this->render('timeshiftemployee',[
-            'provider'=>$provider,
+            'provider'=>$dataProviderTimeshiftEmployee, //$provider,
+            'searchModelTimeshiftEmployee'=>$searchTimeshiftEmployee,
         ]);
     }
 
@@ -224,6 +241,8 @@ class PeriodController extends Controller
      */
     public function actionDelete($id)
     {
+        TimeshiftEmployee::deleteAll(['id_period'=>$id]);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -277,41 +296,48 @@ class PeriodController extends Controller
                 //-----------------Matching data employee yg sudah punya kartu dg Log yang sudah diambil --------------------
                 
                 foreach ($list_day as $listday){ 
-                    $shift = TimeshiftEmployee::find()->where([
+                    /*$shift = TimeshiftEmployee::find()->where([
                         'id_employee'=>$myEmp['id_employee'],
                         'date_shift'=>$listday,
                         'id_period'=>$id,
-                    ])->one();
+                    ])->one();*/
+                    
+                    $shift = TimeshiftEmployee::find()->where(['id_employee'=>$myEmp['id_employee'], 'id_period'=>$id, 'date_shift'=>$listday]);
                     //echo "-----------------------------------------------------------------------------------------<br>";
-                    //$iter = New LogIntegration($myLog, $myEmp['id_employee'], $myEmp['cards'], $listday);
-                    $iter = New IntegrateAttendance($myLog, $myEmp['id_employee'], $myEmp['cards'], $listday, $shift->start_hour);
-                    $iter->getLog();
-                    if ($iter->in!=NULL && $iter->out!=NULL){
-                        if ($iter->in===$iter->out){
-                            $in = date("Y-m-d H:i:s", $iter->in);                    
-                            $out=NULL;
-                            $jam_in = date("H:i:s", $iter->in);
-                            $jam_out=NULL;                            
-                           
-                        } else {
-                            $in = date("Y-m-d H:i:s", $iter->in);
-                            $out = date("Y-m-d H:i:s", $iter->out);
-                            $jam_in = date("H:i:s", $iter->in);
-                            $jam_out = date("H:i:s", $iter->out);                            
-                        }
-                      
-                        array_push ($integrated_log, [
-                            'id_employee'=>$myEmp['id_employee'],
-                            'reg_number'=>$myEmp['reg_number'],
-                            'date_att'=>$listday,
-                            'punch_in'=>$in, 
-                            'punch_out'=>$out,
-                            'emp_name'=>$myEmp['emp_name'],
-                            'start_hour'=>$shift->start_hour,
-                            'duration'=>$shift->duration_hour,
+                    if ($shift->exists()){
+                        $shift = $shift->one();
+                        //$iter = New LogIntegration($myLog, $myEmp['id_employee'], $myEmp['cards'], $listday);
+                        $iter = New IntegrateAttendance($myLog, $myEmp['id_employee'], $myEmp['cards'], $listday, '08:00:00');
+                        $iter->getLog();
+                        if ($iter->in!=NULL && $iter->out!=NULL){
+                            if ($iter->in===$iter->out){
+                                $in = date("Y-m-d H:i:s", $iter->in);                    
+                                $out=NULL;
+                                $jam_in = date("H:i:s", $iter->in);
+                                $jam_out=NULL;                            
+                            
+                            } else {
+                                $in = date("Y-m-d H:i:s", $iter->in);
+                                $out = date("Y-m-d H:i:s", $iter->out);
+                                $jam_in = date("H:i:s", $iter->in);
+                                $jam_out = date("H:i:s", $iter->out);                            
+                            }
+                        
+                            array_push ($integrated_log, [
+                                'id_employee'=>$myEmp['id_employee'],
+                                'reg_number'=>$myEmp['reg_number'],
+                                'date_att'=>$listday,
+                                'punch_in'=>$in, 
+                                'punch_out'=>$out,
+                                'emp_name'=>$myEmp['emp_name'],
+                                'start_hour'=>$shift->start_hour,
+                                'duration'=>$shift->duration_hour,
 
-                        ]);
-                    }                     
+                            ]);
+                        }  
+                    }
+                    
+                                       
                 } 
                 //end of loop date range
             }
@@ -388,36 +414,68 @@ class PeriodController extends Controller
             $payroll_group_employee = PayrollGroupEmployee::find()->where(['id_payroll_group'=>$model->id_payroll_group])->all(); 
             
             $shift_arr = [];
-            $dt_arr = [];
+            
+            $dt_arr_employee_payroll=[];
             foreach ($payroll_group_employee as $employees){
-                //P003/
+
+                //Looping employee
                 $employee = Employee::findOne($employees->id_employee);
+
+                //Masakerja Employee
+                $start_kerja = New DateTime($employee->date_of_hired);
+                $today = date("y-m-d");
+                $obj_today = New DateTime($today);
+                $diff_mskerja = $start_kerja->diff($obj_today);
+                $masakerja = $diff_mskerja->format('%Y');
+                $hasil_masakerja = MasaKerja::getMasakerja($employee->date_of_hired);
                 
+               
                 /*
                 - looping tanggal 
                 */
-                
+                $dt_arr = [];
                 $datePeriod = DateRange::getListDay($period->start_date, $period->end_date);
+
+                //Insentif all 
+                $insentif_master = InsentifEmployee::getKet($employee->id, $period->start_date, $period->end_date);
+
+                $total_gaji=0;
+                $wt=0;
+                $pt=0;
+                $emp_in = '00:00:00';
+                $emp_out = '00:00:00';
+
                 foreach ($datePeriod as $date_now){
 
+                     //Insentif
                     
+                    $ins = InsentifEmployee::getInsentif($employee->id, $date_now);
+                    
+
                     /*
                     //tanggal 2020-08-08
 
                     - cari shift P003 tanggal 2020-08-08 
                     */
+                    //$obj_datenow = date_create($date_now);
+                    $num_day = NameDay::getName($date_now);//$obj_datenow->format('N');
                     $shift = TimeshiftEmployee::find()->where(['date_shift'=>$date_now, 'id_employee'=>$employee->id, 'id_period'=>$period->id])->one();
+                    
                     $office_in = $shift->start_hour;
                     $is_dayoff = $shift->is_dayoff;
                     $office_ev = $shift->duration_hour;
+                    
                     //array_push($shift_arr, $shift->start_hour);
                     
                     $att = Attendance::find()->where(['id_employee'=>$employee->id, 'date'=>$date_now]);
                     if ($att->exists()){
                         $ket = "on";
                         $atts = $att->one();
-                        if (empty($atts->login)){
+                        if (empty($atts->login) || empty($atts->logout)){
+                            $ket = "off";
+                        }elseif (empty($atts->login)){
                             $emp_in = Null;
+                            $ket = "off";
         
                         }else {
                             $emp_in = $atts->login;
@@ -425,6 +483,7 @@ class PeriodController extends Controller
                         }
                         if (empty($atts->logout)){
                             $emp_out = Null;
+                            $ket = "off";
         
                         }else {
                             $emp_out = $atts->logout;
@@ -433,34 +492,57 @@ class PeriodController extends Controller
                         
                         
                     }else {
+                        if ($is_dayoff){
+                            $emp_in = Null;
+                            $emp_out = Null;
+                            $ket = "off";
+                        }else{
                         $emp_in = Null;
                         $emp_out = Null;
-                        $ket = "off";
+                        $ket = "alpha";
+                        }
                         
                     }
+                    
 
-                    $gaji = New GajiPokok($employee->basic_salary,$emp_in, $emp_out, $office_in, $is_dayoff, $office_ev, $date_now, $ket);
-
+                    $gaji = New GajiPokok($employee->basic_salary,$emp_in, $emp_out, 
+                        $office_in, $is_dayoff, $office_ev, $date_now, $ket, $employee->date_of_hired, $ins);
+                    
                     array_push($dt_arr, [
                         'id'=>$employee->id,
                         'name'=>$employee->coreperson->name,
+                        'reg_number'=>$employee->reg_number,
+                        'date_now'=>$date_now,
+                        'name_day'=>$num_day,
                         'basic'=>$gaji->basic_day,
                         'person_in'=>$emp_in,
                         'person_out'=>$emp_out,
                         //'early_in'=>$gaji->earlyIn(),
                         //'lateOut'=>$gaji->lateOut(),
-                        'office_in'=>$shift->start_hour,
+                        //'office_in'=>$shift->start_hour,
                         'office_start'=>$gaji->getOfficeStart(),
                         'office_stop'=>$gaji->getOfficeStop(),
                         'o_ev'=>$shift->duration_hour,
                         'p_ev'=>$gaji->getDurationEvectifeHour(),
                         'ot'=>$gaji->getOvertime(),
                         'sal_ot'=>$gaji->getSalaryOverTime(),
-                        'basic_salary'=>Yii::$app->formatter->asCurrency($gaji->getSalaryBasic(),'Rp.'),
-                        'date_now'=>$date_now,
-                        'is_doff'=>$shift->is_dayoff,
-                        'ket'=>$ket,
+                        'basic_salary'=>$gaji->getSalaryBasic(),
+                        
+                        'is_doff'=>$gaji->is_dayoff,//$shift->is_dayoff,
+                        'ket'=>$gaji->ket,//$ket,
+                        'doh'=>$gaji->doh,//$employee->date_of_hired,
+                        'mskerja'=>$masakerja,
+                        't_masakerja'=> $gaji->getTmasakerja(),
+                        'telat'=>$gaji->getTelat(),
+                        'pot_telat'=>$gaji->getPotonganTelat(),
+                        'ins'=>$gaji->getInsentif(),
+                        'salary_day'=>$gaji->getSalaryDay(),
+                        
                     ]);
+                    $total_gaji = $total_gaji + $gaji->getSalaryDay();
+                    $wt +=  $gaji->getDurationEvectifeHour();
+                    $pt += $gaji->getDurationEvectifeHour()+$gaji->getOvertime();
+
                 
                 
                 
@@ -476,11 +558,27 @@ class PeriodController extends Controller
 
 
                 */
-                }  
+                }
+                array_push($dt_arr_employee_payroll,[
+                    'reg_number'=>$employee->reg_number,
+                    'employee_name'=>$employee->name,
+                    'doh'=>$employee->date_of_hired,
+                    'basic'=>$employee->basic_salary,
+                    'ins_master'=>$insentif_master,
+                    'total_gaji'=>$total_gaji,
+                    'wt'=>$wt,
+                    'pt'=>$pt,
+                    'detil'=>$dt_arr,
+                    
+
+                ]);  
             }
+            
             $providerTest = New ArrayDataProvider([
                 'allModels'=>$dt_arr,
             ]);
+
+            
              
             return $this->render('_form_pilih_group',[
                 'model'=>$model,
@@ -492,6 +590,7 @@ class PeriodController extends Controller
                 //'shift'=>$shift_arr,
                 'dt_arr'=>$dt_arr,
                 'providerTest'=>$providerTest,
+                'dt_arr_payroll'=>$dt_arr_employee_payroll
     
             ]);
         }

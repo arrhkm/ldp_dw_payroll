@@ -4,6 +4,7 @@ namespace app\components\hkm\payroll;
 
 use DateInterval;
 use DateTime;
+use PhpOffice\PhpSpreadsheet\Shared\TimeZone;
 
 class GajiPokok {
     /*Upah Pekerja/Buruh harian lepas ditetapkan secara bulanan yang dibayarkan berdasarkan jumlah hari 
@@ -11,6 +12,8 @@ class GajiPokok {
     bagi Perusahaan dengan sistem waktu kerja 6 (enam) hari dalam seminggu, upah bulanan dibagi 25;
     bagi Perusahaan dengan sistem waktu kerja 5 (lima) hari dalam seminggu, upah bulanan dibagi 21.
     Dasar hukumnya adalah Peraturan Menteri Ketenagakerjaan Nomor 15 Tahun 2018 tentang Upah Minimum.
+
+    GajiPengali Lembur = (Gaji_perjam *25(constanta work of Month))/173;
     */
 
     public $basic_day;
@@ -22,8 +25,12 @@ class GajiPokok {
     public $end_office;
     public $is_dayoff;
     public $ket;
+    public $doh;
+    public $insentif;
 
-    public function __construct($basic, $person_start, $person_stop, $start_office, $is_dayoff, $office_ev, $date_now, $ket){
+    public function __construct($basic, $person_start, $person_stop, 
+        $start_office, $is_dayoff, $office_ev, $date_now, $ket, $doh, $insentif)
+    {
         $this->basic_day = $basic;
         
         $this->person_start = $person_start;
@@ -33,6 +40,9 @@ class GajiPokok {
         $this->date_now = $date_now;
         $this->is_dayoff = $is_dayoff;
         $this->ket = $ket;
+        $this->doh = $doh;
+        $this->insentif = $insentif;
+
         //$this->end_office = date('Y-m-d H:i:s', strtotime("+".$office_ev."hours", strtotime($date_now." ".$start_hour)));
 
         
@@ -57,7 +67,7 @@ class GajiPokok {
     public function getOfficeStop(){
         $str_office_in = $this->date_now." ".$this->office_start;
         $obj_office_out = New DateTime($str_office_in);
-        if ($this->office_ev ==7){
+        if ($this->office_ev >=7){
             $diffev = $this->office_ev+1;
             $diffInterval = 'PT'.$diffev.'H';
         }else {
@@ -153,9 +163,10 @@ class GajiPokok {
     }
 
     public function getOvertime(){
-        if($this->ket=="off" || empty($this->person_stop)){
+        if($this->ket=="off" || empty($this->person_stop || $this->getDurationEvectifeHour()<$this->office_ev)){
             return 0;
         }
+
         $obj_office_stop = new DateTime($this->getOfficeStop());
         $obj_person_out = New DateTime($this->person_stop);
         $diff_ot = $obj_office_stop->diff($obj_person_out);
@@ -167,6 +178,8 @@ class GajiPokok {
     public function getSalaryOverTime(){
         $const_hari = 25;
         $v_gajilembur = ($this->basic_day * $const_hari)/173;
+        
+
        
 		if ($this->is_dayoff OR $this->ket=="libur") {
 			//$ot=$this->getOvertime();
@@ -190,7 +203,10 @@ class GajiPokok {
 				$gaji_ot=2*($v_gajilembur)*$this->getOvertime();
 			}
 			
-		} else {
+        }elseif($this->ket=="alpha"){
+            $gaji_ot = 0;
+        }
+         else {
 			if ($this->getOvertime()<=9 AND $this->getOvertime()>0){
 				$part1=1.5*($v_gajilembur);
 				$part2=2*($this->getOvertime() -1)*($v_gajilembur);
@@ -210,7 +226,74 @@ class GajiPokok {
 	
     }
 
-    
+    public function getTmasakerja(){
+        if ($this->ket=='on'){
+            return MasaKerja::getMasakerja($this->doh);
+        }else{
+            return 0;
+        }
+    }
+
+    public function getTelat(){
+        if ($this->ket=="off" || empty($this->person_start) || empty($this->person_stop)){
+            $telat = "00:00:00";
+        }else {
+            $obj_p_s = New DateTime($this->person_start);
+            $obj_o_s = New DateTime("{$this->date_now}  {$this->office_start}"); 
+
+            $diff_start = $obj_p_s->diff($obj_o_s);
         
+            $late  = $diff_start->format('%R1');
+            $late_in = $late < 0 ?True:False;
+            if ($late_in) {
+                //$late_h = $diff_start->format('%H');
+                //$late_m = $diff_start->format('%m');
+                $telat =  $diff_start->format('%H:%I:%S');
+            }else{
+                $telat = '00:00:00';
+            }
+        }
+        
+        return  $telat;
+    }
+
+    public function getPotonganTelat(){
+        $potongan = 0;
+        $x = $this->getTelat();
+        $y = explode(":", $x);
+        if ($y[0]==0){
+            if ($y[1]>5 && $y[1]<=25){
+                //Potongan 1 jam ;
+                $potongan = $this->getBasicHour();
+            }elseif($y[1]>=26){
+                //potongan 2 * jam ;
+                $potongan = $this->getBasicHour()*2;
+            }
+        }elseif($y[0]==1){
+            //potongan 2 jam;
+            $potongan = $this->getBasicHour()*2;
+        }elseif($y[0]>=2){
+            $potongan = $this->getBasicHour()*$y[0];
+        }else {
+            $potongan = 0;
+        }
+        
+       return $potongan;
+    }
+    public function getSalaryDay(){
+        $x = ($this->getSalaryBasic()+$this->getSalaryOverTime()+$this->getTmasakerja()+$this->getInsentif())-$this->getPotonganTelat();
+        return $x;
+    }
+
+    public function getInsentif(){
+        if ($this->ket == 'alpha'){
+            return 0;
+        }else{
+            return $this->insentif;
+        }
+        
+    }
+
+    
     
 }

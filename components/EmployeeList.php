@@ -6,9 +6,10 @@ use yii\base\Component;
 use yii\helpers\ArrayHelper;
 
 class EmployeeList extends Component{
-    public function getEmployeeActive(){
+    static function getEmployeeActive(){
         
-        $emp= Employee::find()->where(['is_active'=>TRUE])->with('coreperson')->alias('p')            
+        $emp= Employee::find()->where(['is_active'=>TRUE])->with('coreperson')->alias('p')
+            ->orderBy(['reg_number'=>SORT_ASC])            
             ->all();               
         $list = ArrayHelper::toArray($emp, [
             'app\models\Employee'=>[

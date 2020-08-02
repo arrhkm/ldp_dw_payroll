@@ -34,19 +34,22 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{view} {update} {delete} {schedule} {timeshift} {integration} {payroll}',
+                'template'=>'{view} {update} {delete} {schedule}  {timeshift} {integration}  {payroll}  {removeTimeshift}',
                 'buttons'=>[
                     'schedule' => function($url, $model) {
                         return Html::a('<span class="glyphicon glyphicon-cloud-download">Schedule</span>', ['schedule', 'id' => $model['id']], ['title' => 'Schedule', 'class' => '',]);
                     },
                     'timeshift' => function($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-cloud-download">timeshift</span>', ['timeshiftemployee', 'id' => $model['id']], ['title' => 'timeshift', 'class' => '',]);
+                        return Html::a('<span class="">Timeshift</span>', ['timeshiftemployee', 'id' => $model['id']], ['title' => 'timeshift', 'class' => '',]);
                     },
                     'integration'=>function($url, $model){
-                        return Html::a('<span class="glyphicon glyphicon-cloud-download">integration</span>', ['integration', 'id'=>$model['id']], ['title'=>'integration', 'class'=>'',]);
+                        return Html::a(':: Integrate', ['integration', 'id'=>$model['id']], ['title'=>'integration', 'class'=>'success',]);
                     },
                     'payroll'=>function($url, $model){
-                        return Html::a('Payroll', ['pilihgroup', 'id'=>$model['id']]);
+                        return Html::a(':: Payroll', ['pilihgroup', 'id'=>$model['id']]);
+                    },
+                    'removeTimeshift'=>function($url, $model){
+                        return Html::a(':: Remove Timeshift', ['removetimeshift', 'id'=>$model['id']]);
                     }
 
                 ],

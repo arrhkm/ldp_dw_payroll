@@ -4,25 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Insentif;
+use app\models\Spkl;
 
 /**
- * InsentifSearch represents the model behind the search form of `app\models\Insentif`.
+ * SpklSeach represents the model behind the search form of `app\models\Spkl`.
  */
-class InsentifSearch extends Insentif
+class SpklSeach extends Spkl
 {
-    public $reg_number;
-    public $employee_name;
-    public $insentif;
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'id_insentif_master', 'id_employee'], 'integer'],
-            [['date_insentif', 'reg_number', 'employee_name', 'insentif'], 'safe'],
+            [['id', 'overtime_hour', 'id_employee'], 'integer'],
+            [['date_spkl'], 'safe'],
         ];
     }
 
@@ -44,9 +40,7 @@ class InsentifSearch extends Insentif
      */
     public function search($params)
     {
-        $query = Insentif::find()->joinWith(['employee a', 'insentifMaster b']);
-        //$query->joinWidth('insentifMaster a');
-
+        $query = Spkl::find();
 
         // add conditions that should always apply here
 
@@ -65,14 +59,11 @@ class InsentifSearch extends Insentif
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'date_insentif' => $this->date_insentif,
-            'id_insentif_master' => $this->id_insentif_master,
+            'date_spkl' => $this->date_spkl,
+            'overtime_hour' => $this->overtime_hour,
             'id_employee' => $this->id_employee,
         ]);
 
-        $query->andFilterWhere(['ilike', 'employee.reg_number',$this->reg_number]);
-        $query->andFilterWhere(['ilike', 'employee.name', $this->employee_name]);
-        $query->andFilterWhere(['ilike', 'b.name', $this->insentif]);
         return $dataProvider;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\EmployeeList;
 use app\models\Coreperson;
 use app\models\Employee;
 use app\models\ModelFormTimeshiftEmployee;
@@ -84,11 +85,11 @@ class TimeshiftoptionController extends Controller
     public function actionTimeshiftoptionemployee(){
         $modelForm = New ModelFormTimeshiftEmployee();
 
-        $employee_list = Employee::find()->where(['is_active'=>true])->all();
+        //$employee_list = Employee::find()->where(['is_active'=>true])->all();
         
         $modelTimeshift = Timeshift::find()->all();
         $timeshift_list = ArrayHelper::map($modelTimeshift, 'id', 'name');
-        $data_employee = ArrayHelper::map($employee_list, 'id', 'name');
+        $data_employee = EmployeeList::getEmployeeActive();//ArrayHelper::map($employee_list, 'id', 'name');
         if ($modelForm->load(Yii::$app->request->post()) && $modelForm->validate()){
             //Input data default Timeshift karyawan 
             //foreach ($modelForm->id_employee as $ids){

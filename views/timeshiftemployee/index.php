@@ -26,12 +26,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            //'id',
             'date_shift',
             'id_period',
-            'id_employee',
+            //'id_employee',
+            [
+                'attribute'=>'employee',
+                'value'=>'employee.reg_number',
+            ],
+            [
+                'attribute'=>'coreperson',
+                'value'=>'employee.coreperson.name',
+            ],
             'start_hour',
-            //'duration_hour',
+            'duration_hour',
             //'is_dayoff:boolean',
 
             ['class' => 'yii\grid\ActionColumn'],

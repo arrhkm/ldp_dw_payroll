@@ -17,13 +17,14 @@ use yii\helpers\ArrayHelper;
  * 
  */
 $num_day = [
-    7=>'Sunday',
-    1=>'Monday',
-    2=>'Tuesday', 
-    3=>'Wednesday', 
-    4=>'Thursday', 
-    5=>'Friday', 
-    6=>'Saturday',
+    
+    1=>'Monday-Senin',
+    2=>'Tuesday-Selasa', 
+    3=>'Wednesday-Rabu', 
+    4=>'Thursday-Kamis', 
+    5=>'Friday-Jumat', 
+    6=>'Saturday-Sabtu',
+    7=>'Sunday-Minggu',
 ];
 
 ?>
