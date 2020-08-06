@@ -91,6 +91,7 @@ class TimeshiftoptionController extends Controller
         $timeshift_list = ArrayHelper::map($modelTimeshift, 'id', 'name');
         $data_employee = EmployeeList::getEmployeeActive();//ArrayHelper::map($employee_list, 'id', 'name');
         if ($modelForm->load(Yii::$app->request->post()) && $modelForm->validate()){
+            TimeshiftOption::deleteAll(['id_timeshift'=>$modelForm->id_timeshift]);
             //Input data default Timeshift karyawan 
             //foreach ($modelForm->id_employee as $ids){
             foreach ($modelForm->id_employee as $ids){

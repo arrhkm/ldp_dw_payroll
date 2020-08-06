@@ -7,7 +7,7 @@ use yii\data\ArrayDataProvider;
 use yii\grid\GridView;
 use yii\i18n\Formatter;
 
-/* @var $this yii\web\View */
+/* @var $tdis yii\web\View */
 /* @var $model app\models\Employee */
 /* @var $form yii\widgets\ActiveForm */
 $formater = New Formatter();
@@ -90,34 +90,35 @@ if (isset($model->id_payroll_group)){
     //var_dump($dt_arr_payroll);
 
     foreach ($dt_arr_payroll as $dt){ ?>
-    <table class="table">
-    <!-- thead -->
-        <tr>
+    <table class="table table-bordered">
+        
+    <tr class="bg-primary">
         <td scope="col" style="text-align: center">reg_number</td>
         <td colspan ="3" col" style="text-align: center">name</td>
         <td colspan ="10" col" style="text-align: center">PAYROLL PT.LINTECH DUTA PRATAMA</td>
         <td colspan ="" scope="col" style="text-align: center">basic</td>
         <td colspan="2" scope="col" style="text-align: center">doh</td>
-        </tr>
-    <!-- /thead -->
+    </tr>
+  
+    
     <tbody>
-        <tr>
+        <tr class="bg-primary">
             <td><?=$dt['reg_number']?>
-            <td colspan="3"><?=$dt['employee_name']?></td>
+            <td colspan="3" style="text-align: center"><?=$dt['employee_name']?></td>
             <td colspan="10" style="text-align: center"><?="Period :".$period->period_name//$dt['employee_name']?></td>
             <td colspan=""><?=$dt['basic']?></td>
-            <td colspan="2" style="text-align: center" class="info"><?=$dt['doh']?></td>
+            <td colspan="2" style="text-align: center"><?=$dt['doh']?></td>
         </tr>
     </tbody>
     <tbody>
-        <tr>
-            <th style="text-align: center">tgl</th>
-            <th style="text-align: center">name day</th>
+        <tr class="bg-primary">
+            <th style="text-align: center">Date</th>
+            <th style="text-align: center">Theday</th>
             <th style="text-align: center">in</th>
-            <th style="text-align: center">out</th>
+            <th style="text-align: center">Out</th>
             <th style="text-align: center">O_start</th>
             <th style="text-align: center">O_stop</th>
-            <th style="text-align: center">o_ev</th>
+            <th style="text-align: center">O ev</th>
             <th style="text-align: center">ev</th>
             <th style="text-align: center">ot</th>
             <th>g_basic</th>
@@ -166,10 +167,28 @@ if (isset($model->id_payroll_group)){
                 <td colspan=""><?=$dt['wt']?></td>
                 <td colspan=""><?="PT : "?></td>
                 <td colspan=""><?=$dt['pt']?></td>
-                <td colspan=""><?=" ? "?></td>
-                <td colspan=""><?="?"?></td>
-                <td colspan="4"><?="Total Gaji"?></td>
+                <td colspan=""><?=" "?></td>
+                <td colspan="3"><?=""?></td>
+                <td colspan="2"><?="Total Gaji"?></td>
                 <td colspan="1"><?=$formater->asCurrency(round($dt['total_gaji']),'')?></td>
+            </tr>
+            <tr>
+                <td colspan="3">Kasbon :<?=$formater->asCurrency(round($dt['kasbon']),'')?></td>
+                <td colspan="4">Total Bayar : <?=$formater->asCurrency($dt['kasbon_total_cicilan'],'')?></td>
+                <td colspan="6">Kurang Bayar : <?=$formater->asCurrency($dt['kasbon_kurang_bayar'],'')?></td>
+                
+                <td colspan=""></td>
+                <td colspan="2"><?="Potongan Kasbon"?></td>
+                <td colspan="1"><?=$formater->asCurrency(round($dt['kasbon_potongan']),'')?></td>
+            </tr>
+            <tr>
+                <td colspan="3"></td>
+                <td colspan="4"></td>
+                <td colspan="6"></td>
+                
+                <td colspan=""></td>
+                <td colspan="2"><?="Grand Total"?></td>
+                <td colspan="1"><?=$formater->asCurrency(round($dt['grand_total_gaji']),'')?></td>
             </tr>
     </tbody>
     </table>

@@ -44,6 +44,7 @@ class EmployeeSearch extends Employee
     {
         $query = Employee::find();
         $query->joinWith('coreperson');
+        $query->orderBy(['id'=>SORT_ASC]);
 
         // add conditions that should always apply here
 
@@ -70,7 +71,52 @@ class EmployeeSearch extends Employee
             'id_department' => $this->id_department,
             'id_coreperson' => $this->id_coreperson,
             'id_location' => $this->id_location,
-            'is_active' => $this->is_active,
+            'is_active' => TRUE, //$this->is_active,
+            'id_job_alocation' => $this->id_job_alocation,
+        ]);
+
+        $query->andFilterWhere(['ilike', 'reg_number', $this->reg_number])
+            ->andFilterWhere(['ilike', 'no_bpjstk', $this->no_bpjstk])
+            ->andFilterWhere(['ilike', 'no_bpjskes', $this->no_bpjskes])
+            ->andFilterWhere(['ilike', 'type', $this->type])
+            ->andFilterWhere(['ilike', 'email', $this->email])
+            ->andFilterWhere(['ilike', 'coreperson.name', $this->person_name])
+            ->andFilterWhere(['ilike', 'name', $this->name]);
+
+        return $dataProvider;
+    }
+
+    public function searchEmployeeClose($params)
+    {
+        $query = Employee::find();
+        $query->joinWith('coreperson');
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'employee.id' => $this->id,
+            'date_of_hired' => $this->date_of_hired,
+            'is_permanent' => $this->is_permanent,
+            'id_jobtitle' => $this->id_jobtitle,
+            'id_division' => $this->id_division,
+            'id_jobrole' => $this->id_jobrole,
+            'id_department' => $this->id_department,
+            'id_coreperson' => $this->id_coreperson,
+            'id_location' => $this->id_location,
+            'is_active' => False, //$this->is_active,
             'id_job_alocation' => $this->id_job_alocation,
         ]);
 

@@ -28,6 +28,7 @@ Class DateRange extends Component{
         
     }
 
+    /*
     public static function getListDayActive($v_date1, $v_date2){
         $date1= date_create($v_date1);
         $date2 = date_create($v_date2);
@@ -52,7 +53,7 @@ Class DateRange extends Component{
         return $result_date;
         
         
-    }    
+    }  */  
     
     public static function getDateInterval($intervalDate){
         $tgl_ini = date('Y-m-d');

@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'start_hour',
             'duration_hour',
-            //'is_dayoff:boolean',
+            'is_dayoff:boolean',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

@@ -43,7 +43,8 @@ AppAsset::register($this);
             ['label' => 'Home', 'url'=>['/site/index/']],
             //['label' => 'App Old', 'url' =>['<a href=www.google.com>']],
             ['label' => 'Employee', 'url' => ['#'], 'items'=>[
-                ['label' => 'Master EMployee', 'url' => ['/employee']],
+                ['label' => 'Employee Active', 'url' => ['/employee']],
+                ['label' => 'Employee Close', 'url' => ['/employee/employeeclose']],
                 ['label' => 'Person', 'url' => ['/coreperson']],
                 ['label' => 'Insetif Rresiko', 'url' => ['/iresiko']],
                 ['label' => 'Foreman', 'url' => ['/foreman']],
@@ -78,6 +79,11 @@ AppAsset::register($this);
                 ['label' => 'Surat Perintah Lembur(SPL)', 'url'=>['/spkl/']],
                 
             ]],
+            ['label' => 'Deduction $ Reduction', 'url'=>['#'], 'items'=>[
+                ['label' => 'Kasbon', 'url'=>['/kasbon/']],
+                ['label' => 'Kasbon Close', 'url'=>['/kasbon/close']],
+                
+            ]],
             ['label' => 'Attendance', 'url'=>['#'], 'items'=>[
                 ['label' => 'Timeshift', 'url'=>['/timeshift']],
                 ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],
@@ -91,7 +97,7 @@ AppAsset::register($this);
                 ['label'=>'Leaves', 'url'=>['/leave']],
 
             ]],
-            ['label' => 'Sales Order', 'url'=>['/salesorder/']],
+            //['label' => 'Sales Order', 'url'=>['/salesorder/']],
            
             //['label' => 'Contact', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (

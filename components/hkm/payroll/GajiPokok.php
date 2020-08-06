@@ -2,6 +2,7 @@
 
 namespace app\components\hkm\payroll;
 
+use app\models\Spkl;
 use DateInterval;
 use DateTime;
 use PhpOffice\PhpSpreadsheet\Shared\TimeZone;
@@ -46,6 +47,9 @@ class GajiPokok {
         //$this->end_office = date('Y-m-d H:i:s', strtotime("+".$office_ev."hours", strtotime($date_now." ".$start_hour)));
 
         
+    }
+    public function getSpkl(){
+        $spkl = Spkl::find()->where([]);
     }
 
     public function getBasicHour(){

@@ -46,6 +46,14 @@ $config = [
             ],
         ],
         'db' => $db,
+       
+        'formatter' => [
+            'dateFormat' => 'yyyyy-mm-dd',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => '.',
+            'currencyCode' => 'Rp.',
+        ],
+        
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,

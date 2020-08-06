@@ -7,6 +7,7 @@ use app\components\hkm\IntegrasiClass;
 use app\components\hkm\IntegrateAttendance;
 use app\components\hkm\LogIntegration;
 use app\components\hkm\NameDay;
+use app\components\hkm\payroll\CppKasbon;
 use app\components\hkm\payroll\GajiPokok;
 use app\components\hkm\payroll\InsentifEmployee;
 use app\components\hkm\payroll\MasaKerja;
@@ -429,7 +430,14 @@ class PeriodController extends Controller
                 $masakerja = $diff_mskerja->format('%Y');
                 $hasil_masakerja = MasaKerja::getMasakerja($employee->date_of_hired);
                 
-               
+               //Kasbon
+                $EmpKasbon = New CppKasbon($employee->id, $period->id);
+                $kasbon = $EmpKasbon->getKasbon();
+                $kasbon_total_cicilan = $EmpKasbon->getTotalCicilan();
+
+
+
+               //end kasbon -------
                 /*
                 - looping tanggal 
                 */
@@ -444,6 +452,7 @@ class PeriodController extends Controller
                 $pt=0;
                 $emp_in = '00:00:00';
                 $emp_out = '00:00:00';
+                $ket = '';
 
                 foreach ($datePeriod as $date_now){
 
@@ -497,9 +506,9 @@ class PeriodController extends Controller
                             $emp_out = Null;
                             $ket = "off";
                         }else{
-                        $emp_in = Null;
-                        $emp_out = Null;
-                        $ket = "alpha";
+                            $emp_in = Null;
+                            $emp_out = Null;
+                            $ket = "alpha";
                         }
                         
                     }
@@ -559,6 +568,7 @@ class PeriodController extends Controller
 
                 */
                 }
+                $grand_total_gaji = $total_gaji -($EmpKasbon->getPotonanKasbon());
                 array_push($dt_arr_employee_payroll,[
                     'reg_number'=>$employee->reg_number,
                     'employee_name'=>$employee->name,
@@ -568,6 +578,11 @@ class PeriodController extends Controller
                     'total_gaji'=>$total_gaji,
                     'wt'=>$wt,
                     'pt'=>$pt,
+                    'kasbon'=>$kasbon,
+                    'kasbon_total_cicilan'=>$kasbon_total_cicilan,
+                    'kasbon_kurang_bayar'=>$EmpKasbon->getSisaKasbon(),
+                    'kasbon_potongan'=>$EmpKasbon->getPotonanKasbon(),
+                    'grand_total_gaji'=>$grand_total_gaji,
                     'detil'=>$dt_arr,
                     
 

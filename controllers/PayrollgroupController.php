@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\EmployeeList;
 use app\models\Employee;
 use app\models\ModelFormEmloyee;
 use app\models\ModelFormEmployee;
@@ -63,8 +64,9 @@ class PayrollgroupController extends Controller
             'id_payroll_group'=>$id,
         ])->orderBy(['id'=>SORT_ASC])->all();
 
-        $employee = Employee::find()->where(['is_active'=>True])->all();
-        $employee_list = ArrayHelper::map($employee, 'id', 'name');    
+    
+        //$employee = Employee::find()->where(['is_active'=>True])->all();
+        $employee_list = EmployeeList::getEmployeeActive();//ArrayHelper::map($employee, 'id', 'name');    
 
         $modelForm = New ModelFormEmployee();
         $modelForm->id_payroll_group = $id;
