@@ -28,9 +28,10 @@ class GajiPokok {
     public $ket;
     public $doh;
     public $insentif;
+    public $overtime_approve;
 
     public function __construct($basic, $person_start, $person_stop, 
-        $start_office, $is_dayoff, $office_ev, $date_now, $ket, $doh, $insentif)
+        $start_office, $is_dayoff, $office_ev, $date_now, $ket, $doh, $insentif, $overtime_approve)
     {
         $this->basic_day = $basic;
         
@@ -43,13 +44,14 @@ class GajiPokok {
         $this->ket = $ket;
         $this->doh = $doh;
         $this->insentif = $insentif;
+        $this->overtime_approve = $overtime_approve;
 
         //$this->end_office = date('Y-m-d H:i:s', strtotime("+".$office_ev."hours", strtotime($date_now." ".$start_hour)));
 
         
     }
     public function getSpkl(){
-        $spkl = Spkl::find()->where([]);
+       
     }
 
     public function getBasicHour(){
@@ -167,15 +169,26 @@ class GajiPokok {
     }
 
     public function getOvertime(){
-        if($this->ket=="off" || empty($this->person_stop || $this->getDurationEvectifeHour()<$this->office_ev)){
+        if (empty($this->overtime_approve)){
             return 0;
+        }else {
+            if($this->ket=="off" || empty($this->person_stop || $this->getDurationEvectifeHour()<$this->office_ev)){
+                return 0;
+            }
+    
+            $obj_office_stop = new DateTime($this->getOfficeStop());
+            $obj_person_out = New DateTime($this->person_stop);
+            $diff_ot = $obj_office_stop->diff($obj_person_out);
+            $ot = $diff_ot->format('%h');
+            //return $ot;
+            if ($this->overtime_approve < $ot){
+                $policy_ot = $this->overtime_approve;
+            }else {
+                $policy_ot = $ot;
+            }
+            return $policy_ot;
         }
-
-        $obj_office_stop = new DateTime($this->getOfficeStop());
-        $obj_person_out = New DateTime($this->person_stop);
-        $diff_ot = $obj_office_stop->diff($obj_person_out);
-        $ot = $diff_ot->format('%h');
-        return $ot;
+        
 
     }
 

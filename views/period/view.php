@@ -34,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'start_date',
             'end_date',
             'pot_jamsos:boolean',
+            'is_archive:boolean',
         ],
     ]) ?>
 

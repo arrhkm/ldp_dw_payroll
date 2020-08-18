@@ -38,6 +38,9 @@ use kartik\date\DatePicker;
 
     <?= $form->field($model, 'pot_jamsos')->checkbox() ?>
 
+    <?= $form->field($model, 'is_archive')->checkbox() ?>
+
+
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>

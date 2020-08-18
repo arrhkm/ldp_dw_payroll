@@ -29,7 +29,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'pin',
             'id_attmachine',
-            'id_employee',
+            //'id_employee',
+            [
+                'attribute'=>'reg_number',
+                'value'=>'employee.reg_number',
+            ],
+            [
+                'attribute'=>'employee_name',
+                'value'=>'employee.coreperson.name',
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

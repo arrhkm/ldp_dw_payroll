@@ -31,10 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'start_date',
             'end_date',
             'pot_jamsos:boolean',
+            'is_archive:boolean',
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{view} {update} {delete} {schedule}  {timeshift} {integration}  {payroll}  {removeTimeshift}',
+                'template'=>'{view} {update} {delete} {schedule}  {timeshift} {integration}  {payroll}  {removeTimeshift} {archivePayroll}',
                 'buttons'=>[
                     'schedule' => function($url, $model) {
                         return Html::a('<span class="glyphicon glyphicon-cloud-download">Schedule</span>', ['schedule', 'id' => $model['id']], ['title' => 'Schedule', 'class' => '',]);
@@ -50,6 +51,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'removeTimeshift'=>function($url, $model){
                         return Html::a(':: Remove Timeshift', ['removetimeshift', 'id'=>$model['id']]);
+                    },
+                    'archivePayroll'=>function($url, $model){
+                        return Html::a(':: Archive Payroll', ['archivepayroll', 'id_period'=>$model['id']]);
                     }
 
                 ],

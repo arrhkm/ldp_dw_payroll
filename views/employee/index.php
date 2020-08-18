@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'date_of_hired',
             
             'type',
-            //'is_permanent:boolean',
+            'is_permanent:boolean',
             //'id_jobtitle',
             //'id_division',
             //'id_jobrole',

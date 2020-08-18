@@ -19,7 +19,7 @@ class PeriodSearch extends Period
         return [
             [['id'], 'integer'],
             [['period_name', 'start_date', 'end_date'], 'safe'],
-            [['pot_jamsos'], 'boolean'],
+            [['pot_jamsos', 'is_archive'], 'boolean'],
         ];
     }
 
@@ -64,6 +64,7 @@ class PeriodSearch extends Period
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'pot_jamsos' => $this->pot_jamsos,
+            'is_archive'=>$this->is_archive,
         ]);
 
         $query->andFilterWhere(['ilike', 'period_name', $this->period_name]);

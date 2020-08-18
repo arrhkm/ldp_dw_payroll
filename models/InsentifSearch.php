@@ -73,6 +73,7 @@ class InsentifSearch extends Insentif
         $query->andFilterWhere(['ilike', 'employee.reg_number',$this->reg_number]);
         $query->andFilterWhere(['ilike', 'employee.name', $this->employee_name]);
         $query->andFilterWhere(['ilike', 'b.name', $this->insentif]);
+        $query->orderBy(['date_insentif'=>SORT_DESC]);
         return $dataProvider;
     }
 }

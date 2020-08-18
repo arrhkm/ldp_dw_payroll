@@ -67,7 +67,7 @@ class Kasbonsearch extends Kasbon
             'id' => $this->id,
             'date_kasbon' => $this->date_kasbon,
             'nilai_kasbon' => $this->nilai_kasbon,
-            'is_active' => $this->is_active,
+            'kasbon.is_active' => $this->is_active,
             'id_employee' => $this->id_employee,
         ]);
         $query->andFilterWhere(['ilike', 'employee.name', $this->employee]);

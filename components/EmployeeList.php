@@ -25,6 +25,25 @@ class EmployeeList extends Component{
         return $list_emp;
     
     }
+    static function getEmployee(){
+        
+        $emp= Employee::find()->with('coreperson')->alias('p')
+            ->orderBy(['reg_number'=>SORT_ASC])            
+            ->all();               
+        $list = ArrayHelper::toArray($emp, [
+            'app\models\Employee'=>[
+                'id',
+                'reg_number',
+                'reg_plus'=>function($emp){
+                    return $emp->reg_number." - ".$emp->coreperson->name;
+                },
+            ]
+        ]);        
+        
+        $list_emp = ArrayHelper::map($list, 'id', 'reg_plus');
+        return $list_emp;
+    
+    }
 
 
 }

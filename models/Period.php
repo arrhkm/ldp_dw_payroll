@@ -39,6 +39,7 @@ class Period extends \yii\db\ActiveRecord
             [['id'], 'integer'],
             [['start_date', 'end_date'], 'safe'],
             [['pot_jamsos'], 'boolean'],
+            [['is_archive'], 'boolean'],
             [['period_name'], 'string', 'max' => 32],
             [['id'], 'unique'],
         ];
@@ -55,6 +56,7 @@ class Period extends \yii\db\ActiveRecord
             'start_date' => 'Start Date',
             'end_date' => 'End Date',
             'pot_jamsos' => 'Pot Jamsos',
+            'is_archive'=> 'Is Archive',
         ];
     }
 

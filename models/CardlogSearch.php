@@ -11,6 +11,9 @@ use app\models\Cardlog;
  */
 class CardlogSearch extends Cardlog
 {
+    public $reg_number;
+    public $employee_name;
+    
     /**
      * {@inheritdoc}
      */
@@ -18,6 +21,7 @@ class CardlogSearch extends Cardlog
     {
         return [
             [['id', 'pin', 'id_attmachine', 'id_employee'], 'integer'],
+            [['reg_number', 'employee_name'], 'safe'],
         ];
     }
 
@@ -39,7 +43,9 @@ class CardlogSearch extends Cardlog
      */
     public function search($params)
     {
-        $query = Cardlog::find();
+        $query = Cardlog::find()->joinWith('employee a');
+        $query->join('LEFT JOIN', 'coreperson b', 'b.id = a.id_coreperson');
+
 
         // add conditions that should always apply here
 
@@ -62,6 +68,8 @@ class CardlogSearch extends Cardlog
             'id_attmachine' => $this->id_attmachine,
             'id_employee' => $this->id_employee,
         ]);
+        $query->andFilterWhere(['ilike','a.reg_number', $this->reg_number]);
+        $query->andFilterWhere(['ilike','b.name', $this->employee_name]);
 
         return $dataProvider;
     }

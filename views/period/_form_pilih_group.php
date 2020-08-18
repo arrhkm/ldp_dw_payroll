@@ -3,8 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\select2\Select2;
-use yii\data\ArrayDataProvider;
-use yii\grid\GridView;
+
 use yii\i18n\Formatter;
 
 /* @var $tdis yii\web\View */
@@ -12,31 +11,11 @@ use yii\i18n\Formatter;
 /* @var $form yii\widgets\ActiveForm */
 $formater = New Formatter();
 
-use app\models\Insentif;
-use yii\db\Query;
-
-use function app\components\hkm\println;
-
-
-//$query->groupBy('id_employee','insentifMaster.id');
-/*
-$query = New Query();
-$query->select(["count(id_insentif_master) as total", 'b.name']);
-$query->from('insentif a');
-$query->join('LEFT JOIN', 'insentif_master b', 'b.id = a.id_insentif_master');
-$query->where(['between', 'a.date_insentif', '2020-07-23', '2020-07-29']);
-$query->andWhere(['a.id_employee'=>3]);
-$query->groupBy(['a.id_insentif_master', 'b.name']);
-//var_dump($query->all());
-
-foreach ($query->all()as $dtku){
-    echo $dtku['name']." - ".$dtku['total']."<br>";
-    
-}
-*/
-
 ?>
 
+<?php $this->params['breadcrumbs'][] = ['label'=>'period', 'url'=>['index','id_period']];?>
+
+<h1><?= Html::encode($this->title) ?></h1>
 
 <div class="employee-form">
 
@@ -50,9 +29,15 @@ foreach ($query->all()as $dtku){
 
     <div class="form-group">
         <?= Html::submitButton('Proses', ['class' => 'btn btn-success']) ?>
+        <?php 
+        if (isset($model->id_payroll_group) /*&& !$period->is_archive*/){
+            echo Html::a('Posting Payroll', ['/period/posting', 'id_period'=>$period->id, 'id_payroll_group'=>$model->id_payroll_group], ['class' => 'btn btn-success']);
+        }
+    ?>
     </div>
 
     <?php ActiveForm::end(); ?>
+   
 
 </div>
 

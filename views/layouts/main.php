@@ -47,7 +47,7 @@ AppAsset::register($this);
                 ['label' => 'Employee Close', 'url' => ['/employee/employeeclose']],
                 ['label' => 'Person', 'url' => ['/coreperson']],
                 ['label' => 'Insetif Rresiko', 'url' => ['/iresiko']],
-                ['label' => 'Foreman', 'url' => ['/foreman']],
+                ['label' => 'contract', 'url' => ['/contract']],
                 ['label' => 'Anggota Foreman', 'url' => ['/childforeman']],
                 ['label' => 'Ubah Gaji', 'url' => ['/employee/ubahgaji']],
                 ['label' => 'Ubah Jamsostek', 'url' => ['/employee/ubahjamsostek']],
@@ -62,6 +62,9 @@ AppAsset::register($this);
                 ['label'=>'Payroll Group', 'url'=>['/payrollgroup/']],
                 ['label' => 'Master Insentif', 'url'=>['/insentifmaster/']],
                 ['label'=>'Leave Type', 'url'=>['/leavetype']],
+                ['label' => 'Timeshift', 'url'=>['/timeshift']],
+                ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],
+                ['label'=>'Component Payroll','url'=>['/componentpayroll']],
             ]],
             /*['label' => 'Tunjangan', 'url'=>['#'], 'items'=>[
                 ['label' => 'Jenis Tunjangan', 'url'=>['/jenistunjangan/']],
@@ -85,10 +88,11 @@ AppAsset::register($this);
                 
             ]],
             ['label' => 'Attendance', 'url'=>['#'], 'items'=>[
-                ['label' => 'Timeshift', 'url'=>['/timeshift']],
-                ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],
-                ['label' => 'Setup Timeshift Employee', 'url'=>['/timeshiftemployee']],
                 ['label' => 'Machine', 'url'=>['/attmachine']],
+                
+                
+                ['label' => 'Setup Timeshift Employee', 'url'=>['/timeshiftemployee']],
+               
                 //['label' => 'Integrasi', 'url'=>['/attmachine/integration']],
                 ['label' => 'card', 'url'=>['/cardlog']],
                 ['label'=>'Absensi', 'url'=>['/attendance']],

@@ -5,9 +5,11 @@ namespace app\controllers;
 use Yii;
 use app\models\Cardlog;
 use app\models\CardlogSearch;
+use app\models\Employee;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * CardlogController implements the CRUD actions for Cardlog model.
@@ -62,9 +64,27 @@ class CardlogController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
+    public function getEmployee(){
+         //register
+         $regs = [];
+         foreach (Cardlog::find()->all() as $reg){
+             array_push($regs, $reg->id);
+         }
+         $emp = Employee::find()->where(['NOT IN', 'id', $regs])->andWhere(['is_active'=>True])->all();
+         return ArrayHelper::map($emp, 'id', 'name');
+    }
+
+    public function getEmployeeUpdate(){
+        //register
+        
+        $emp = Employee::find()->all();
+        return ArrayHelper::map($emp, 'id', 'name');
+   }
+
     public function actionCreate()
     {
         $model = new Cardlog();
+        $model->id = $model->getLastId();    
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -72,6 +92,7 @@ class CardlogController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'emp_list'=>$this->getEmployee(),
         ]);
     }
 
@@ -92,6 +113,7 @@ class CardlogController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'emp_list'=>$this->getEmployeeUpdate(),
         ]);
     }
 

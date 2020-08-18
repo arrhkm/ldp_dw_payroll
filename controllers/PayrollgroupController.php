@@ -73,6 +73,9 @@ class PayrollgroupController extends Controller
 
         $providerGroup = New ArrayDataProvider([
             'allModels'=>$employee_saved,
+            'pagination'=>[
+                'pageSize'=>1000,
+            ]
         ]);
 
         if ($modelForm->load(Yii::$app->request->post()) && $modelForm->validate()){

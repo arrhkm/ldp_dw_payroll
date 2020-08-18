@@ -2,12 +2,14 @@
 
 namespace app\controllers;
 
+use app\components\fpdf\fpdf;
 use app\components\hkm\DateRange;
 use app\components\hkm\IntegrasiClass;
 use app\components\hkm\IntegrateAttendance;
 use app\components\hkm\LogIntegration;
 use app\components\hkm\NameDay;
 use app\components\hkm\payroll\CppKasbon;
+use app\components\hkm\payroll\CppOvertime;
 use app\components\hkm\payroll\GajiPokok;
 use app\components\hkm\payroll\InsentifEmployee;
 use app\components\hkm\payroll\MasaKerja;
@@ -16,10 +18,14 @@ use app\models\Cardlog;
 //use app\models\DownloadMachineForm;
 use app\models\Employee;
 use app\models\InsentifMaster;
+use app\models\Kasbon;
 use app\models\Log;
 use app\models\ModelFormPayroll;
+use app\models\Payroll;
+use app\models\PayrollDay;
 use app\models\PayrollGroup;
 use app\models\PayrollGroupEmployee;
+use app\models\PayrollSearch;
 use Yii;
 use app\models\Period;
 use app\models\PeriodSearch;
@@ -409,12 +415,15 @@ class PeriodController extends Controller
         
         $model = New ModelFormPayroll();
         
-        if ($model->load(Yii::$app->request->post()) && $model->validate()){
+        //looping date period 
+        $datePeriod = DateRange::getListDay($period->start_date, $period->end_date);
+        
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && !empty($period)){
             //Select Employee dalam group 
             $payroll_group = PayrollGroup::findOne($model->id_payroll_group);
             $payroll_group_employee = PayrollGroupEmployee::find()->where(['id_payroll_group'=>$model->id_payroll_group])->all(); 
             
-            $shift_arr = [];
+           
             
             $dt_arr_employee_payroll=[];
             foreach ($payroll_group_employee as $employees){
@@ -442,7 +451,7 @@ class PeriodController extends Controller
                 - looping tanggal 
                 */
                 $dt_arr = [];
-                $datePeriod = DateRange::getListDay($period->start_date, $period->end_date);
+                //$datePeriod = DateRange::getListDay($period->start_date, $period->end_date);
 
                 //Insentif all 
                 $insentif_master = InsentifEmployee::getKet($employee->id, $period->start_date, $period->end_date);
@@ -459,13 +468,7 @@ class PeriodController extends Controller
                      //Insentif
                     
                     $ins = InsentifEmployee::getInsentif($employee->id, $date_now);
-                    
 
-                    /*
-                    //tanggal 2020-08-08
-
-                    - cari shift P003 tanggal 2020-08-08 
-                    */
                     //$obj_datenow = date_create($date_now);
                     $num_day = NameDay::getName($date_now);//$obj_datenow->format('N');
                     $shift = TimeshiftEmployee::find()->where(['date_shift'=>$date_now, 'id_employee'=>$employee->id, 'id_period'=>$period->id])->one();
@@ -512,10 +515,13 @@ class PeriodController extends Controller
                         }
                         
                     }
-                    
+                    //Overtime Approve
+                    $ComponentOvertime = New CppOvertime($employee->id, $date_now);
+                    $overtime_approve = $ComponentOvertime->getSpklOfficeDuration();
+                    //end Overtime approve
 
                     $gaji = New GajiPokok($employee->basic_salary,$emp_in, $emp_out, 
-                        $office_in, $is_dayoff, $office_ev, $date_now, $ket, $employee->date_of_hired, $ins);
+                        $office_in, $is_dayoff, $office_ev, $date_now, $ket, $employee->date_of_hired, $ins, $overtime_approve);
                     
                     array_push($dt_arr, [
                         'id'=>$employee->id,
@@ -551,22 +557,6 @@ class PeriodController extends Controller
                     $total_gaji = $total_gaji + $gaji->getSalaryDay();
                     $wt +=  $gaji->getDurationEvectifeHour();
                     $pt += $gaji->getDurationEvectifeHour()+$gaji->getOvertime();
-
-                
-                
-                
-                    /*
-                    - jam masuk = ? durasi = istirahat = 1
-                    -//Payroll
-                    - hitung gaji pokok 
-                    - hitung overtime jika ada
-                    - hitung tunjangan masa kerja 
-                    - hitung insentif Jika ada 
-                    - hitung 
-
-
-
-                */
                 }
                 $grand_total_gaji = $total_gaji -($EmpKasbon->getPotonanKasbon());
                 array_push($dt_arr_employee_payroll,[
@@ -589,9 +579,9 @@ class PeriodController extends Controller
                 ]);  
             }
             
-            $providerTest = New ArrayDataProvider([
+            /*$providerTest = New ArrayDataProvider([
                 'allModels'=>$dt_arr,
-            ]);
+            ]);*/
 
             
              
@@ -603,8 +593,8 @@ class PeriodController extends Controller
                 'payroll_group_employee'=>$payroll_group_employee,
                 'date_now'=>$datePeriod,
                 //'shift'=>$shift_arr,
-                'dt_arr'=>$dt_arr,
-                'providerTest'=>$providerTest,
+                //'dt_arr'=>$dt_arr,
+                //'providerTest'=>$providerTest,
                 'dt_arr_payroll'=>$dt_arr_employee_payroll
     
             ]);
@@ -615,8 +605,7 @@ class PeriodController extends Controller
             'model'=>$model,
             'group_list'=>$group_list,
             'period'=>$period,
-            //'group'=>$payroll_group,
-            //'group_employee'=>$payroll_group_employee
+         
 
         ]);
     }
@@ -636,4 +625,461 @@ class PeriodController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionPosting($id_period, $id_payroll_group){
+        $period = $this->findModel($id_period);
+        $period->is_archive = TRUE;
+        $period->save();
+        $payroll_group = PayrollGroup::findOne($id_payroll_group);
+        $payroll_group_employee = PayrollGroupEmployee::find()->where(['id_payroll_group'=>$id_payroll_group])->all();
+        
+        //looping date period 
+        $datePeriod = DateRange::getListDay($period->start_date, $period->end_date);
+        //---------------------------------------------------------
+        $dt_arr_employee_payroll=[];
+        foreach ($payroll_group_employee as $employees){
+
+            //Looping employee
+            $employee = Employee::findOne($employees->id_employee);
+
+            //Masakerja Employee
+            $start_kerja = New DateTime($employee->date_of_hired);
+            $today = date("y-m-d");
+            $obj_today = New DateTime($today);
+            $diff_mskerja = $start_kerja->diff($obj_today);
+            $masakerja = $diff_mskerja->format('%Y');
+            //$hasil_masakerja = MasaKerja::getMasakerja($employee->date_of_hired);
+            
+            //Kasbon
+            $EmpKasbon = New CppKasbon($employee->id, $period->id);
+            $kasbon = $EmpKasbon->getKasbon();
+            $kasbon_total_cicilan = $EmpKasbon->getTotalCicilan();
+
+
+
+            //end kasbon -------
+            
+            $dt_arr = [];
+            
+
+            //Insentif all 
+            $insentif_master = InsentifEmployee::getKet($employee->id, $period->start_date, $period->end_date);
+
+            $total_gaji=0;
+            $wt=0;
+            $pt=0;
+            $emp_in = '00:00:00';
+            $emp_out = '00:00:00';
+            $ket = '';
+
+            foreach ($datePeriod as $date_now){
+
+                //Insentif                
+                $ins = InsentifEmployee::getInsentif($employee->id, $date_now);
+
+                //$obj_datenow = date_create($date_now);
+                $num_day = NameDay::getName($date_now);//$obj_datenow->format('N');
+                $shift = TimeshiftEmployee::find()->where(['date_shift'=>$date_now, 'id_employee'=>$employee->id, 'id_period'=>$period->id])->one();
+                
+                $office_in = $shift->start_hour;
+                $is_dayoff = $shift->is_dayoff;
+                $office_ev = $shift->duration_hour;
+                
+                //array_push($shift_arr, $shift->start_hour);
+                
+                $att = Attendance::find()->where(['id_employee'=>$employee->id, 'date'=>$date_now]);
+                if ($att->exists()){
+                    $ket = "on";
+                    $atts = $att->one();
+                    if (empty($atts->login) || empty($atts->logout)){
+                        $ket = "off";
+                    }elseif (empty($atts->login)){
+                        $emp_in = Null;
+                        $ket = "off";
+    
+                    }else {
+                        $emp_in = $atts->login;
+    
+                    }
+                    if (empty($atts->logout)){
+                        $emp_out = Null;
+                        $ket = "off";
+    
+                    }else {
+                        $emp_out = $atts->logout;
+                        
+                    }
+                    
+                    
+                }else {
+                    if ($is_dayoff){
+                        $emp_in = Null;
+                        $emp_out = Null;
+                        $ket = "off";
+                    }else{
+                        $emp_in = Null;
+                        $emp_out = Null;
+                        $ket = "alpha";
+                    }
+                    
+                }
+                //Overtime Approve
+                $ComponentOvertime = New CppOvertime($employee->id, $date_now);
+                $overtime_approve = $ComponentOvertime->getSpklOfficeDuration();
+                //end Overtime approve
+
+                $gaji = New GajiPokok($employee->basic_salary,$emp_in, $emp_out, 
+                    $office_in, $is_dayoff, $office_ev, $date_now, $ket, $employee->date_of_hired, $ins, $overtime_approve);
+                
+                array_push($dt_arr, [
+                    'id'=>$employee->id,
+                    'id_period'=>$period->id,
+                    'id_payroll_group'=>$id_payroll_group,
+                    'name'=>$employee->coreperson->name,
+                    'reg_number'=>$employee->reg_number,
+                    'date_now'=>$date_now,
+                    'name_day'=>$num_day,
+                    'basic'=>$gaji->basic_day,
+                    'person_in'=>$emp_in,
+                    'person_out'=>$emp_out,
+                    //'early_in'=>$gaji->earlyIn(),
+                    //'lateOut'=>$gaji->lateOut(),
+                    //'office_in'=>$shift->start_hour,
+                    'office_start'=>$gaji->getOfficeStart(),
+                    'office_stop'=>$gaji->getOfficeStop(),
+                    'o_ev'=>$shift->duration_hour,
+                    'p_ev'=>$gaji->getDurationEvectifeHour(),
+                    'ot'=>$gaji->getOvertime(),
+                    'sal_ot'=>$gaji->getSalaryOverTime(),
+                    'basic_salary'=>$gaji->getSalaryBasic(),
+                    
+                    'is_doff'=>$gaji->is_dayoff,//$shift->is_dayoff,
+                    'ket'=>$gaji->ket,//$ket,
+                    'doh'=>$gaji->doh,//$employee->date_of_hired,
+                    'mskerja'=>$masakerja,
+                    't_masakerja'=> $gaji->getTmasakerja(),
+                    'telat'=>$gaji->getTelat(),
+                    'pot_telat'=>$gaji->getPotonganTelat(),
+                    'ins'=>$gaji->getInsentif(),
+                    'salary_day'=>$gaji->getSalaryDay(),
+                    
+                ]);
+                $total_gaji = $total_gaji + $gaji->getSalaryDay();
+                $wt +=  $gaji->getDurationEvectifeHour();
+                $pt += $gaji->getDurationEvectifeHour()+$gaji->getOvertime();
+            }
+            $grand_total_gaji = $total_gaji -($EmpKasbon->getPotonanKasbon());
+            array_push($dt_arr_employee_payroll,[
+                'id_employee'=>$employee->id,
+                'id_period'=>$id_period,
+                'id_payroll_group'=>$id_payroll_group,
+                'payroll_name'=>"{$payroll_group->name} {$period->end_date}",
+                'reg_number'=>$employee->reg_number,
+                'employee_name'=>$employee->name,
+                'basic'=>$employee->basic_salary,
+                'doh'=>$employee->date_of_hired,
+                'basic'=>$employee->basic_salary,
+                'ins_master'=>$insentif_master,
+                'total_gaji'=>$total_gaji,
+                'wt'=>$wt,
+                'pt'=>$pt,
+                'kasbon'=>$kasbon,
+                'kasbon_total_cicilan'=>$EmpKasbon->getTotalCicilan(),
+                'kasbon_kurang_bayar'=>$EmpKasbon->getSisaKasbon(),
+                'kasbon_potongan'=>$EmpKasbon->getPotonanKasbon(),
+                'grand_total_salary'=>$grand_total_gaji,
+                'detil'=>$dt_arr,
+                
+                
+
+            ]);  
+        }
+        foreach($dt_arr_employee_payroll as $pays){
+            $modelPay = Payroll::find()->where(['id_employee'=>$pays['id_employee'], 'id_period'=>$id_period]);
+            if ($modelPay->exists()){
+                $modelPay = $modelPay->one();
+
+                $modelPay->reg_number = $pays['reg_number'];
+                $modelPay->employee_name = $pays['employee_name'];
+                $modelPay->id_period = $pays['id_period'];
+                $modelPay->id_payroll_group = $pays['id_payroll_group'];
+                $modelPay->tg_all = $pays['total_gaji'];
+                $modelPay->grand_total_salary = $pays['grand_total_salary'];
+                $modelPay->wt = $pays['wt'];
+                $modelPay->pt = $pays['pt'];
+                $modelPay->pot_bpjs_kes = 0; 
+                $modelPay->payroll_name = $pays['payroll_name'];
+                $modelPay->cicilan_kasbon = $pays['kasbon_potongan'];
+                $modelPay->dscription_kasbon = $pays['ins_master'];
+                $modelPay->basic_salary = $pays['basic'];
+                $modelPay->save();
+
+            }else{
+                $modelPay = New Payroll;
+                $modelPay->id = $modelPay->getLastId();
+                $modelPay->id_employee = $pays['id_employee'];
+                $modelPay->id_period = $pays['id_period'];
+                $modelPay->id_payroll_group = $pays['id_payroll_group'];
+                $modelPay->reg_number = $pays['reg_number'];
+                $modelPay->employee_name = $pays['employee_name'];                
+                $modelPay->tg_all = $pays['total_gaji'];
+                $modelPay->grand_total_salary = $pays['grand_total_salary'];
+                $modelPay->wt = $pays['wt'];
+                $modelPay->pt = $pays['pt'];
+                $modelPay->pot_bpjs_kes = 0; 
+                $modelPay->payroll_name = $pays['payroll_name'];
+                $modelPay->cicilan_kasbon = $pays['kasbon_potongan'];
+                $modelPay->dscription_kasbon = $pays['ins_master'];
+                $modelPay->basic_salary = $pays['basic'];
+
+                $modelPay->save();
+            }
+
+            foreach ($pays['detil'] as $detils){
+                $modelDetil = PayrollDay::find()->where(['id_employee'=>$pays['id_employee'], 'id_period'=>$pays['id_period'], 'date_payroll'=>$detils['date_now']]);
+                if ($modelDetil->exists()){
+                    $detil = $modelDetil->one();
+                    
+                    $detil->date_payroll = $detils['date_now'];
+                    $detil->basic_per_hour = $detils['basic'];
+                    $detil->ev_hour = $detils['p_ev'];
+                    $detil->ot_hour = $detils['ot'];
+                    $detil->basic_salary = $detils['basic_salary'];
+                    $detil->overtime_salary = $detils['sal_ot'];
+                    $detil->t_masakerja = $detils['t_masakerja'];
+                    $detil->insentif = $detils['ins'];
+                    $detil->pot_telat = $detils['pot_telat'];
+                    $detil->name_day = $detils['name_day'];
+                    $detil->logika_day = $detils['ket'];
+                    $detil->total_gaji = $detils['salary_day'];
+                    
+                    $detil->save();
+                    
+                }else {
+                   
+                    $detil = New PayrollDay();
+                    $detil->id = $detil->getLastId();
+                    $detil->id_employee= $detils['id'];
+                    $detil->id_period= $detils['id_period'];
+                    $detil->id_payroll_group = $pays['id_payroll_group'];
+                    $detil->date_payroll = $detils['date_now'];
+                    $detil->basic_per_hour = $detils['basic'];
+                    $detil->ev_hour = $detils['p_ev'];
+                    $detil->ot_hour = $detils['ot'];
+                    $detil->basic_salary = $detils['basic_salary'];
+                    $detil->overtime_salary = $detils['sal_ot'];
+                    $detil->t_masakerja = $detils['t_masakerja'];
+                    $detil->insentif = $detils['ins'];
+                    $detil->pot_telat = $detils['pot_telat'];
+                    $detil->name_day = $detils['name_day'];
+                    $detil->logika_day = $detils['ket'];
+                    $detil->total_gaji = $detils['salary_day'];
+                    
+                    $detil->save();
+                }
+            }
+        }
+        
+        //------------------------end------------------------------
+        
+        return $this->render('posting',[
+            'dt_arr_emp'=>$dt_arr_employee_payroll,
+
+        ]);
+    }
+
+    public function actionArchivepayroll($id_period){
+        $period = $this->findModel($id_period);
+        $group = PayrollGroup::find()->all();
+        $group_list = ArrayHelper::map($group, 'id', 'name');
+        
+        $model = New ModelFormPayroll();
+
+        $PayrollPeriod = Payroll::find()->select(['id_period', 'id_payroll_group'])->distinct(['id_period', 'id_payroll_group'])
+        ->where(['id_period'=>$period->id])->all();
+        $provider = New ArrayDataProvider([
+            'allModels'=>$PayrollPeriod,
+        ]);
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && !empty($period)){
+            //Select Employee dalam group 
+            $payroll_group = PayrollGroup::findOne($model->id_payroll_group);
+            //$payroll_group_employee = PayrollGroupEmployee::find()->where(['id_payroll_group'=>$model->id_payroll_group])->all(); 
+            $srcPayrollModel = New PayrollSearch();
+            $dataprovider = $srcPayrollModel->searchByGroup(Yii::$app->request->queryParams, $payroll_group->id, $period->id);
+            return $this->render('indexarchivepayroll',[
+                'period'=>$period,
+                'searchModel'=>$srcPayrollModel,
+                'dataProvider'=>$dataprovider,
+                //'PayrollGroup'=>$payroll_group,
+                
+            ]);
+
+        }
+
+        return $this->render('archivepayroll', [
+            'model'=>$model,
+            'group_list'=>$group_list,
+            'provider'=>$provider,
+        ]);
+
+    }
+    public function actionPayrollperiod($id_period, $id_payroll_group){
+        $period = Period::findOne($id_period);
+        $PayrollGroup = PayrollGroup::findOne($id_payroll_group);
+        $srcPayrollModel = New PayrollSearch();
+        $dataprovider = $srcPayrollModel->searchByGroup(Yii::$app->request->queryParams, $id_payroll_group, $id_period);
+        return $this->render('indexarchivepayroll',[
+            'period'=>$period,
+            'searchModel'=>$srcPayrollModel,
+            'dataProvider'=>$dataprovider,
+            'PayrollGroup'=>$PayrollGroup,
+            
+        ]);
+    }
+
+    public function actionPayrollpdf($id_period, $id_payroll_group){
+        $period = Period::findOne($id_period);
+       
+        
+        $pdf=new fpdf('P','mm','A4');
+        $pdf->SetMargins(5,5,5);
+        $pdf->SetFillColor(224,224,224);//Grey
+        //$pdf->SetTopMargin(10);
+        //$pdf->SetButtomMargin(10);
+        $t_baris=2.5;//tinggi baris
+        $pdf->SetFont('courier','',6);
+        $pdf->AddPage();
+        $header = array('Tanggal', 'Hari', 'GP/jam', 'EV', 'OT', 'Gj.Pokok', 'Gj.Lmbr', 'Insentif', 'T. Msker', 'P.Telat', 'P.Safety', 'Total');
+        // Column widths
+        $w = array(16, 15, 15, 6, 6, 20, 20, 20, 20, 20, 20, 20);
+        //select attribut payroll
+        /*$qry_attribut=mysql_query("select * from attribut_payroll");
+        $row_attribut=mysql_fetch_array($qry_attribut);
+        */
+        $payroll = Payroll::find()->where(['id_period'=>$id_period, 'id_payroll_group'=>$id_payroll_group])->all();
+                
+                //:::::::::::::::::::::::    PERULANGAN ALL KARYAWAN  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                $page =0;
+                //while ($row_emp=mysql_fetch_array($rs_emp)) { 	
+                foreach ($payroll as $payrolls){	
+                //Kasbon 
+                //Kasbon
+                $EmpKasbon = New CppKasbon($payrolls->id_employee, $payrolls->id_period);
+                
+                
+                //end kasbon 
+                
+                $pdf->SetFont('','B','');
+                $pdf->Cell($w[0]+$w[1]+$w[2]+$w[3],$t_baris,"Nama: ".$payrolls->employee_name." Basic:".Yii::$app->formatter->asCurrency($payrolls->basic_salary,''),1,0,'L',1);
+                $pdf->SetFont('','B','');
+                $pdf->Cell($w[4]+$w[5]+$w[6]+$w[7]+$w[8]+$w[9],$t_baris+$t_baris,"SLIP GAJI MANPOWER {$payrolls->payroll_name}",1,0,'C',1);
+                $pdf->SetFont('','B','');
+                $pdf->Cell($w[10]+$w[11],$t_baris,$period->period_name,1,0,'R',1);
+                $pdf->Ln();
+                $pdf->Cell($w[0]+$w[1]+$w[2]+$w[3],$t_baris,"Jabatan: [jabatan]",1,0,'L',1);		
+                $pdf->Cell($w[4]+$w[5]+$w[6]+$w[7]+$w[8]+$w[9],0,'',0,0,'C');
+                $pdf->Cell($w[10]+$w[11],$t_baris,"Reg Number : ".$payrolls->reg_number,1,0,'R',1);
+                $pdf->Ln();
+                $pdf->SetFont('','','');
+                for($hi=0;$hi<count($header);$hi++) {
+                $pdf->Cell($w[$hi],$t_baris,$header[$hi],1,0,'C');		
+                }
+                $pdf->Ln();
+                
+                //::::::::::::::::::::::::::::::::::::::::::::::  PERULANGAN WAKTU DALAM SATU PERODE :::::::::::::::::::::::::::::::::::::::::::::::::
+                
+               
+                $PDay = PayrollDay::find()->where(['id_employee'=>$payrolls->id_employee,'id_period'=>$payrolls->id_period,'id_payroll_group'=>$payrolls->id_payroll_group])->all();
+                //while ($row_posDetil=mysql_fetch_assoc($rs_posDetil)) 
+                foreach ($PDay as $PayrollDay)
+                { 	
+                    
+                    $GP2=number_format($PayrollDay->basic_salary,2,',','.');
+                    $GL2=number_format($PayrollDay->overtime_salary,2,',','.');
+                    //$UM2=number_format(0,2,',','.');
+                    $potongan_telat2=number_format($PayrollDay->pot_telat,2,',','.');
+                    $p_safety2=number_format(0,2,',','.');
+                    $t_msker2=number_format($PayrollDay->t_masakerja,2,',','.');
+                    $GT2=number_format($PayrollDay->total_gaji,2,',','.');
+                    $pdf->SetFont('','','');
+                    $pdf->Cell($w[0],$t_baris,$PayrollDay->date_payroll,1,0,'L');
+                    $pdf->Cell($w[1],$t_baris,$PayrollDay->name_day,1,0,'C');
+                    $pdf->Cell($w[2],$t_baris,ceil($PayrollDay->basic_per_hour),1,0,'R');
+                    $pdf->Cell($w[3],$t_baris,$PayrollDay->ev_hour,1,0,'C');			
+                    $pdf->Cell($w[4],$t_baris,$PayrollDay->ot_hour,1,0,'C');
+                    $pdf->Cell($w[5],$t_baris,$GP2,1,0,'R');
+                    $pdf->Cell($w[6],$t_baris,$GL2,1,0,'R');
+                    $pdf->Cell($w[7],$t_baris,$PayrollDay->insentif,1,0,'R');
+                    $pdf->Cell($w[8],$t_baris,$t_msker2,1,0,'R');
+                    $pdf->Cell($w[9],$t_baris,$potongan_telat2,1,0,'R');
+                    $pdf->Cell($w[10],$t_baris,$p_safety2,1,0,'R');
+                    $pdf->Cell($w[11],$t_baris,$GT2,1,0,'R');
+                    $pdf->Ln();
+                    
+                  
+                    
+                }            
+                
+                $pdf->Cell($w[0]+$w[1],$t_baris,'Jumlah',1,0,'L',1);//jumlah
+                $pdf->Cell($w[2],$t_baris,'WT/PT',1,0,'L',1);
+                $pdf->Cell($w[3],$t_baris,$payrolls->wt,1,0,'C',1);
+                
+                $pdf->Cell($w[4],$t_baris,$payrolls->pt,1,0,'C',1);
+                $pdf->Cell($w[5],$t_baris,0,1,0,'R',1);
+                $pdf->Cell($w[6],$t_baris,0,1,0,'R',1);
+                $pdf->Cell($w[7],$t_baris,0,1,0,'R',1);
+                $pdf->Cell($w[8],$t_baris,0,1,0,'R',1);
+                $pdf->Cell($w[9],$t_baris,0,1,0,'R',1);
+                $pdf->Cell($w[10],$t_baris,0,1,0,'R',1);		
+                $pdf->Cell($w[11],$t_baris,0,1,0,'R',1);
+                $pdf->Ln();		
+                $pdf->Cell($w[0]+$w[1]+$w[2]+$w[3]+$w[4]+$w[5]+$w[6],$t_baris,"Insentif : {$payrolls->dscription_kasbon}",0,0,'C');
+                $pdf->Cell($w[7],$t_baris,'Kasbon',1,0,'L');
+                $pdf->Cell($w[8],$t_baris,Yii::$app->formatter->asCurrency($EmpKasbon->getKasbon(),''),1,0,'R');
+                $pdf->Cell($w[9]+$w[10],$t_baris,'Potongan Cicilan kasbon',1,0,'L');
+                $pdf->Cell($w[11],$t_baris,Yii::$app->formatter->asCurrency($payrolls->cicilan_kasbon,''),1,0,'R');
+                $pdf->Ln();		
+                $pdf->Cell($w[0]+$w[1]+$w[2]+$w[3]+$w[4]+$w[5]+$w[6],$t_baris,'',0,0,'C');
+                $pdf->Cell($w[7],$t_baris,'Total Cicilan',1,0,'L');
+                $pdf->Cell($w[8],$t_baris,Yii::$app->formatter->asCurrency($EmpKasbon->getTotalCicilan(),''),1,0,'R');
+                $pdf->Cell($w[9]+$w[10],$t_baris,'Jamsostek',1,0,'L');
+                $pdf->Cell($w[11],$t_baris,0,1,0,'R');
+                $pdf->Ln();				
+                
+                //$pdf->Cell($w[0]+$w[1]+$w[2]+$w[3]+$w[4]+$w[5]+$w[6]+$w[7]+$w[8],$t_baris,'',0,0,'C');
+                $pdf->Cell($w[0]+$w[1]+$w[2]+$w[3]+$w[4]+$w[5]+$w[6],$t_baris,'',0,0,'C');
+                $pdf->Cell($w[7],$t_baris,'Sisa Kasbon',1,0,'L');
+                $pdf->Cell($w[8],$t_baris,Yii::$app->formatter->asCurrency($EmpKasbon->getSisaKasbon(),''),1,0,'R');
+                $pdf->Cell($w[9]+$w[10],$t_baris,'Kelebihan Gaji',1,0,'L');
+                $pdf->Cell($w[11],$t_baris,0,1,0,'R');
+                $pdf->Ln();
+                $pdf->Cell($w[0]+$w[1]+$w[2]+$w[3]+$w[4]+$w[5]+$w[6]+$w[7]+$w[8],$t_baris,'',0,0,'C');
+                $pdf->Cell($w[9]+$w[10],$t_baris,'Kekurangan Gaji',1,0,'L');
+                $pdf->Cell($w[11],$t_baris,0,1,0,'R');
+                $pdf->Ln();	
+                
+                                
+            
+                
+                $pdf->Cell($w[0]+$w[1]+$w[2]+$w[3]+$w[4]+$w[5]+$w[6]+$w[7]+$w[8],$t_baris,'',0,0,'C');
+                $pdf->Cell($w[9]+$w[10],$t_baris,'Total Gaji',1,0,'L',1);
+                $pdf->Cell($w[11],$t_baris,number_format($payrolls->grand_total_salary,2,',','.'),1,0,'R',1);
+                $pdf->Ln();		
+                $pdf->Ln();
+                $pdf->Ln();
+                //MultiCell(float w, float h, string txt [, mixed border [, string align [, boolean fill]]];
+                //Line(float x1, float y1, float x2, float y2);
+                //$pdf->MultiCell( 170, 1,'',1,'');
+                $page++;
+                if ($page%5==0)
+                $pdf->AddPage();		
+                }			
+        //------------------
+        $pdf->Output("$period->period_name.pdf",'I');
+
+        
+    }
+
+    
 }
