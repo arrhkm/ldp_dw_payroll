@@ -11,7 +11,9 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    
     'components' => [
+        
         'date_range'=>[
             'class'=>'app\components\hkm\DateRange',
         ],
@@ -67,6 +69,13 @@ $config = [
         ],*/
     ],
     'params' => $params,
+    
+    'modules' => [
+        'gridview' => [
+            'class' => 'kartik\grid\Module',
+           
+        ]
+    ],
 ];
 
 if (YII_ENV_DEV) {

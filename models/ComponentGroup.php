@@ -35,6 +35,7 @@ class ComponentGroup extends \yii\db\ActiveRecord
             [['id'], 'required'],
             [['id', 'id_component_payroll', 'id_employee'], 'default', 'value' => null],
             [['id', 'id_component_payroll', 'id_employee'], 'integer'],
+            [['id_employee', 'id_component_payroll'], 'unique', 'targetAttribute' => ['id_employee', 'id_component_payroll']],
             [['id'], 'unique'],
             [['id_component_payroll'], 'exist', 'skipOnError' => true, 'targetClass' => ComponentPayroll::className(), 'targetAttribute' => ['id_component_payroll' => 'id']],
             [['id_employee'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['id_employee' => 'id']],

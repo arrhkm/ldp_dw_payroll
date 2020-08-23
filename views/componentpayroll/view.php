@@ -43,6 +43,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             'id',
             'id_employee',
+            [
+                'attribute'=>'reg_number',
+                'value'=>'employee.reg_number',
+            ],
+            [
+                'attribute'=>'employee_name',
+                'value'=>'employee.coreperson.name',
+            ],
             'id_component_payroll',
             
             [
@@ -50,7 +58,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template'=>'{delete}',
                 'buttons'=>[
                     'delete'=>function($url, $data){
-                       
                         return Html::a('Delete', ['componentpayroll/deletegroup', 'id'=>$data->id]);
                     },
                 ],

@@ -2,8 +2,10 @@
 
 use app\models\Payroll;
 use yii\helpers\Html;
-use yii\grid\GridView;
+//use yii\grid\GridView;
 use yii\i18n\Formatter;
+use kartik\export\ExportMenu;
+
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\PeriodSearch */
@@ -25,7 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
+    
+    <?php /*= GridView::widget([
         'dataProvider' => $dataProvider,
         //'filterModel' => $searchModel,
         'showFooter'=>TRUE,
@@ -54,4 +57,36 @@ $this->params['breadcrumbs'][] = $this->title;
 
             
         ],
-    ])?>
+    ])*/?>
+    <?php 
+
+    $gridColumns = [
+        ['class' => 'yii\grid\SerialColumn'],
+        'id',
+        'reg_number',
+        'employee_name',
+        'employee.coreperson.bank_account',
+        'wt',
+        'pt',
+        [
+            'attribute'=>'tg_all',
+            'value'=>function($model){
+                return Yii::$app->formatter->asCurrency($model->tg_all,'');
+            },
+            'footer'=>Yii::$app->formatter->asCurrency(Payroll::getTotal($dataProvider->models,'tg_all'),''),
+        ],
+        ['class' => 'yii\grid\ActionColumn'],
+    ];
+
+    // Renders a export dropdown menu
+    echo ExportMenu::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => $gridColumns
+    ]);
+
+    echo \kartik\grid\GridView::widget([
+        'dataProvider' => $dataProvider,
+        //'filterModel' => $searchModel,
+        'showFooter'=>TRUE,
+        'columns' => $gridColumns
+    ]);

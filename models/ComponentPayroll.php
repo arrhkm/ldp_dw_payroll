@@ -31,7 +31,7 @@ class ComponentPayroll extends \yii\db\ActiveRecord
         return [
             [['id'], 'required'],
             [['id', 'component_code'], 'default', 'value' => null],
-            [['id', 'component_code'], 'integer'],
+            [['id', 'component_code'], 'integer'],          
             [['name'], 'string'],
             [['id'], 'unique'],
         ];

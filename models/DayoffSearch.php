@@ -4,23 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\ComponentGroup;
+use app\models\Dayoff;
 
 /**
- * ComponentGroupSearch represents the model behind the search form of `app\models\ComponentGroup`.
+ * DayoffSearch represents the model behind the search form of `app\models\Dayoff`.
  */
-class ComponentGroupSearch extends ComponentGroup
+class DayoffSearch extends Dayoff
 {
-    public $reg_number;
-    public $employee_name;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'id_component_payroll', 'id_employee'], 'integer'],
-            [['reg_number', 'employee_name'], 'safe']
+            [['id'], 'integer'],
+            [['date_dayoff', 'dscription'], 'safe'],
         ];
     }
 
@@ -42,8 +40,7 @@ class ComponentGroupSearch extends ComponentGroup
      */
     public function search($params)
     {
-        $query = ComponentGroup::find();
-        $query->joinWith('employee a')->join('LEFT JOIN', 'coreperson b', 'b.id = a.id_coreperson');
+        $query = Dayoff::find();
 
         // add conditions that should always apply here
 
@@ -62,12 +59,10 @@ class ComponentGroupSearch extends ComponentGroup
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'id_component_payroll' => $this->id_component_payroll,
-            'id_employee' => $this->id_employee,
+            'date_dayoff' => $this->date_dayoff,
         ]);
 
-        $query->andFilterWhere(['ilike', 'a.reg_number',$this->reg_number]);
-        $query->andFilterWhere(['ilike', 'b.name',$this->employee_name]);
+        $query->andFilterWhere(['ilike', 'dscription', $this->dscription]);
 
         return $dataProvider;
     }

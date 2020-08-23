@@ -90,7 +90,7 @@ if (isset($model->id_payroll_group)){
         <tr class="bg-primary">
             <td><?=$dt['reg_number']?>
             <td colspan="3" style="text-align: center"><?=$dt['employee_name']?></td>
-            <td colspan="10" style="text-align: center"><?="Period :".$period->period_name//$dt['employee_name']?></td>
+            <td colspan="10" style="text-align: center"><?php echo "Period :".$period->period_name; if($dt['is_covid']){ echo " covid50";} ?></td>
             <td colspan=""><?=$dt['basic']?></td>
             <td colspan="2" style="text-align: center"><?=$dt['doh']?></td>
         </tr>

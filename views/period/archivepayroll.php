@@ -59,7 +59,7 @@ $formater = New Formatter();
            'payrollGroup.name',
            [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{view_payroll} {pdf}',
+                'template'=>'{view_payroll} #  {pdf} # {summary}',
                 'buttons'=>[
                     'view_payroll' => function($url, $model) {
                         return Html::a('View Payroll', ['payrollperiod', 'id_period' => $model->id_period, 'id_payroll_group'=>$model->id_payroll_group]);
@@ -67,6 +67,11 @@ $formater = New Formatter();
                     'pdf' => function($url, $model) {
                         return Html::a('PDF', ['payrollpdf', 'id_period' => $model->id_period, 'id_payroll_group'=>$model->id_payroll_group]);
                     },
+                    'summary'=>function($url, $model){
+                        return Html::a('Summary PDF',[
+                            'summarypdf', 'id_period'=>$model->id_period, 'id_payroll_group'=>$model->id_payroll_group,
+                        ]);
+                    }
                 ],
             ],
        ]

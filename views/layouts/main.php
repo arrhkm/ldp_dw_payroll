@@ -46,25 +46,26 @@ AppAsset::register($this);
                 ['label' => 'Employee Active', 'url' => ['/employee']],
                 ['label' => 'Employee Close', 'url' => ['/employee/employeeclose']],
                 ['label' => 'Person', 'url' => ['/coreperson']],
-                ['label' => 'Insetif Rresiko', 'url' => ['/iresiko']],
+               
                 ['label' => 'contract', 'url' => ['/contract']],
-                ['label' => 'Anggota Foreman', 'url' => ['/childforeman']],
+                /*['label' => 'Anggota Foreman', 'url' => ['/childforeman']],
                 ['label' => 'Ubah Gaji', 'url' => ['/employee/ubahgaji']],
                 ['label' => 'Ubah Jamsostek', 'url' => ['/employee/ubahjamsostek']],
                 ['label' => 'Plusmin Gaji', 'url' => ['/plusmin/']],
-                
+                */
 
                 
             ]],
             //['label' => 'Tarif Masakerja', 'url'=>['/tarifmasakerja/']],
             ['label' => 'Configure', 'url'=>['#'], 'items'=>[
-                ['label' => 'Jabatan', 'url'=>['/jabatan/']],
+                //['label' => 'Jabatan', 'url'=>['/jabatan/']],
                 ['label'=>'Payroll Group', 'url'=>['/payrollgroup/']],
                 ['label' => 'Master Insentif', 'url'=>['/insentifmaster/']],
                 ['label'=>'Leave Type', 'url'=>['/leavetype']],
                 ['label' => 'Timeshift', 'url'=>['/timeshift']],
                 ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],
                 ['label'=>'Component Payroll','url'=>['/componentpayroll']],
+                ['label'=>'Dayoff', 'url'=>['/dayoff']],
             ]],
             /*['label' => 'Tunjangan', 'url'=>['#'], 'items'=>[
                 ['label' => 'Jenis Tunjangan', 'url'=>['/jenistunjangan/']],

@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\export\ExportMenu;
+
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\LeaveTypeSearch */
@@ -20,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
+    <?php /*= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
@@ -32,7 +34,31 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
-    ]); ?>
+    ]); */?>
+
+    <?php 
+    $gridColumns = [
+        ['class' => 'yii\grid\SerialColumn'],
+        'id',
+        'name',
+        'is_limited:boolean',
+        
+        ['class' => 'yii\grid\ActionColumn'],
+    ];
+
+    echo ExportMenu::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => $gridColumns
+    ]);
+    
+    // You can choose to render your own GridView separately
+    echo \kartik\grid\GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => $gridColumns
+    ]);
+
+    ?>
 
 
 </div>

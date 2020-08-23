@@ -15,6 +15,8 @@ use app\components\hkm\payroll\InsentifEmployee;
 use app\components\hkm\payroll\MasaKerja;
 use app\models\Attendance;
 use app\models\Cardlog;
+use app\models\ComponentGroup;
+use app\models\Dayoff;
 //use app\models\DownloadMachineForm;
 use app\models\Employee;
 use app\models\InsentifMaster;
@@ -431,6 +433,9 @@ class PeriodController extends Controller
                 //Looping employee
                 $employee = Employee::findOne($employees->id_employee);
 
+                //potongan covid 50%;
+                $covid50 = ComponentGroup::find()->where(['id_employee'=>$employee->id, 'id_component_payroll'=>1]);
+
                 //Masakerja Employee
                 $start_kerja = New DateTime($employee->date_of_hired);
                 $today = date("y-m-d");
@@ -477,51 +482,103 @@ class PeriodController extends Controller
                     $is_dayoff = $shift->is_dayoff;
                     $office_ev = $shift->duration_hour;
                     
-                    //array_push($shift_arr, $shift->start_hour);
                     
+
+                    //--Dayoff------
+                    $LiburNasional = Dayoff::find()->where(['date_dayoff'=>$date_now]);
+
+
+                    //array_push($shift_arr, $shift->start_hour);                   
                     $att = Attendance::find()->where(['id_employee'=>$employee->id, 'date'=>$date_now]);
-                    if ($att->exists()){
-                        $ket = "on";
+                    
+                    
+                    if ($LiburNasional->exists()){
+                        $libur_nasional = TRUE;
+                    }else {
+                        $libur_nasional = FALSE;
+                    }
+                    
+                   
+                    if ($att->exists()){ //Jika ada absensis nya 
+                        
                         $atts = $att->one();
                         if (empty($atts->login) || empty($atts->logout)){
-                            $ket = "off";
-                        }elseif (empty($atts->login)){
-                            $emp_in = Null;
-                            $ket = "off";
-        
-                        }else {
+                            
+                            if (empty($atts->login) && !empty($atts->logout)){         
+                                $emp_in = NULL;
+                                $emp_out = $atts->logout;
+                                if ($is_dayoff){
+                                    $ket = "off";
+                                }elseif($libur_nasional){
+                                    $ket = "off_all";
+                                }else{
+                                    $ket = "alpha";
+                                }
+                            }
+                            elseif (!empty($atts->login) && empty($atts->logout)){
+                                $emp_in = $atts->login;
+                                $emp_out = NULL;
+                                if ($is_dayoff){
+                                    $ket = "off";
+                                }elseif($libur_nasional){
+                                    $ket = "off_all";
+                                }else{
+                                    $ket = "alpha";
+                                }
+                            }
+                            else //(empty($atts->login) && empty($atts->logout)){
+                            {
+                                
+                                $emp_in = NULL;
+                                $emp_out = NULL;
+                                if ($is_dayoff){
+                                    $ket = "off";
+                                }elseif($libur_nasional){
+                                    $ket = "off_all";
+                                }else {
+                                    $ket = "alpha";
+                                }
+                                
+                            }
+                        }                           
+                        else { 
                             $emp_in = $atts->login;
-        
-                        }
-                        if (empty($atts->logout)){
-                            $emp_out = Null;
-                            $ket = "off";
-        
-                        }else {
                             $emp_out = $atts->logout;
                             
+                            if ($is_dayoff){
+                                $ket = "off";
+                            }elseif($libur_nasional){
+                                $ket = "off_all";
+                            }else {
+                                $ket = "on";
+                            }
+                            
                         }
-                        
-                        
-                    }else {
+                    }else{
+                        $emp_in = NULL;
+                        $emp_out = NULL;
+
                         if ($is_dayoff){
-                            $emp_in = Null;
-                            $emp_out = Null;
                             $ket = "off";
-                        }else{
-                            $emp_in = Null;
-                            $emp_out = Null;
+                        }elseif($libur_nasional){
+                            $ket = "off_all";
+                        }else {
                             $ket = "alpha";
                         }
-                        
+                       
                     }
+                    
+                    
+                        
+                        
+                    
                     //Overtime Approve
                     $ComponentOvertime = New CppOvertime($employee->id, $date_now);
                     $overtime_approve = $ComponentOvertime->getSpklOfficeDuration();
                     //end Overtime approve
 
-                    $gaji = New GajiPokok($employee->basic_salary,$emp_in, $emp_out, 
-                        $office_in, $is_dayoff, $office_ev, $date_now, $ket, $employee->date_of_hired, $ins, $overtime_approve);
+                    $gaji = New GajiPokok($employee->id, $employee->basic_salary,$emp_in, $emp_out, 
+                        $office_in, $is_dayoff, $office_ev, $date_now, $ket, $employee->date_of_hired, $ins, $overtime_approve, $libur_nasional);
                     
                     array_push($dt_arr, [
                         'id'=>$employee->id,
@@ -573,6 +630,7 @@ class PeriodController extends Controller
                     'kasbon_kurang_bayar'=>$EmpKasbon->getSisaKasbon(),
                     'kasbon_potongan'=>$EmpKasbon->getPotonanKasbon(),
                     'grand_total_gaji'=>$grand_total_gaji,
+                    'is_covid'=>$covid50->exists(),
                     'detil'=>$dt_arr,
                     
 
@@ -685,10 +743,12 @@ class PeriodController extends Controller
                 $is_dayoff = $shift->is_dayoff;
                 $office_ev = $shift->duration_hour;
                 
-                //array_push($shift_arr, $shift->start_hour);
+                
+                //--Dayoff------
+                $LiburNasional = Dayoff::find()->where(['date_dayoff'=>$date_now]);
                 
                 $att = Attendance::find()->where(['id_employee'=>$employee->id, 'date'=>$date_now]);
-                if ($att->exists()){
+                /*if ($att->exists()){
                     $ket = "on";
                     $atts = $att->one();
                     if (empty($atts->login) || empty($atts->logout)){
@@ -722,14 +782,86 @@ class PeriodController extends Controller
                         $ket = "alpha";
                     }
                     
+                }*/
+                if ($LiburNasional->exists()){
+                    $libur_nasional = TRUE;
+                }else {
+                    $libur_nasional = FALSE;
+                }
+                
+               
+                if ($att->exists()){ //Jika ada absensis nya 
+                    
+                    $atts = $att->one();
+                    if (empty($atts->login) || empty($atts->logout)){
+                        
+                        if (empty($atts->login) && !empty($atts->logout)){         
+                            $emp_in = NULL;
+                            $emp_out = $atts->logout;
+                            if ($is_dayoff){
+                                $ket = "off";
+                            }elseif($libur_nasional){
+                                $ket = "off_all";
+                            }else{
+                                $ket = "alpha";
+                            }
+                        }
+                        elseif (!empty($atts->login) && empty($atts->logout)){
+                            $emp_in = $atts->login;
+                            $emp_out = NULL;
+                            if ($is_dayoff){
+                                $ket = "off";
+                            }elseif($libur_nasional){
+                                $ket = "off_all";
+                            }else{
+                                $ket = "alpha";
+                            }
+                        }
+                        else //(empty($atts->login) && empty($atts->logout)){
+                        {                            
+                            $emp_in = NULL;
+                            $emp_out = NULL;
+                            if ($is_dayoff){
+                                $ket = "off";
+                            }elseif($libur_nasional){
+                                $ket = "off_all";
+                            }else {
+                                $ket = "alpha";
+                            }                            
+                        }
+                    }                           
+                    else { 
+                        $emp_in = $atts->login;
+                        $emp_out = $atts->logout;
+                        
+                        if ($is_dayoff){
+                            $ket = "off";
+                        }elseif($libur_nasional){
+                            $ket = "off_all";
+                        }else {
+                            $ket = "on";
+                        }                        
+                    }
+                }else{
+                    $emp_in = NULL;
+                    $emp_out = NULL;
+
+                    if ($is_dayoff){
+                        $ket = "off";
+                    }elseif($libur_nasional){
+                        $ket = "off_all";
+                    }else {
+                        $ket = "alpha";
+                    }                   
                 }
                 //Overtime Approve
                 $ComponentOvertime = New CppOvertime($employee->id, $date_now);
                 $overtime_approve = $ComponentOvertime->getSpklOfficeDuration();
                 //end Overtime approve
 
-                $gaji = New GajiPokok($employee->basic_salary,$emp_in, $emp_out, 
-                    $office_in, $is_dayoff, $office_ev, $date_now, $ket, $employee->date_of_hired, $ins, $overtime_approve);
+                $gaji = New GajiPokok($employee->id, $employee->basic_salary,$emp_in, $emp_out, 
+                    $office_in, $is_dayoff, $office_ev, $date_now, $ket, $employee->date_of_hired, $ins, $overtime_approve,
+                    $libur_nasional);
                 
                 array_push($dt_arr, [
                     'id'=>$employee->id,
@@ -1081,5 +1213,8 @@ class PeriodController extends Controller
         
     }
 
-    
+    public function actionSummarypdf($id_period, $id_payroll_group){
+        $payroll = Payroll::find()->joinWith('employee a')->join('LEFT JOIN', 'coreperson b', 'b.id = a.id_coreperson')->where(['id_period'=>$id_period, 'id_payroll_group'=>$id_payroll_group])->all();
+        var_dump($payroll);
+    }
 }

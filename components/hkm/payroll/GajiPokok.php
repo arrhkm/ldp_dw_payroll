@@ -2,6 +2,7 @@
 
 namespace app\components\hkm\payroll;
 
+use app\models\ComponentGroup;
 use app\models\Spkl;
 use DateInterval;
 use DateTime;
@@ -29,9 +30,11 @@ class GajiPokok {
     public $doh;
     public $insentif;
     public $overtime_approve;
+    public $id_employee;
+    public $libur_nasional;
 
-    public function __construct($basic, $person_start, $person_stop, 
-        $start_office, $is_dayoff, $office_ev, $date_now, $ket, $doh, $insentif, $overtime_approve)
+    public function __construct($id_employee, $basic, $person_start, $person_stop, 
+        $start_office, $is_dayoff, $office_ev, $date_now, $ket, $doh, $insentif, $overtime_approve, $libur_nasional)
     {
         $this->basic_day = $basic;
         
@@ -45,6 +48,8 @@ class GajiPokok {
         $this->doh = $doh;
         $this->insentif = $insentif;
         $this->overtime_approve = $overtime_approve;
+        $this->id_employee = $id_employee;
+        $this->libur_nasional = $libur_nasional;
 
         //$this->end_office = date('Y-m-d H:i:s', strtotime("+".$office_ev."hours", strtotime($date_now." ".$start_hour)));
 
@@ -60,8 +65,29 @@ class GajiPokok {
 
     }
 
+    public function isCovid50(){
+        $covid_50 = ComponentGroup::find()->where(['id_employee'=>$this->id_employee]);
+        if ($covid_50->exists()) {
+            return True;
+        } else return false;
+    }
+
     public function getSalaryBasic(){
-        $hasil = $this->getDurationEvectifeHour() * ($this->basic_day/($this->office_ev));
+        if ($this->isCovid50()){
+            if ($this->is_dayoff){
+                $hasil = 0;
+            }
+            elseif ($this->libur_nasional){
+                $hasil = $this->basic_day;
+            }else {            
+                $hasil = $this->basic_day * 0.5;
+            }
+            //$hasil = $this->getDurationEvectifeHour() * ($this->basic_day/($this->office_ev));
+            
+        }else {
+            $hasil = $this->getDurationEvectifeHour() * ($this->basic_day/($this->office_ev));
+        }
+       
         return $hasil;
     }
 
@@ -246,7 +272,24 @@ class GajiPokok {
     public function getTmasakerja(){
         if ($this->ket=='on'){
             return MasaKerja::getMasakerja($this->doh);
-        }else{
+        }elseif ($this->isCovid50()){
+            if ($this->libur_nasional){
+                if ($this->is_dayoff){
+                    return 0;
+                }else{
+                    return MasaKerja::getMasakerja($this->doh);
+                }
+               
+            }elseif ($this->is_dayoff){
+                return 0;
+            }else {
+                return MasaKerja::getMasakerja($this->doh) * 0.5;
+            }
+            
+        }
+       
+        
+        else {
             return 0;
         }
     }
