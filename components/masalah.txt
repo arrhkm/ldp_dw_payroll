@@ -1,0 +1,15 @@
+masalah Libur nasional dan libur hari minggu biasa 
+
+1. hari minggu 
+- Kondisi Overtime : 
+    * T masakerja ada
+- Tidak Overtime : 
+    * 
+ 2. Jika Hari Libur Nasional 
+ - kondisi OT 
+   * GP Ada 
+   * TJ Masakerja 
+- tdk overtime 
+    * GP Saja 
+    
+masalah : jika pasa hari minggu dan pasa hari nasional , maka yang dipilih yang mana ?

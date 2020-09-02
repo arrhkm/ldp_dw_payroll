@@ -79,7 +79,14 @@ class TimeshiftoptionController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'timeShiftList'=>$this->getTimeshiftList(),
         ]);
+    }
+
+    public function getTimeshiftList(){
+        $modelTimeshift = Timeshift::find()->all();
+        $timeshift_list = ArrayHelper::map($modelTimeshift, 'id', 'name');
+        return $timeshift_list;
     }
 
     public function actionTimeshiftoptionemployee(){
@@ -87,8 +94,8 @@ class TimeshiftoptionController extends Controller
 
         //$employee_list = Employee::find()->where(['is_active'=>true])->all();
         
-        $modelTimeshift = Timeshift::find()->all();
-        $timeshift_list = ArrayHelper::map($modelTimeshift, 'id', 'name');
+        //$modelTimeshift = Timeshift::find()->all();
+        $timeshift_list = $this->getTimeshiftList(); //ArrayHelper::map($modelTimeshift, 'id', 'name');
         $data_employee = EmployeeList::getEmployeeActive();//ArrayHelper::map($employee_list, 'id', 'name');
         if ($modelForm->load(Yii::$app->request->post()) && $modelForm->validate()){
             TimeshiftOption::deleteAll(['id_timeshift'=>$modelForm->id_timeshift]);
@@ -147,6 +154,7 @@ class TimeshiftoptionController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'timeShiftList'=>$this->getTimeshiftList(),
         ]);
     }
 

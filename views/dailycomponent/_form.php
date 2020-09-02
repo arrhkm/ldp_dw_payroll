@@ -1,25 +1,22 @@
 <?php
 
-use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TimeshiftOption */
+/* @var $model app\models\DailyComponent */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="timeshift-option-form">
+<div class="daily-component-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'id')->textInput() ?>
 
-    <?= $form->field($model, 'id_timeshift')->widget(Select2::className(),[
-        'data'=>$timeShiftList,
-    ]) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'id_employee')->textInput() ?>
+    <?= $form->field($model, 'component_code')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

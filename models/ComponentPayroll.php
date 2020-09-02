@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\commands\SmartIncrementKeyDb;
 use Yii;
 
 /**
@@ -12,9 +13,11 @@ use Yii;
  * @property int|null $component_code
  *
  * @property ComponentGroup[] $componentGroups
+ * @property Employee[] $employees
  */
 class ComponentPayroll extends \yii\db\ActiveRecord
 {
+    use SmartIncrementKeyDb;
     /**
      * {@inheritdoc}
      */
@@ -31,7 +34,7 @@ class ComponentPayroll extends \yii\db\ActiveRecord
         return [
             [['id'], 'required'],
             [['id', 'component_code'], 'default', 'value' => null],
-            [['id', 'component_code'], 'integer'],          
+            [['id', 'component_code'], 'integer'],
             [['name'], 'string'],
             [['id'], 'unique'],
         ];
@@ -57,5 +60,15 @@ class ComponentPayroll extends \yii\db\ActiveRecord
     public function getComponentGroups()
     {
         return $this->hasMany(ComponentGroup::className(), ['id_component_payroll' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Employees]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEmployees()
+    {
+        return $this->hasMany(Employee::className(), ['id' => 'id_employee'])->viaTable('component_group', ['id_component_payroll' => 'id']);
     }
 }

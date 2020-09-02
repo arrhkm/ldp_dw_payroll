@@ -22,11 +22,15 @@ use Yii;
  * @property float|null $t_masakerja
  * @property float|null $total_gaji
  * @property string|null $logika_day
- * @property int|null $description_leave
+ * @property string|null $description_leave
  * @property int|null $id_employee
  * @property int|null $id_period
  * @property int|null $id_payroll_group
  * @property string|null $name_day
+ * @property float|null $potongan
+ * @property string|null $description
+ * @property string|null $punch_in
+ * @property string|null $punch_out
  *
  * @property Employee $employee
  * @property Period $period
@@ -49,12 +53,13 @@ class PayrollDay extends \yii\db\ActiveRecord
     {
         return [
             [['id'], 'required'],
-            [['id', 'ev_hour', 'ot_hour', 'description_leave', 'id_employee', 'id_period', 'id_payroll_group'], 'default', 'value' => null],
-            [['id', 'ev_hour', 'ot_hour', 'description_leave', 'id_employee', 'id_period', 'id_payroll_group'], 'integer'],
-            [['date_payroll'], 'safe'],
-            [['basic_per_hour', 'basic_salary', 'overtime_salary', 'uang_makan', 'pot_telat', 'pot_safety', 'insentif', 't_masakerja', 'total_gaji'], 'number'],
-            [['logika_day'], 'string', 'max' => 50],
+            [['id', 'ev_hour', 'ot_hour', 'id_employee', 'id_period', 'id_payroll_group'], 'default', 'value' => null],
+            [['id', 'ev_hour', 'ot_hour', 'id_employee', 'id_period', 'id_payroll_group'], 'integer'],
+            [['date_payroll', 'punch_in', 'punch_out'], 'safe'],
+            [['basic_per_hour', 'basic_salary', 'overtime_salary', 'uang_makan', 'pot_telat', 'pot_safety', 'insentif', 't_masakerja', 'total_gaji', 'potongan'], 'number'],
+            [['logika_day', 'description_leave'], 'string', 'max' => 50],
             [['name_day'], 'string', 'max' => 20],
+            [['description'], 'string', 'max' => 100],
             [['id_employee', 'date_payroll'], 'unique', 'targetAttribute' => ['id_employee', 'date_payroll']],
             [['id'], 'unique'],
             [['id_employee'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['id_employee' => 'id']],
@@ -87,6 +92,10 @@ class PayrollDay extends \yii\db\ActiveRecord
             'id_period' => 'Id Period',
             'id_payroll_group' => 'Id Payroll Group',
             'name_day' => 'Name Day',
+            'potongan' => 'Potongan',
+            'description' => 'Description',
+            'punch_in' => 'Punch In',
+            'punch_out' => 'Punch Out',
         ];
     }
 

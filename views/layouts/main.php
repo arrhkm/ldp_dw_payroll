@@ -64,8 +64,10 @@ AppAsset::register($this);
                 ['label'=>'Leave Type', 'url'=>['/leavetype']],
                 ['label' => 'Timeshift', 'url'=>['/timeshift']],
                 ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],
-                ['label'=>'Component Payroll','url'=>['/componentpayroll']],
+                ['label'=>'Component Payroll Daily','url'=>['/componentpayroll']],
                 ['label'=>'Dayoff', 'url'=>['/dayoff']],
+                ['label'=>'Component Payroll Group', 'url'=>['/componentpayroll']],
+                ['label'=>'Component Payroll Detil', 'url'=>['/componentgroup']],
             ]],
             /*['label' => 'Tunjangan', 'url'=>['#'], 'items'=>[
                 ['label' => 'Jenis Tunjangan', 'url'=>['/jenistunjangan/']],
@@ -86,6 +88,8 @@ AppAsset::register($this);
             ['label' => 'Deduction $ Reduction', 'url'=>['#'], 'items'=>[
                 ['label' => 'Kasbon', 'url'=>['/kasbon/']],
                 ['label' => 'Kasbon Close', 'url'=>['/kasbon/close']],
+                ['label'=>'Daily Component','url'=>['/dailycomponent']],
+                ['label'=>'Daily Component Detil','url'=>['/dailycomponentdetil/']],
                 
             ]],
             ['label' => 'Attendance', 'url'=>['#'], 'items'=>[

@@ -28,8 +28,20 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'date_leave',
-            'id_employee',
+            //'id_employee',
+            [
+                'attribute'=>'reg_number',
+                'value'=>'employee.reg_number',
+            ],
+            [
+                'attribute'=>'employee_name',
+                'value'=>'employee.coreperson.name',
+            ],           
             'id_leave_type',
+            [
+                'attribute'=>'leave_type',
+                'value'=>'leavetype.name',
+            ],      
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

@@ -1,5 +1,5 @@
 <?php
-namespace components\hkm\payroll;
+//namespace components\hkm\payroll;
 
 use app\components\hkm\payroll\InsentifEmployee;
 use app\models\Attendance;
@@ -9,58 +9,60 @@ use app\models\TimeshiftEmployee;
 use DateInterval;
 use DateTime;
 
-class AttendanceDay
+class GajiHarianCopy
 {
     public
-        $id_employee,
-        $basic,
-        $date_now,
-        //$name_day,
-        //$ev,
-        //$ot,
-        //$t_masakerja,
-        //$insentif,
-        //$potongan_telat,
-        //$potongan_covid,
-        $doh,
-        //$list_insentif,
-        //$list_schedule,
-        //property Time Shift----------
-        $shift_office_start,
-        //$shift_office_stop,
-        $shift_office_ev,
-        $shift_dayoff;
-        //---------end Timeshift--------
-        //$salary_day;
+    $id_employee,
+    $basic,
+    $date_now,
+    $doh,
+    $shift_office_start,
+    $shift_office_ev,
+    $shift_dayoff;
+    //$name_day,
+    //$ev,
+    //$ot,
+    //$t_masakerja,
+    //$insentif,
+    //$potongan_telat,
+    //$potongan_covid,
+    
+    //$list_insentif,
+    //$list_schedule,
+    //property Time Shift----------
+    
+    //$shift_office_stop,
+    
+    //---------end Timeshift--------
+    //$salary_day;
         
 
-        public function __construct($id_employee, $basic, $date_now, $doh)
-        {
-            $this->id_employee = $id_employee;
-            $this->basic = $basic;
-            $this->date_now = $date_now;
-            $this->doh = $doh;
-            //$this->list_insentif = $list_insentif;
-            //$this->list_schedule = $list_schedule;
+    public function __construct($id_employee, $basic, $date_now, $doh)
+    {
+        $this->id_employee = $id_employee;
+        $this->basic = $basic;
+        $this->date_now = $date_now;
+        $this->doh = $doh;
+        //$this->list_insentif = $list_insentif;
+        //$this->list_schedule = $list_schedule;
 
-            $adaShift = TimeshiftEmployee::find()->where(['date_shift'=>$date_now, 'id_employee'=>$id_employee]);
-            if ($adaShift->exists()){
-                $shift = $adaShift->one();
-                $this->shift_office_start = $shift->office_start;
-                $this->shift_office_ev = $shift->duration_hour;
-                $this->shift_dayoff = $shift->is_dayoff;
+        $adaShift = TimeshiftEmployee::find()->where(['date_shift'=>$date_now, 'id_employee'=>$id_employee]);
+        if ($adaShift->exists()){
+            $shift = $adaShift->one();
+            $this->shift_office_start = $shift->office_start;
+            $this->shift_office_ev = $shift->duration_hour;
+            $this->shift_dayoff = $shift->is_dayoff;
 
-            }else {
-                $this->shift_office_start = '08:00:00';
-                $this->shift_office_ev = 0;
-                $this->shift_dayoff = TRUE;
-            }
-
+        }else {
+            $this->shift_office_start = '08:00:00';
+            $this->shift_office_ev = 0;
+            $this->shift_dayoff = TRUE;
         }
-        
-        public function getOfficeStart(){
-            //$shift = $this->getShift();
 
+    }
+
+ 
+public function getOfficeStart(){
             $str_office_in = $this->date_now." ".$this->shift_office_start;
             return $str_office_in;
         }
@@ -86,7 +88,7 @@ class AttendanceDay
             }
             return FALSE;
         }
-
+       
         public function getAttendance(){
             $att=['emp_in'=>NULL, 'emp_out'=>NULL, 'ket'=>'off'];
 
@@ -172,9 +174,7 @@ class AttendanceDay
                     $obj_office_stop = New DateTime($this->getOfficeStop());
     
                    
-                    if($this->earlyIn() && $this->lateOut()){ //if ($early_in  && late_out){
-                    
-                        //ev = $ev_office
+                    if($this->earlyIn() && $this->lateOut()){ //if ($early_in  && late_out)              
                         $person_ev = $this->office_ev;
                     }
                     elseif(!$this->earlyIn() && !$this->lateOut()) {//else if (!$early_in && !late_out)
@@ -203,9 +203,7 @@ class AttendanceDay
     
                         if($this->office_ev >=7){
                             $person_ev = $person_ev -1;//-1 jam istirahat
-                        }
-    
-                        
+                        }    
                     }     
     
                 }
@@ -279,20 +277,6 @@ class AttendanceDay
 
         }
 
-       
-
-        //Potongan Telat
-        /*
-        public function getPotonganTelat(){
-            foreach ($list_schedule as $schedule){
-                if ($date_now == $schedule[0]){
-                    $jadwal = $chedule;
-                }
-            }
-
-        }
-        */
-
         public function getOverTimeApprove(){
             $spkl = Spkl::find()->where(['date_spkl'=>$this->date_now, 'id_employee'=>$this->id_employee]);
             if ($spkl->exists()){
@@ -302,19 +286,6 @@ class AttendanceDay
                 return 0;
             }
         }
-
-       
-
-        /*public function adaShift(){
-            $shift = TimeshiftEmployee::find()->where(['date_shift'=>$this->date_now, 'id_employee'=>$this->id_employee]);
-            return ($shift->exists());
-        }
-
-        public function getShift(){
-            $shift = TimeshiftEmployee::find()->where(['date_shift'=>$this->date_now, 'id_employee'=>$this->id_employee])->one();
-            
-            return $shift;
-        }*/
 
         public function getSalaryOvertime(){
             $att = $this->getAttendance();
@@ -419,21 +390,7 @@ class AttendanceDay
         public function getInsentif(){
             $ins = InsentifEmployee::getInsentif($this->id_employee, $this->date_now);
             return $ins;
-        }
-         
-        /* 
-        public function getInsentif(){
-            $dt =[];
-            foreach ($this->list_insentif as $list){
-                if ($list[0]==$this->date_now){
-                    array_push($dt[], $list[1]);
-                }
-            }
-            return array_sum($dt);
-
-        }*/
-        
-        
+        }   
 
         //Gaji Total per Hari 
         public function getSalaryDay(){
@@ -442,4 +399,9 @@ class AttendanceDay
             - $this->getPotonganTelat();
             return $salary;
         }
+
+        public function getPotonganCovid(){
+
+        }
+        
 }

@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{view} {update} {delete} {schedule}  {timeshift} {integration}  {payroll}  {removeTimeshift} {archivePayroll}',
+                'template'=>'{view} {update} {delete} {schedule}  {timeshift} {integration}  {payroll}  {removeTimeshift} {archivePayroll} {coba}',
                 'buttons'=>[
                     'schedule' => function($url, $model) {
                         return Html::a('<span class="glyphicon glyphicon-cloud-download">Schedule</span>', ['schedule', 'id' => $model['id']], ['title' => 'Schedule', 'class' => '',]);
@@ -54,6 +54,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'archivePayroll'=>function($url, $model){
                         return Html::a(':: Archive Payroll', ['archivepayroll', 'id_period'=>$model['id']]);
+                    },
+                    'coba'=>function($url, $model){
+                        return Html::a(':: Coba', ['tes', 'id'=>$model['id']]);
                     }
 
                 ],

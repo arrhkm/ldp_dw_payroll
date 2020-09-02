@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'id_location',
             'is_active:boolean',
             //'id_job_alocation',
-            'name',
+            //'name',
             
 
             ['class' => 'yii\grid\ActionColumn'],

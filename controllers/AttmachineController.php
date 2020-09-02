@@ -19,6 +19,9 @@ use app\models\Employee;
 use yii\helpers\ArrayHelper;
 use app\components\hkm\LogIntegration;
 use app\models\Attendance;
+use app\models\UploadForm;
+use DateTime;
+use yii\web\UploadedFile;
 
 /**
  * AttmachineController implements the CRUD actions for Attmachine model.
@@ -320,6 +323,110 @@ class AttmachineController extends Controller
             //'integrated_log'=>$integrated_log,
             //'emp_aray'=>$emp_array,
         ]);
+    }
+
+    public function actionImportattendance(){
+        $model = New UploadForm();
+      
+        $name="Null";
+        $data = array();
+        if (Yii::$app->request->isPost) {
+            
+            $model->excelFile = UploadedFile::getInstance($model, 'excelFile');            
+            if ($model->upload()) {
+                // file is uploaded successfully                
+                
+                $fileName = Yii::$app->basePath.'/web/upload_file/'.$model->excelFile->name;
+                $data = \moonland\phpexcel\Excel::import($fileName, [
+                    'setFirstRecordAsKeys' => true, // if you want to set the keys of record column with first record, if it not set, the header with use the alphabet column on excel. 
+                    //'setIndexSheetByName' => true, // set this if your excel data with multiple worksheet, the index of array will be set with the sheet name. If this not set, the index will use numeric. 
+                    'getOnlySheet' => 'Sheet1', // you can set this property if you want to get the specified sheet from the excel data with multiple worksheet.
+                ]);
+                
+                
+                unlink($fileName);//Hapus file nya...
+                
+              
+                $dt_set = array();
+                $list_card = [];
+                $list_card2 = [];
+                foreach ($data as $dt) {                    
+                    $date_nows = date_create($dt['date_log']);                    
+                    $emp = Employee::find()//->joinWith('cardlog b')
+                    ->where(['reg_number'=>$dt['reg_number']]);
+                    if ($emp->exists()){
+                        $emp = $emp->one();
+                        $log = Log::find()->where(['pin'=>$emp->cardlog->pin, 'timestamp'=>$date_nows->format('Y-m-d H:i:s')]);
+                        if ($log->exists()){
+                            /*
+                            $log = $log->one();
+                            array_push($list_card, [
+                                'reg_number'=>$emp->reg_number,
+                                'pin'=>$emp->cardlog->pin,
+                                'date_now'=>$log->date_log,
+                            ]);*/
+                        }else{
+                            $log = New Log;
+                            $log->id = $log->getLastId();
+                            $log->pin = $emp->cardlog->pin;
+                            $log->timestamp = $date_nows->format('Y-m-d H:i:s');
+                            $log->status = $dt['status'];
+                            $log->id_attmachine = $dt['id_attmachine'];
+                            $log->verification = 100;
+                            if ($log->save()){
+                                array_push($list_card, [
+                                    'reg_number'=>$emp->reg_number,
+                                    'name'=>$emp->coreperson->name,
+                                    'pin'=>$emp->cardlog->pin,
+                                    'date_now'=>$date_nows->format('Y-m-d TH:i:s'),
+                                ]);
+                            }
+
+                            
+                        }
+                       
+                    }
+                    array_push($list_card2, [
+                        'reg_number'=>$dt['reg_number'],
+                        'name'=>$emp->coreperson->name,
+                        'date_log'=>$date_nows->format('Y-m-d h:i:s'),
+                        
+                    ]);
+                }
+                
+                $provider = new ArrayDataProvider([
+                    'allModels' => $list_card2,
+                    'sort' => [
+                        'attributes' => [
+                            //'pin', 
+                            //'nama', 'total_gp', 
+                            //'t_jabatan', 't_fungsional', 't_masakerja',
+                            ],
+                    ],
+                    
+                    'pagination' => [
+                        'pageSize' => 1000,
+                    ],
+                ]);   
+                //$total = $provider->getCount();
+                //$id_start = Payrollnew::getLastId();
+                   
+
+                return $this->render('_import_attendance', [                     
+                    'model'=>$model,                    
+                    'provider'=>$provider,
+                    'data'=>$data,
+                    'list_card'=>$list_card,
+                ]); 
+            }
+        }
+
+      
+        return $this->render('_import_attendance',[          
+            'model'=>$model,
+            
+        ]);
+    
     }
 
     /**

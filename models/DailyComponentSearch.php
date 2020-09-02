@@ -4,23 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Leave;
+use app\models\DailyComponent;
 
 /**
- * LeaveSearch represents the model behind the search form of `app\models\Leave`.
+ * DailyComponentSearch represents the model behind the search form of `app\models\DailyComponent`.
  */
-class LeaveSearch extends Leave
+class DailyComponentSearch extends DailyComponent
 {
-
-    public $reg_number, $employee_name, $leave_type;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'id_employee', 'id_leave_type'], 'integer'],
-            [['date_leave', 'employee_name', 'reg_number', 'leave_type'], 'safe'],
+            [['id', 'component_code'], 'integer'],
+            [['name'], 'safe'],
         ];
     }
 
@@ -42,9 +40,7 @@ class LeaveSearch extends Leave
      */
     public function search($params)
     {
-        $query = Leave::find();
-        $query->joinWith(['employee a', 'leavetype c'])->join('LEFT JOIN', 'coreperson b', 'b.id = a.id_coreperson');
-        //$query->joinWith('leaveType c');
+        $query = DailyComponent::find();
 
         // add conditions that should always apply here
 
@@ -63,14 +59,10 @@ class LeaveSearch extends Leave
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'date_leave' => $this->date_leave,
-            'id_employee' => $this->id_employee,
-            'id_leave_type' => $this->id_leave_type,
+            'component_code' => $this->component_code,
         ]);
 
-        $query->andFilterWhere(['ilike', 'a.reg_number',$this->reg_number]);
-        $query->andFilterWhere(['ilike', 'b.name', $this->employee_name]);
-        $query->andFilterWhere(['ilike', 'c.name', $this->leave_type]);
+        $query->andFilterWhere(['ilike', 'name', $this->name]);
 
         return $dataProvider;
     }

@@ -51,7 +51,7 @@ class CppKasbon extends Component
         return 0;
     }
 
-    public function getPotonanKasbon(){
+    public function getPotonganKasbon(){
         if ($this->kasbon->exists()){
             $period = Period::find()->where(['id'=>$this->id_period])->one();
             $kasbon = $this->kasbon->one();
@@ -65,5 +65,8 @@ class CppKasbon extends Component
             return 0;
         }
         
+    }
+    public function getKet(){
+        return "#kasbon : {$this->getKasbon()} #sisa kasbon: {$this->getSisaKasbon()}";
     }
 }

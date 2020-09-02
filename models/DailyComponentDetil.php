@@ -33,9 +33,10 @@ class DailyComponentDetil extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
+            [['id', 'date_component'], 'required'],
             [['id', 'id_employee', 'id_daily_component'], 'default', 'value' => null],
             [['id', 'id_employee', 'id_daily_component'], 'integer'],
+            
             [['date_component'], 'safe'],
             [['date_component', 'id_employee', 'id_daily_component'], 'unique', 'targetAttribute' => ['date_component', 'id_employee', 'id_daily_component']],
             [['id'], 'unique'],

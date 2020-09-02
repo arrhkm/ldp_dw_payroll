@@ -11,6 +11,8 @@ use Yii;
  * @property int $id
  * @property int|null $id_component_payroll
  * @property int|null $id_employee
+ * @property string|null $start_date
+ * @property string|null $end_date
  *
  * @property ComponentPayroll $componentPayroll
  * @property Employee $employee
@@ -35,6 +37,7 @@ class ComponentGroup extends \yii\db\ActiveRecord
             [['id'], 'required'],
             [['id', 'id_component_payroll', 'id_employee'], 'default', 'value' => null],
             [['id', 'id_component_payroll', 'id_employee'], 'integer'],
+            [['start_date', 'end_date'], 'safe'],
             [['id_employee', 'id_component_payroll'], 'unique', 'targetAttribute' => ['id_employee', 'id_component_payroll']],
             [['id'], 'unique'],
             [['id_component_payroll'], 'exist', 'skipOnError' => true, 'targetClass' => ComponentPayroll::className(), 'targetAttribute' => ['id_component_payroll' => 'id']],
@@ -51,6 +54,8 @@ class ComponentGroup extends \yii\db\ActiveRecord
             'id' => 'ID',
             'id_component_payroll' => 'Id Component Payroll',
             'id_employee' => 'Id Employee',
+            'start_date' => 'Start Date',
+            'end_date' => 'End Date',
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace app\components\hkm\payroll;
 
 use app\models\ComponentGroup;
+use app\models\DailyComponentDetil;
 use app\models\Spkl;
 use DateInterval;
 use DateTime;
@@ -55,10 +56,10 @@ class GajiPokok {
 
         
     }
-    public function getSpkl(){
-       
+    public function getNameDay(){
+        
     }
-
+   
     public function getBasicHour(){
         $gp_jam = $this->basic_day/$this->office_ev;
         return $gp_jam;
@@ -73,7 +74,10 @@ class GajiPokok {
     }
 
     public function getSalaryBasic(){
-        if ($this->isCovid50()){
+        if ($this->ket == "off_all"){
+            $hasil = $this->basic_day;
+        }
+        elseif ($this->isCovid50()){
             if ($this->is_dayoff){
                 $hasil = 0;
             }
@@ -84,7 +88,11 @@ class GajiPokok {
             }
             //$hasil = $this->getDurationEvectifeHour() * ($this->basic_day/($this->office_ev));
             
-        }else {
+        }
+        elseif($this->getCovid2()){
+            $hasil = $this->basic_day;
+        }
+        else {
             $hasil = $this->getDurationEvectifeHour() * ($this->basic_day/($this->office_ev));
         }
        
@@ -270,7 +278,7 @@ class GajiPokok {
     }
 
     public function getTmasakerja(){
-        if ($this->ket=='on'){
+        if ($this->ket=='on' || $this->ket == 'off_all'){
             return MasaKerja::getMasakerja($this->doh);
         }elseif ($this->isCovid50()){
             if ($this->libur_nasional){
@@ -287,7 +295,12 @@ class GajiPokok {
             }
             
         }
-       
+        elseif($this->getCovid2()){
+            return MasaKerja::getMasakerja($this->doh);
+        }
+        /*elseif($this->ket == "off_all"){
+            return MasaKerja::getMasakerja($this->doh);
+        }*/
         
         else {
             return 0;
@@ -295,7 +308,7 @@ class GajiPokok {
     }
 
     public function getTelat(){
-        if ($this->ket=="off" || empty($this->person_start) || empty($this->person_stop)){
+        if ($this->ket=="off" || empty($this->person_start) || empty($this->person_stop || $this->getCovid2() || $this->isCovid50())){
             $telat = "00:00:00";
         }else {
             $obj_p_s = New DateTime($this->person_start);
@@ -340,8 +353,18 @@ class GajiPokok {
         
        return $potongan;
     }
+
+    public function getCovid2(){
+        $covid = DailyComponentDetil::find()->where(['id_employee'=>$this->id_employee, 'date_component'=>$this->date_now, 'id_daily_component'=>1]);
+         return $covid->exists();
+    }
     public function getSalaryDay(){
-        $x = ($this->getSalaryBasic()+$this->getSalaryOverTime()+$this->getTmasakerja()+$this->getInsentif())-$this->getPotonganTelat();
+        if ($this->getCovid2()){
+            $x = (($this->getSalaryBasic()*0.75)+ $this->getSalaryOverTime()+ ($this->getTmasakerja()*0.75)+$this->getInsentif())-$this->getPotonganTelat();
+        }else {
+            $x = ($this->getSalaryBasic()+$this->getSalaryOverTime()+$this->getTmasakerja()+$this->getInsentif())-$this->getPotonganTelat();
+        }
+        
         return $x;
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use kartik\date\DatePicker;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -16,6 +17,20 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'id')->textInput() ?>
 
     <?= $form->field($model, 'id_component_payroll')->textInput() ?>
+    <?= $form->field($model, 'start_date')->widget(DatePicker::className(),[
+        'pluginOptions'=>[
+            'format'=>'yyyy-mm-dd',
+            'todayHighlight'=>True,
+            'autoclose'=>true,
+        ]
+    ]) ?>
+    <?= $form->field($model, 'end_date')->widget(DatePicker::className(), [
+        'pluginOptions'=>[
+            'format'=>'yyyy-mm-dd',
+            'todayHighlight'=>True,
+            'autoclose'=>TRUE,
+        ]
+    ]) ?>
 
     <?= $form->field($model, 'id_employee')->widget(Select2::className(),[
         'data'=>$emp,
