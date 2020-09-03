@@ -1244,8 +1244,10 @@ class PeriodController extends Controller
             ->where(['BETWEEN', 'date_dayoff', $period->start_date, $period->end_date])
             ->all(), 'date_dayoff');
         $payroll_group_employee = PayrollGroupEmployee::find()
+            ->joinWith('employee a')
             ->where(['id_payroll_group'=>$id_payroll_group])
             //->limit(2)
+            ->orderBy(['a.reg_number'=>SORT_ASC])
             ->all();
    
         foreach ($payroll_group_employee as $group){
