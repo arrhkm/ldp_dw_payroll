@@ -5,6 +5,9 @@ use app\models\DetilKasbon;
 use app\models\Kasbon;
 use app\models\Period;
 use yii\base\Component;
+use yii\i18n\Formatter;
+use Yii;
+
 
 
 class CppKasbon extends Component
@@ -16,9 +19,10 @@ class CppKasbon extends Component
     {
         $this->id_employee = $id_employee;
         $this->id_period = $id_period;
-        $this->kasbon = Kasbon::find()->where(['id_employee'=> $this->id_employee, 'is_active'=>TRUE]);
-        
-        
+        $this->kasbon = Kasbon::find()->where([
+            'id_employee'=> $this->id_employee, 
+            //'is_active'=>TRUE
+        ]);
     }
 
     public function getKasbon()
@@ -67,6 +71,6 @@ class CppKasbon extends Component
         
     }
     public function getKet(){
-        return "#kasbon : {$this->getKasbon()} #sisa kasbon: {$this->getSisaKasbon()}";
+        return "#kasbon :".Yii::$app->Formatter->asCurrency($this->getKasbon(),'')." #sisa kasbon: ".Yii::$app->Formatter->asCurrency($this->getSisaKasbon(),'');
     }
 }

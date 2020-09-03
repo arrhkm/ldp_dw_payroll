@@ -13,3 +13,20 @@ masalah Libur nasional dan libur hari minggu biasa
     * GP Saja 
     
 masalah : jika pasa hari minggu dan pasa hari nasional , maka yang dipilih yang mana ?
+
+
+
+
+sep 2 2020
+--------------
+1. Menambahkan Menu edit waktu perpanjangan karyawan dirumahkan (javascript selectet column)
+2. Pembulatan Angka Salary All Karyawan --> (OK)
+3. Kekurangan dan Kelebihan 
+4. Potongan BPJS 
+5. Keterangan keperluan Kasbonan
+6. Kasbon yang sudah di close ikut tertutup di payroll nya seharusnya masih tampil. -->(ok)
+7. Update Leave error Undefined variable: emp_list -->(ok)
+8. Jika tidak ada absensi (in = null out = null), seharusnya keterangan muncul (ok)
+9. Pesan error untuk Kasbon yang melebihi saldo pemotongan belum ada. 
+10.
+

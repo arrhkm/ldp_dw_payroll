@@ -1275,8 +1275,8 @@ class PeriodController extends Controller
                     'name_day'=>$gaji->getNameDay(),
                     'in'=>$gaji->att_login,
                     'out'=>$gaji->att_logout,
-                    //'office_start'=>$gaji->getOfficeStart(),
-                    //'office_stop'=>$gaji->getOfficeStop(),
+                    'office_start'=>$gaji->getOfficeStart(),
+                    'office_stop'=>$gaji->getOfficeStop(),
                     'id_employee'=>$gaji->id_employee,            
                     'date_now'=>$gaji->date_now,
                     'office_duration'=>$gaji->shift_office_duration,
@@ -1284,6 +1284,7 @@ class PeriodController extends Controller
                     'isDayOff'=>$gaji->shift_dayoff,
                     'attendance'=> 0,//$gaji->getAttendance(),
                     'ev'=>$gaji->getEffective(),
+                    'office_ev'=>$gaji->shift_office_duration,
                     'ot'=>$gaji->getOverTime(),
                     'telat'=>$gaji->getTelat(),
                     'basic_salary'=>$gaji->getBasic(),
@@ -1317,6 +1318,7 @@ class PeriodController extends Controller
                 'wt'=>$CetakTotal['wt'],
                 'pt'=>$CetakTotal['pt'],
                 'insentif_dscription'=>InsentifEmployee::getKet($employee->id, $period->start_date, $period->end_date),
+                'kasbon_dscription'=>$EmpKasbon->getKet(),
             ];
             array_push($data_period, $data_array);
         }

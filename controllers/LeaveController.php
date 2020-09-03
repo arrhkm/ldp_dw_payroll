@@ -64,11 +64,22 @@ class LeaveController extends Controller
      * Creates a new Leave model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+    
      */
+    public function getEmployeeList(){
+        $emp = New EmployeeList;
+        return $emp->getEmployeeActive();
+
+    }
+
+    public function getTypeList(){
+        $rc_leave_type = LeaveType::find()->all();
+        return ArrayHelper::map($rc_leave_type, 'id', 'name');
+    }
+
     public function actionCreate()
     {
-        $rc_leave_type = LeaveType::find()->all();
-        $type_list = ArrayHelper::map($rc_leave_type, 'id', 'name');
+        
         $model = new Leave();
         $model->id = $model->getLastId();
 
@@ -82,8 +93,8 @@ class LeaveController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'type_list'=>$type_list,
-            'emp_list'=>$emp_list,
+            'type_list'=>$this->getTypeList(),
+            'emp_list'=>$this->getEmployeeList(),
         ]);
     }
 
@@ -104,6 +115,8 @@ class LeaveController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'type_list'=>$this->getTypeList(),
+            'emp_list'=>$this->getEmployeeList(),
         ]);
     }
 

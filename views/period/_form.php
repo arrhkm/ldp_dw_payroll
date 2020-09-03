@@ -14,9 +14,9 @@ use kartik\date\DatePicker;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'id')->textInput() ?>
+    <?php //= $form->field($model, 'id')->textInput() ?>
 
-    <?= $form->field($model, 'period_name')->textInput(['maxlength' => true]) ?>
+    <?php //= $form->field($model, 'period_name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'start_date')->widget(DatePicker::className(),[
         'pluginOptions'=>[

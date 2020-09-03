@@ -32,7 +32,12 @@ class GajiHarian {
     $att_logout,
     $overtime_approve,
     $isCovid25, 
-    $isCovid80;
+    $isCovid80,
+    $is_annual_leave,
+    $is_sick,
+    $is_permit,
+    $is_sepecial_permit
+    ;
 
     public function __construct($id_employee, $basic, $date_now, $doh, $isDayOffNational)
     {
@@ -42,6 +47,33 @@ class GajiHarian {
         $this->doh = $doh;
         $this->isDayOffNational = $isDayOffNational;
 
+        //Leave
+        $DtLeave = Leave::find()->where(['id_employee'=>$id_employee, 'date_leave'=>$date_now]);
+        $this->is_annual_leave=false;
+        $this->is_sick= false;    
+        $this->is_permit=false;
+        $this->is_sepecial_permit=false;
+
+        if ($DtLeave->exists()){
+            $leave = $DtLeave->one();
+            switch ($leave->id_leave_type) {
+                case 1:  
+                    $this->is_annual_leave = true;
+                    break;
+                case 2:  
+                    $this->is_sick = true;
+                    break;
+                case 3:  
+                    $this->is_permit = true;
+                    break;
+                case 4:  
+                    $this->is_sepecial_permit = true;
+                    break;
+              
+            }
+        }
+        
+        //--------------end-Leave---------------
         $this->isCovid25 = DailyComponentDetil::find()->where(['id_employee'=>$this->id_employee, 'date_component'=>$this->date_now, 'id_daily_component'=>1])->exists();
         $this->isCovid80 = DailyComponentDetil::find()->where(['id_employee'=>$this->id_employee, 'date_component'=>$this->date_now, 'id_daily_component'=>2])->exists();
         $spkl = Spkl::find()->where(['date_spkl'=>$this->date_now, 'id_employee'=>$this->id_employee])->one();
@@ -57,27 +89,25 @@ class GajiHarian {
             $this->att_logout = NULL;
         }
        
-        
-
-        $adaShift = TimeshiftEmployee::find()->where(['date_shift'=>$date_now, 'id_employee'=>$id_employee]);
-        if ($adaShift->exists()){
-            $this->ada_shift= TRUE;
-            $shift = $adaShift->one();
-            $this->shift_office_start = $shift->start_hour;
-            $this->shift_office_ev = $shift->duration_hour;
-            $this->shift_dayoff = $shift->is_dayoff;
-            $this->shift_office_duration =  $shift->duration_hour;
-
-        }else {
+        $Shift = TimeshiftEmployee::find()->where(['date_shift'=>$date_now, 'id_employee'=>$id_employee])->one();
+        if(empty($Shift)) {
             $this->ada_shift = FALSE;
             $this->shift_office_start = '08:00:00';
             $this->shift_office_duration = 0;
             $this->shift_dayoff = TRUE;
-            $this->shift_office_duration = 0;
+            
         }
-        $this->component_payroll = ComponentGroup::find()->where(['id_employee'=>$this->id_employee, 'id_component_payroll'=>1])->one();
+        else{
+            $this->ada_shift= TRUE;           
+            $this->shift_office_start = $Shift->start_hour;  
+            $this->shift_office_duration =  $Shift->duration_hour;         
+            $this->shift_dayoff = $Shift->is_dayoff;
+            
 
-        
+        }
+
+        $this->component_payroll = ComponentGroup::find()->where(['id_employee'=>$this->id_employee, 'id_component_payroll'=>1])->one();
+  
     }
 
     public function isDirumahkan(){
@@ -99,39 +129,46 @@ class GajiHarian {
     }
 
     public function getAnualLeave(){
-        if ($this->getLeave()->exists()){
-            $x = $this->getLeave()->one();
-            if ($x->id_leave_type==1){
-                return True;
-            }else return false;
-        }else return false;
+        //if ($this->getLeave()->exists()){
+            //$x = $this->getLeave()->one();
+            //if ($x->id_leave_type==1){
+            //if($this->$is_annual_leave){
+            //    return True;
+            //}else return false;
+        //}else return false;
+        return $this->is_annual_leave;
     }
 
-    public function getSakit(){
-        if ($this->getLeave()->exists()){
+    public function isSakit(){
+        /*if ($this->getLeave()->exists()){
             $x = $this->getLeave()->one();
             if ($x->id_leave_type==2){
                 return True;
             }else return false;
-        }else return false;
+        }else return false;*/
+        return $this->is_sick;
     }
 
     public function getIjin(){
-        if ($this->getLeave()->exists()){
+        /*if ($this->getLeave()->exists()){
             $x = $this->getLeave()->one();
             if ($x->id_leave_type==3){
                 return True;
             }else return false;
         }else return false;
+        */
+        return $this->is_permit;
     }
 
     public function getIjinKhusus(){
-        if ($this->getLeave()->exists()){
+        /*if ($this->getLeave()->exists()){
             $x = $this->getLeave()->one();
             if ($x->id_leave_type==4){
                 return True;
             }else return false;
         }else return false;
+        */
+        return $this->is_sepecial_permit;
     }
 
     public function getNameDay(){
@@ -205,8 +242,10 @@ class GajiHarian {
             }else {
                 return 0;
             }
+        }elseif ($this->isSakit()){
+            return 0;
         }else{
-            return $nilai;
+            return round($nilai);
         }
         
         //return $nilai;
@@ -215,9 +254,6 @@ class GajiHarian {
     }
 
     public function getEffective(){
-        //$att = $this->getAttendance();
-       
-
         if ( $this->shift_dayoff || $this->isDayOffNational || (empty($this->att_login) || $this->att_logout==NULL)){
             $ev = 0;
         }else {
@@ -226,28 +262,30 @@ class GajiHarian {
             
             $obj_office_in = New DateTime($this->getOfficeStart());
             $obj_office_out = New DateTime($this->getOfficeStop());
+
+            $o_in = $obj_office_in->format('H');
+            $o_out = $obj_office_out->format('H');
+            $p_in = $obj_person_in->format('H');
+            $p_out = $obj_person_out->format('H');
             
             $diff_sio = $obj_person_in->diff($obj_person_out);    
             $diff_si = $obj_person_in->diff($obj_office_in);        
             $diff_so = $obj_person_out->diff($obj_office_out);
             
-            $fsio = $diff_sio->format('%H');
-            $fsi =  $diff_si->format('%H');
-            $fso = $diff_so->format('%H');
-            $ev = $fsio - ($fsi + $fso);
-
-            if ($this->shift_office_duration == 7 ){
-                $ev = $ev -1 ;//Istirahat 1 jam ;
+            $fsio = $p_out - $p_in;//$diff_sio->format('%H');
+            $fsi = $o_in - $p_in; //$diff_si->format('%H');
+            $fso = $p_out - $o_out; //$diff_so->format('%H');
+                 
+            if ($this->shift_office_duration != 5 ){
+                $ev = $fsio-($fsi+$fso+1);       
+            }else{
+                $ev= $fsio-($fsi+$fso);       
             }
-            //$ev=['sio'=>$fsio, 'si'=>$fsi, 'so'=>$fso, 'ev'=>$ev];
         }
-        return  $ev;
+        return $ev;
     }
 
-    public function getOverTimeApprove(){
-        //$spkl = Spkl::find()->where(['date_spkl'=>$this->date_now, 'id_employee'=>$this->id_employee])->one();
-        //$spkl?$spkl->overtime_hour:0;
-        //$ot = $spkl?$spkl->overtime_hour:0;
+    public function getOverTimeApprove(){      
         return $this->overtime_approve; 
     }
 
@@ -333,7 +371,7 @@ class GajiHarian {
                 $part1=1.5*($v_gajilembur);
                 $part2=2*8*($v_gajilembur);
                 $part3=3*($this->getOvertime()-9)*($v_gajilembur);
-                $gaji_ot=$part1+$part2+$part3;
+                $gaji_ot=round ($part1+$part2+$part3);
             }else {
                 $gaji_ot=0;
             }
@@ -365,7 +403,8 @@ class GajiHarian {
     }
 
     public function getPotonganTelat(){
-        $basic_hour = $this->basic/$this->shift_office_ev;
+        
+        $basic_hour = $this->basic / $this->shift_office_duration;
         $potongan = 0;
         $x = $this->getTelat();
         $y = explode(":", $x);
@@ -387,6 +426,8 @@ class GajiHarian {
         }
         
        return $potongan;
+       
+        //return 0;
     }
     /*
     public function isCovid2(){ //potongan 0.25
@@ -455,6 +496,9 @@ class GajiHarian {
         if($this->getIjin()){
             $ket .=' #Ijin';
         }
+        if($this->isSakit()){
+            $ket .='#sakit';
+        }
         if($this->getIjinKhusus()){
             $ket .= ' #IjinKhusus';
         }
@@ -476,7 +520,7 @@ class GajiHarian {
         $salary = $this->getBasic() + $this->getSalaryOvertime() + $this->getTmasakerja() 
         + $this->insentif
         - ( $this->getPotonganTelat()+$this->getPotonganCovid() + $this->getPotonganDirumahkan());
-        return $salary;
+        return round($salary);
     }
 
 

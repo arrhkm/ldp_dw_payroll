@@ -44,6 +44,7 @@ class LeaveSearch extends Leave
     {
         $query = Leave::find();
         $query->joinWith(['employee a', 'leavetype c'])->join('LEFT JOIN', 'coreperson b', 'b.id = a.id_coreperson');
+        $query->orderBy(['date_leave'=>SORT_DESC]);
         //$query->joinWith('leaveType c');
 
         // add conditions that should always apply here
