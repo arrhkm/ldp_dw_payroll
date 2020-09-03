@@ -335,7 +335,7 @@ class PeriodController extends Controller
                     if ($shift->exists()){
                         $shift = $shift->one();
                         //$iter = New LogIntegration($myLog, $myEmp['id_employee'], $myEmp['cards'], $listday);
-                        $iter = New IntegrateAttendance($myLog, $myEmp['id_employee'], $myEmp['cards'], $listday, '08:00:00');
+                        $iter = New IntegrateAttendance($myLog, $myEmp['id_employee'], $myEmp['cards'], $listday, $shift->start_hour);
                         $iter->getLog();
                         if ($iter->in!=NULL && $iter->out!=NULL){
                             if ($iter->in===$iter->out){

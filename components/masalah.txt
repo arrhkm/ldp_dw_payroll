@@ -28,6 +28,13 @@ sep 2 2020
 7. Update Leave error Undefined variable: emp_list -->(ok)
 8. Jika tidak ada absensi (in = null out = null), seharusnya keterangan muncul (ok)
 9. Pesan error untuk Kasbon yang melebihi saldo pemotongan belum ada. 
+//----------------------------------------------------------
 10.Tidak ada absensi tapi gaji tetap keluar.
-
-
+11. Penggajian orang yang sakit lama : 
+    - 4 bulan sejak sakit = 100%;
+    - 4 bulan ke2 = 75%;
+    - 4 bulan ke3 = 50%
+    -  bulan ke4 = 25%;
+    -           = 0% = metu ;
+12. Jika ada lembur tandai warna merah. 
+13. Mesin absensi Integration sudah di input in jam 03:59 MULYANTO namun data masih tetep dibaca tdk ada in nya.
