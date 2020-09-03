@@ -28,5 +28,6 @@ sep 2 2020
 7. Update Leave error Undefined variable: emp_list -->(ok)
 8. Jika tidak ada absensi (in = null out = null), seharusnya keterangan muncul (ok)
 9. Pesan error untuk Kasbon yang melebihi saldo pemotongan belum ada. 
-10.
+10.Tidak ada absensi tapi gaji tetap keluar.
+
 

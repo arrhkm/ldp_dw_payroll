@@ -1245,7 +1245,8 @@ class PeriodController extends Controller
             ->all(), 'date_dayoff');
         $payroll_group_employee = PayrollGroupEmployee::find()
             ->joinWith('employee a')
-            ->where(['id_payroll_group'=>$id_payroll_group])
+            ->where(['id_payroll_group'=>$id_payroll_group, 'a.is_active'=>TRUE])
+            
             //->limit(2)
             ->orderBy(['a.reg_number'=>SORT_ASC])
             ->all();
