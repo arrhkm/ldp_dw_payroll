@@ -31,6 +31,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'date_spkl',
             'overtime_hour',
             'id_employee',
+            [
+                'attribute'=>'employee',
+                'value'=>'employee.name'
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

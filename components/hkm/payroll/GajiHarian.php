@@ -129,45 +129,22 @@ class GajiHarian {
     }
 
     public function getAnualLeave(){
-        //if ($this->getLeave()->exists()){
-            //$x = $this->getLeave()->one();
-            //if ($x->id_leave_type==1){
-            //if($this->$is_annual_leave){
-            //    return True;
-            //}else return false;
-        //}else return false;
+       
         return $this->is_annual_leave;
     }
 
     public function isSakit(){
-        /*if ($this->getLeave()->exists()){
-            $x = $this->getLeave()->one();
-            if ($x->id_leave_type==2){
-                return True;
-            }else return false;
-        }else return false;*/
+        
         return $this->is_sick;
     }
 
     public function getIjin(){
-        /*if ($this->getLeave()->exists()){
-            $x = $this->getLeave()->one();
-            if ($x->id_leave_type==3){
-                return True;
-            }else return false;
-        }else return false;
-        */
+       
         return $this->is_permit;
     }
 
     public function getIjinKhusus(){
-        /*if ($this->getLeave()->exists()){
-            $x = $this->getLeave()->one();
-            if ($x->id_leave_type==4){
-                return True;
-            }else return false;
-        }else return false;
-        */
+        
         return $this->is_sepecial_permit;
     }
 
@@ -197,14 +174,7 @@ class GajiHarian {
         return $obj_office_out->format("Y-m-d H:i:s");
     }
 
-    /*public function isDayOffNational{
-        $LiburNasional = Dayoff::find()->where(['date_dayoff'=>$this->date_now]);
-        if($LiburNasional->exists()){
-            return TRUE;
-        }
-        return FALSE;
-    }*/
-
+  
     //T Masakerja 
     public function getTmasakerja(){
         
@@ -468,7 +438,7 @@ class GajiHarian {
     }
 
     public function getBasic(){
-        if($this->shift_dayoff){
+        if($this->shift_dayoff || $this->att_login==NULL || $this->att_logout){
             return  0;
         }else{
             return $this->basic;

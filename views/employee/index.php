@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute'=>'person_name',
                 'value'=>'coreperson.name',
             ],
+           
             'basic_salary',
             'no_bpjstk',
             'no_bpjskes',

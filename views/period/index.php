@@ -11,13 +11,10 @@ $this->title = 'Periods';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="period-index">
-
     <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
         <?= Html::a('Create Period', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
@@ -25,14 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
+            //'id',
             'period_name',
             'start_date',
             'end_date',
             'pot_jamsos:boolean',
             'is_archive:boolean',
-
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template'=>'{view} {update} {delete} {schedule}  {timeshift} {integration}  {payroll}  {removeTimeshift} {archivePayroll} {coba}',
@@ -58,12 +53,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'coba'=>function($url, $model){
                         return Html::a(':: Coba', ['tes', 'id'=>$model['id']]);
                     }
-
                 ],
-        
             ],
         ],
     ]); ?>
-
-
 </div>

@@ -14,11 +14,13 @@ class SpklSeach extends Spkl
     /**
      * {@inheritdoc}
      */
+    public $employee;
+    public $person;
     public function rules()
     {
         return [
             [['id', 'overtime_hour', 'id_employee'], 'integer'],
-            [['date_spkl'], 'safe'],
+            [['date_spkl', 'employee'], 'safe'],
         ];
     }
 
@@ -41,6 +43,7 @@ class SpklSeach extends Spkl
     public function search($params)
     {
         $query = Spkl::find();
+        $query->joinWith('employee a');
 
         // add conditions that should always apply here
 
@@ -63,7 +66,8 @@ class SpklSeach extends Spkl
             'overtime_hour' => $this->overtime_hour,
             'id_employee' => $this->id_employee,
         ]);
-
+        $query->andFilterWhere(['ilike', 'a.name', $this->employee]);
+        $query->orderBy(['date_spkl'=>SORT_DESC]);
         return $dataProvider;
     }
 }
