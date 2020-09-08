@@ -410,8 +410,6 @@ class AttmachineController extends Controller
                 ]);   
                 //$total = $provider->getCount();
                 //$id_start = Payrollnew::getLastId();
-                   
-
                 return $this->render('_import_attendance', [                     
                     'model'=>$model,                    
                     'provider'=>$provider,
@@ -420,13 +418,29 @@ class AttmachineController extends Controller
                 ]); 
             }
         }
-
-      
         return $this->render('_import_attendance',[          
             'model'=>$model,
-            
         ]);
-    
+    }
+
+    public function actionCoba(){
+        $searchModel = new AttmachineSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('coba', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionDeleteselect(){
+        $data = Yii::$app->request->post();
+        
+        $emp = $data['emp'];
+        foreach ($emp as $id_emp){
+            $ws = Attmachine::findOne($id_emp);        
+            $ws->delete();
+        }
+        return $this->redirect(['coba']);
     }
 
     /**

@@ -25,7 +25,8 @@
         "kartik-v/yii2-widget-datetimepicker": "^1.4",
         "kartik-v/yii2-widget-timepicker": "dev-master",
         "kartik-v/yii2-widget-select2": "dev-master",
-        "kartik-v/yii2-export": "@dev"
+        "kartik-v/yii2-export": "@dev",
+        "richardfan1126/yii2-js-register": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

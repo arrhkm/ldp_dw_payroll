@@ -1,8 +1,11 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use richardfan\widget\JSRegister;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\ComponentPayroll */
@@ -34,24 +37,48 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'component_code',
         ],
-    ]) ?>
+    ])?>
+    <p id="demo"></p>
+    
     <?= Html::a('Create Grup', ['componentgroup', 'id_group'=>$model->id], ['class' => 'btn btn-success']) ?>
+    
+    <div class="form-group pull-right">
+        <?php /* = Html::submitButton(
+            'Set Update', 
+            [
+                'class' => 'btn btn-primary',
+                'id'=>'myButton',
+            ]) 
+        */?>
+    </div>
+    <?= Html::button('Update Selected', ['class'=>'btn btn-success', ])?>
+    <?= Html::button('Delete Selected', ['class'=>'btn btn-danger', 'id'=>'deleteSelect'])?>
+    <?php // Pjax::begin() ?>
     <?= GridView::widget([
         'dataProvider'=>$groupProvider,
         'filterModel'=>$groupSearch,
+        'id' => 'tblWorkshiftset',
         'columns'=>[
-            ['class' => 'yii\grid\SerialColumn'],
-            'id',
-            'id_employee',
+            //['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => 'yii\grid\CheckboxColumn',
+                'checkboxOptions' =>function($model) {
+                    return ['value' => $model->id, 'class' => 'checkbox-row', 'id' =>'hkm_checkbox'];
+                }
+            ],
             [
                 'attribute'=>'reg_number',
                 'value'=>'employee.reg_number',
+                'contentOptions' => ['style' => 'max-width:10px;'],
             ],
             [
                 'attribute'=>'employee_name',
                 'value'=>'employee.coreperson.name',
             ],
-            'id_component_payroll',
+            //'id',
+            //'id_employee',
+            
+            //'id_component_payroll',
             'start_date',
             'end_date',            
             [
@@ -69,5 +96,36 @@ $this->params['breadcrumbs'][] = $this->title;
             
         ],
     ])?>
+    <?php // Pjax::end();?>
 
 </div>
+<?php 
+   
+$urlRemove = Url::toRoute(['removegroup']);
+
+$urlDeleteSelect = Url::toRoute(['componentpayroll/deleteselect']);
+  
+$js=<<<js
+$('#deleteSelect').on('click', function(){ 
+    
+    var container = [];
+    $.each($("input[name='selection[]']:checked"), function() {
+        container.push($(this).val());
+    });
+
+    $.ajax({
+        url : "{$urlDeleteSelect}",
+        type : "POST",
+        data : { 
+            id:"{$model->id}",           
+            item:container,
+        },
+        success : function(result){
+            console.log(result);
+        }
+    });
+    alert('Hasil nya adalah' +container);
+});
+
+js;
+$this->registerJs($js);

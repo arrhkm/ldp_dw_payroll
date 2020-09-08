@@ -77,13 +77,14 @@ AppAsset::register($this);
             ['label' => 'DEDUCTION', 'url'=>['#'], 'items'=>[
                 ['label' => 'Kasbon', 'url'=>['/kasbon/']],
                 ['label' => 'Kasbon Close', 'url'=>['/kasbon/close']],
-                ['label'=>'Component Dirumahkan', 'url'=>['/componentpayroll']],
+                ['label'=>'Component Pengurangan', 'url'=>['/componentpayroll']],
                 ['label'=>'Component Daily Covid19','url'=>['/dailycomponent']],
                 
                 
             ]],
             ['label' => 'ATTENDANCE', 'url'=>['#'], 'items'=>[
-                ['label' => 'Machine', 'url'=>['/attmachine']],                
+                ['label' => 'Machine', 'url'=>['/attmachine']],
+                ['label' => 'Machine Coba', 'url'=>['/attmachine/coba']],                
                 ['label' => 'Setup Timeshift Employee', 'url'=>['/timeshiftemployee']],     
                 ['label' => 'card', 'url'=>['/cardlog']],
                 ['label'=>'Absensi', 'url'=>['/attendance']],

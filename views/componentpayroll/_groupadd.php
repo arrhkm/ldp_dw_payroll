@@ -14,9 +14,9 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'id')->textInput() ?>
+    <?php //= $form->field($model, 'id')->textInput() ?>
 
-    <?= $form->field($model, 'id_component_payroll')->textInput() ?>
+    <?php //= $form->field($model, 'id_component_payroll')->textInput() ?>
     <?= $form->field($model, 'start_date')->widget(DatePicker::className(),[
         'pluginOptions'=>[
             'format'=>'yyyy-mm-dd',
@@ -34,6 +34,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id_employee')->widget(Select2::className(),[
         'data'=>$emp,
+        'options'=>[
+            'multiple'=>true,
+        ],
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
     ]) ?>
 
     <div class="form-group">
@@ -43,3 +49,23 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+<?php 
+/*
+$data=[];
+foreach ($emp as $key=>$value){
+    echo "key :".$key. "value :".$value."<br>";
+    
+    if (in_array($key, $group)){
+        
+    }else {
+        array_push($data, 
+            $key,$value
+        );
+    }    
+    
+}
+foreach ($group as $x){
+    echo $x."<br>";
+}
+*/
+//var_dump($emp);

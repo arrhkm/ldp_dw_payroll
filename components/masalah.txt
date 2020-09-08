@@ -19,6 +19,8 @@ masalah : jika pasa hari minggu dan pasa hari nasional , maka yang dipilih yang 
 
 sep 2 2020
 --------------
+
+
 1. Menambahkan Menu edit waktu perpanjangan karyawan dirumahkan (javascript selectet column)
 2. Pembulatan Angka Salary All Karyawan --> (OK)
 3. Kekurangan dan Kelebihan 
@@ -29,6 +31,10 @@ sep 2 2020
 8. Jika tidak ada absensi (in = null out = null), seharusnya keterangan muncul (ok)
 9. Pesan error untuk Kasbon yang melebihi saldo pemotongan belum ada. 
 //----------------------------------------------------------
+Tanggal 3 sep 2020
+//---------------------------
+- perbaiki pC pak Agus QC 
+
 10.Tidak ada absensi, seharusnya gaji nilai nya nol.
 11. Penggajian orang yang sakit lama : 
     - 4 bulan sejak sakit = 100%;
@@ -38,3 +44,12 @@ sep 2 2020
     -           = 0% = metu ;
 12. Jika ada lembur tandai warna merah. 
 13. Mesin absensi Integration sudah di input in jam 03:59 MULYANTO namun data masih tetep dibaca tdk ada in nya. (OK)
+//------------------------------------------------------
+Tanggal 4 sep 2020
+--------------------------------------------------------
+- perbaikan js getSelectedRow()
+---------------------------------------------------------
+Tanggal 7 Sept 2020
+---------------------------------------------------------
+Java script getslected row error 
+- perbaikan PC Pak Agus Budiono 
