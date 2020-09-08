@@ -159,12 +159,7 @@ class ComponentpayrollController extends Controller
             foreach ($group->id_employee as $id_emp){
                 if (ComponentGroup::find()->where(['id_employee'=>$id_emp])->exists()){
                     $ComponentGroup = ComponentGroup::findOne(['id_employee'=>$id_emp]);
-                    //$ComponentGroup->id = $group->getLastId();
-                    /*$ComponentGroup->start_date = $group->start_date;
-                    $ComponentGroup->end_date = $group->end_date;
-                    $ComponentGroup->id_component_payroll = $id_group;
-                    $ComponentGroup->id_employee = $id_emp;
-                    */
+                   
                 }else {
                     $ComponentGroup = New ComponentGroup;
                     $ComponentGroup->id = $ComponentGroup->getLastId();                  
@@ -175,9 +170,9 @@ class ComponentpayrollController extends Controller
                     $ComponentGroup->save();
                 }
             }
-            //if ($group->save()){
+           
             $this->redirect(['view','id'=>$group->id_component_payroll]);
-            //}
+            
         }
         return $this->render('_groupadd', [
             'model'=>$group,

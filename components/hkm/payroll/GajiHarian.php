@@ -214,7 +214,14 @@ class GajiHarian {
             }
         }elseif ($this->isSakit()){
             return 0;
-        }else{
+        }
+        elseif($this->att_logout==NULL || $this->att_logout == NULL){
+            if ($this->isDirumahkan()){
+                return round($nilai);
+            }
+            return 0;
+        }
+        else{
             return round($nilai);
         }
         
@@ -428,7 +435,7 @@ class GajiHarian {
         $potongan_rumah =0;
         $salary = $this->basic + $this->getSalaryOvertime() + $this->getTmasakerja()+ $this->insentif;
         if ($this->isDirumahkan()){
-            if ($this->shift_dayoff || $this->isDayOffNational){
+            if ($this->shift_dayoff || $this->isDayOffNational){ //$this->att_login==NULL || $this->att_logout==NULL
                 $potongan_rumah= 0;
             }else{
                 $potongan_rumah= $salary * 0.5;
@@ -438,9 +445,20 @@ class GajiHarian {
     }
 
     public function getBasic(){
-        if($this->shift_dayoff || $this->att_login==NULL || $this->att_logout){
+        if ($this->isDirumahkan()){
+            if($this->shift_dayoff){
+                return 0;                
+            }else {
+                return $this->basic;
+            }
             return  0;
-        }else{
+        }
+        elseif ($this->att_login==NULL || $this->att_logout){
+            //if (!$this->isDirumahkan()){
+                return 0;
+            //}
+        }
+        else{
             return $this->basic;
         }
     }
