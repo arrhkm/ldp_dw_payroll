@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\AttendanceSearch */
+/* @var $model app\models\BpjsSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="attendance-search">
+<div class="bpjs-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -17,17 +17,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'date') ?>
+    <?= $form->field($model, 'bpjs_kes') ?>
 
-    <?= $form->field($model, 'login') ?>
-
-    <?= $form->field($model, 'logout') ?>
+    <?= $form->field($model, 'bpjs_tkerja') ?>
 
     <?= $form->field($model, 'id_employee') ?>
-
-    <?php // echo $form->field($model, 'hour_in') ?>
-
-    <?php // echo $form->field($model, 'hour_out') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

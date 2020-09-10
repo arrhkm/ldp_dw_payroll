@@ -4,18 +4,19 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\AttendanceSearch */
+/* @var $searchModel app\models\BpjsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Attendances';
+$this->title = 'Bpjs';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="attendance-index">
+<div class="bpjs-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Attendance', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Bpjs', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Import Csv', ['importcsv'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -26,13 +27,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'date',
-            'login',
-            'logout',
-            'id_employee',
-            //'hour_in',
-            //'hour_out',
+            //'id',
+            [
+                'attribute'=>'reg_number',
+                'value'=>'employee.reg_number',
+            ],
+            [
+                'attribute'=>'name',
+                'value'=>'employee.name',
+            ],
+            'bpjs_kes',
+            'bpjs_tkerja',
+            //'id_employee',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

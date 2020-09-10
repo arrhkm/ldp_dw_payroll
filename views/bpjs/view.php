@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Attendance */
+/* @var $model app\models\Bpjs */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Attendances', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Bpjs', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="attendance-view">
+<div class="bpjs-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,12 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'date',
-            'login',
-            'logout',
+            'bpjs_kes',
+            'bpjs_tkerja',
             'id_employee',
-            'hour_in',
-            'hour_out',
         ],
     ]) ?>
 

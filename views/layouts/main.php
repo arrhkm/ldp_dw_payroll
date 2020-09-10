@@ -79,6 +79,7 @@ AppAsset::register($this);
                 ['label' => 'Kasbon Close', 'url'=>['/kasbon/close']],
                 ['label'=>'Component Pengurangan', 'url'=>['/componentpayroll']],
                 ['label'=>'Component Daily Covid19','url'=>['/dailycomponent']],
+                ['label'=>'BPJS', 'url'=>['/bpjs']],
                 
                 
             ]],

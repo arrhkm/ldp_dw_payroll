@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'is_archive:boolean',
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{view} {update} {delete} {schedule}  {timeshift} {integration}  {payroll}  {removeTimeshift} {archivePayroll} {coba}',
+                'template'=>'{view} {update} {delete} {timeshift}{removeTimeshift} ',
                 'buttons'=>[
                     'schedule' => function($url, $model) {
                         return Html::a('<span class="glyphicon glyphicon-cloud-download">Schedule</span>', ['schedule', 'id' => $model['id']], ['title' => 'Schedule', 'class' => '',]);
@@ -41,18 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'integration'=>function($url, $model){
                         return Html::a(':: Integrate', ['integration', 'id'=>$model['id']], ['title'=>'integration', 'class'=>'success',]);
                     },
-                    'payroll'=>function($url, $model){
-                        return Html::a(':: Payroll', ['pilihgroup', 'id'=>$model['id']]);
-                    },
+                    
                     'removeTimeshift'=>function($url, $model){
                         return Html::a(':: Remove Timeshift', ['removetimeshift', 'id'=>$model['id']]);
                     },
-                    'archivePayroll'=>function($url, $model){
-                        return Html::a(':: Archive Payroll', ['archivepayroll', 'id_period'=>$model['id']]);
-                    },
-                    'coba'=>function($url, $model){
-                        return Html::a(':: Coba', ['tes', 'id'=>$model['id']]);
-                    }
+                    
+                   
                 ],
             ],
         ],

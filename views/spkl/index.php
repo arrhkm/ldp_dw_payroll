@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute'=>'employee',
                 'value'=>'employee.name'
             ],
+            'dscription',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

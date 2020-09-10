@@ -21,6 +21,7 @@ class ModelFormComponentGroup extends \yii\base\Model
             [['id_component_payroll', 'id_employee'], 'default', 'value' => null],
             [['id_component_payroll', 'id_employee'], 'integer'],
             [['start_date', 'end_date'], 'safe'],
+            [['start_date', 'end_date', 'id_employee'], 'required'],
             //[['id_employee', 'id_component_payroll'], 'unique', 'targetAttribute' => ['id_employee', 'id_component_payroll']],
             //[['id'], 'unique'],
             [['id_component_payroll'], 'exist', 'skipOnError' => true, 'targetClass' => ComponentPayroll::className(), 'targetAttribute' => ['id_component_payroll' => 'id']],

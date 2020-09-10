@@ -60,6 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Yii::$app->formatter->asCurrency($data->nilai_kasbon-$nilai_kasbon,'');
                 }
             ],
+            'description',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

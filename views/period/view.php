@@ -3,6 +3,7 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\bootstrap\Progress;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Period */
@@ -11,6 +12,7 @@ $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Periods', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+
 ?>
 <div class="period-view">
 
@@ -49,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id_period',      
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{payroll} {archive} {posted} {pdf} {summarypdf}',
+                'template'=>'{setSchedule} {integration} {payroll} {archive} {posted} {pdf} {summarypdf}',
                 'buttons'=>[
                     'payroll'=>function($url, $data){
                         return Html::a(
@@ -99,6 +101,27 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'id_payroll_group'=>$data['id']
                             ], 
                             ['class' => 'btn btn-success']);
+                    },
+                    'setSchedule'=>function($url, $data){
+                        return Html::a(
+                            'Set Schedule',
+                            [
+                                'schedule',
+                                'id'=>$data['id_period'],
+                            ],
+                            ['class'=>'btn btn-success'],
+                        );
+                    },
+                    'integration'=>function($url, $data){
+                        return Html::a(
+									'integration',
+									[
+										'integration',
+										'id'=>$data['id_period'],
+									],
+									['class'=>'btn btn-success'],
+                        );
+
                     }
                 ]
             ],

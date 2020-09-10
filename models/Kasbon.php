@@ -47,6 +47,7 @@ class Kasbon extends \yii\db\ActiveRecord
             [['id', 'nilai_kasbon'], 'required'],
             [['id', 'id_employee'], 'default', 'value' => null],
             [['id', 'id_employee'], 'integer'],
+            [['dscription'], 'string', 'max' => 200],
             [['id_employee'], 'validateRedudanceKasbon', 'on'=>self::SCENARIO_CREATE],
             [['date_kasbon'], 'safe'],
             [['nilai_kasbon'], 'number'],
@@ -67,6 +68,7 @@ class Kasbon extends \yii\db\ActiveRecord
             'nilai_kasbon' => 'Nilai Kasbon',
             'is_active' => 'Is Active',
             'id_employee' => 'Id Employee',
+            'dscription'=>'Description',
         ];
     }
 

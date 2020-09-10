@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider'=>$groupProvider,
         'filterModel'=>$groupSearch,
-        'id' => 'tblWorkshiftset',
+        'id' => 'grid',
         'columns'=>[
             //['class' => 'yii\grid\SerialColumn'],
             [
@@ -106,26 +106,27 @@ $urlRemove = Url::toRoute(['removegroup']);
 $urlDeleteSelect = Url::toRoute(['componentpayroll/deleteselect']);
   
 $js=<<<js
-$('#deleteSelect').on('click', function(){ 
-    
-    var container = [];
-    $.each($("input[name='selection[]']:checked"), function() {
-        container.push($(this).val());
-    });
-
-    $.ajax({
-        url : "{$urlDeleteSelect}",
-        type : "POST",
-        data : { 
-            id:"{$model->id}",           
-            item:container,
-        },
-        success : function(result){
-            console.log(result);
-        }
-    });
-    alert('Hasil nya adalah' +container);
+$('document').ready(function(){
+   $('#deleteSelect').on('click', function(){ 
+      var container = [];
+      var selected_row = $('#grid').yiiGridView('getSelectedRows');
+      $.each($("input[name='selection[]']:checked"), function() {
+          container.push($(this).val());
+      });  
+      $.ajax({
+          url : "{$urlDeleteSelect}",
+          type : "POST",
+          data : { 
+              id:"{$model->id}",           
+              item:selected_row,
+          },
+          success : function(result){
+              console.log(result);
+          }
+      });
+      
+      alert('Anda yakin item ini : ' +selected_row);
+  });
 });
-
 js;
 $this->registerJs($js);

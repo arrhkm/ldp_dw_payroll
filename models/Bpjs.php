@@ -6,16 +6,16 @@ use app\commands\SmartIncrementKeyDb;
 use Yii;
 
 /**
- * This is the model class for table "spkl".
+ * This is the model class for table "bpjs".
  *
  * @property int $id
- * @property string|null $date_spkl
- * @property int|null $overtime_hour
+ * @property string|null $bpjs_kes
+ * @property string|null $bpjs_tkerja
  * @property int|null $id_employee
  *
  * @property Employee $employee
  */
-class Spkl extends \yii\db\ActiveRecord
+class Bpjs extends \yii\db\ActiveRecord
 {
     use SmartIncrementKeyDb;
     /**
@@ -23,7 +23,7 @@ class Spkl extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'spkl';
+        return 'bpjs';
     }
 
     /**
@@ -32,12 +32,11 @@ class Spkl extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'date_spkl'], 'required'],
-            [['id', 'overtime_hour', 'id_employee'], 'default', 'value' => null],
-            [['id', 'overtime_hour', 'id_employee'], 'integer'],
-            [['dscription'], 'string', 'max' => 200],
-            [['date_spkl'], 'safe'],
-            [['date_spkl', 'id_employee'], 'unique', 'targetAttribute' => ['date_spkl', 'id_employee']],
+            [['id'], 'required'],
+            [['id', 'id_employee'], 'default', 'value' => null],
+            [['id', 'id_employee'], 'integer'],
+            [['bpjs_kes', 'bpjs_tkerja'], 'string', 'max' => 100],
+            [['id_employee'], 'unique'],
             [['id'], 'unique'],
             [['id_employee'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['id_employee' => 'id']],
         ];
@@ -50,10 +49,9 @@ class Spkl extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'date_spkl' => 'Date Spkl',
-            'overtime_hour' => 'Overtime Hour',
+            'bpjs_kes' => 'Bpjs Kes',
+            'bpjs_tkerja' => 'Bpjs Tkerja',
             'id_employee' => 'Id Employee',
-            'dscription' => 'Description',
         ];
     }
 

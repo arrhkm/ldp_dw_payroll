@@ -270,6 +270,8 @@ class PeriodController extends Controller
     public function actionDelete($id)
     {
         TimeshiftEmployee::deleteAll(['id_period'=>$id]);
+        Payroll::deleteAll(['id_period'=>$id]);
+        PayrollDay::deleteAll(['id_period'=>$id]);
 
         $this->findModel($id)->delete();
 

@@ -406,16 +406,7 @@ class GajiHarian {
        
         //return 0;
     }
-    /*
-    public function isCovid2(){ //potongan 0.25
-        $covid = DailyComponentDetil::find()->where(['id_employee'=>$this->id_employee, 'date_component'=>$this->date_now, 'id_daily_component'=>1]);
-         return $covid->exists();
-    }
-    */
-    /*public function isCovidOff(){ //potongan 0.80 
-        $covid = DailyComponentDetil::find()->where(['id_employee'=>$this->id_employee, 'date_component'=>$this->date_now, 'id_daily_component'=>2]);
-         return $covid->exists();
-    }*/
+   
 
     public function getPotonganCovid(){
         $salary = $this->basic + $this->getSalaryOvertime() + $this->getTmasakerja()+ $this->insentif;
@@ -445,6 +436,18 @@ class GajiHarian {
     }
 
     public function getBasic(){
+        if ($this->shift_dayoff){
+            return 0;
+        }
+        elseif($this->att_login==NULL || $this->att_logout==NULL){
+            if ($this->isDirumahkan()){
+                return $this->basic;
+            }
+            return 0;
+        }else {
+            return $this->basic;
+        }
+/*
         if ($this->isDirumahkan()){
             if($this->shift_dayoff){
                 return 0;                
@@ -453,14 +456,14 @@ class GajiHarian {
             }
             return  0;
         }
-        elseif ($this->att_login==NULL || $this->att_logout){
+        elseif ($this->att_login==NULL || $this->att_logout==NULL){
             //if (!$this->isDirumahkan()){
                 return 0;
             //}
         }
         else{
             return $this->basic;
-        }
+        }*/
     }
     public function getPotongan(){
         

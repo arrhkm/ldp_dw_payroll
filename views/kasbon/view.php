@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'nilai_kasbon',
             'is_active:boolean',
             'employee.name',
+            'dscription',
         ],
     ]) ?>
     <?= Html::a('Add Detil Kasbon', ['/detilkasbon/create', 'id_kasbon' => $model->id], ['class' => 'btn btn-primary']) ?>

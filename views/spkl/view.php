@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'date_spkl',
             'overtime_hour:datetime',
             'id_employee',
+            'dscription',
         ],
     ]) ?>
 

@@ -45,7 +45,7 @@ class TimeshiftEmployeeSearch extends TimeshiftEmployee
     {
         $query = TimeshiftEmployee::find();
         $query->joinWith('employee')->join('left join', 'coreperson', 'coreperson.id = employee.id_coreperson');
-
+        $query->orderBy(['employee.reg_number'=>SORT_ASC,'date_shift'=>SORT_ASC]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -81,7 +81,7 @@ class TimeshiftEmployeeSearch extends TimeshiftEmployee
     {
         $query = TimeshiftEmployee::find();
         $query->joinWith('employee')->join('left join', 'coreperson', 'coreperson.id = employee.id_coreperson');
-
+        $query->orderBy(['employee.reg_number'=>SORT_ASC,'date_shift'=>SORT_ASC]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
