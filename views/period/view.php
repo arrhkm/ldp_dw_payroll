@@ -3,7 +3,7 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use yii\bootstrap\Progress;
+
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Period */
@@ -109,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'schedule',
                                 'id'=>$data['id_period'],
                             ],
-                            ['class'=>'btn btn-success'],
+                            ['class'=>'btn btn-success']
                         );
                     },
                     'integration'=>function($url, $data){
@@ -119,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
 										'integration',
 										'id'=>$data['id_period'],
 									],
-									['class'=>'btn btn-success'],
+									['class'=>'btn btn-success']
                         );
 
                     }
