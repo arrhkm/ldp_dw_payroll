@@ -7,6 +7,7 @@ use Yii;
 use app\models\Insentif;
 use app\models\InsentifMaster;
 use app\models\InsentifSearch;
+use app\models\ModelFormInsentifMultipleDate;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -84,16 +85,69 @@ class InsentifController extends Controller
         $emp = New EmployeeList();
         $emp_list = $emp->getEmployeeActive();
         $master_insentif = ArrayHelper::map(InsentifMaster::find()->all(), 'id','name');
-        
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
+        if (Yii::$app->request->isAjax){
+            if ($model->load(Yii::$app->request->post())&& $model->validate())  {
+                if ($model->save()){
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+                
+            }
 
-        return $this->render('create', [
+            return $this->renderAjax('create',[
+                'model' => $model,
+                'emp_list'=>$emp_list,
+                'master_insentif'=>$master_insentif,
+            ]);
+        }else {
+        
+
+        /*return $this->render('create', [
             'model' => $model,
             'emp_list'=>$emp_list,
             'master_insentif'=>$master_insentif,
         ]);
+        */
+        return $this->render('create',[
+            'model' => $model,
+            'emp_list'=>$emp_list,
+            'master_insentif'=>$master_insentif,
+        ]);
+        }
+    }
+
+    public function actionCreatemultiple(){
+        $model = new ModelFormInsentifMultipleDate();
+        //-------------------------------------------
+        $emp = New EmployeeList();
+        $emp_list = $emp->getEmployeeActive();
+        $master_insentif = ArrayHelper::map(InsentifMaster::find()->all(), 'id','name');
+        //-------------------------------------------
+        if ($model->load(Yii::$app->request->post())&& $model->validate()){
+            
+            $x= explode(';',$model->date_insentif);
+            var_dump($x);
+            var_dump($model);
+            foreach ($x as $dtdate){
+                $cek = Insentif::find()->where(['id_employee'=>$model->id_employee, 'date_insentif'=>$dtdate, 'id_insentif_master'=>$model->id_insentif_master]);
+                if(!$cek->exists()){
+                    $insentif = New Insentif;
+                    $insentif->date_insentif = $dtdate;
+                    $insentif->id_insentif_master = $model->id_insentif_master;
+                    $insentif->id_employee = $model->id_employee;
+                    $insentif->id = $insentif->getLastId();
+                    $insentif->save();
+                }
+            }
+            return $this->redirect(['index']);
+           
+        }else {
+            return $this->renderAjax('createmultiple',[
+                'model'=>$model,
+                'emp_list'=>$emp_list,
+                'master_insentif'=>$master_insentif,
+            ]);
+        }
+        
     }
 
     /**
@@ -130,6 +184,17 @@ class InsentifController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionDeleteselected(){
+        if (Yii::$app->request->isAjax){
+            $x= Yii::$app->request->post();
+            /*foreach($x['item'] as $dt){
+                
+            }*/
+            Insentif::deleteAll(['id'=>$x['item']]);
+            return $this->redirect(['index']);
+        }
     }
 
     /**

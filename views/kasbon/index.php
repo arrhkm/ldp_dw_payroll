@@ -62,7 +62,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'description',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template'=>'{view} {update} {delete} {plan}',
+                'buttons'=>[
+                    'plan'=>function($url,$model){
+                        return Html::a('Plan', ['kasbon-plan', 'id'=>$model->id], ['class'=>'btn btn-primary']);
+                    }
+                ]
+            ],
         ],
     ]); ?>
 

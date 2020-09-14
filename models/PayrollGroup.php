@@ -10,8 +10,10 @@ use Yii;
  *
  * @property int $id
  * @property string|null $name
+ * @property int|null $id_payroll_logic
  *
- * @property PayrollGroupEmployee $payrollGroupEmployee
+ * @property PayrollLogic $payrollLogic
+ * @property PayrollGroupEmployee[] $payrollGroupEmployees
  */
 class PayrollGroup extends \yii\db\ActiveRecord
 {
@@ -31,10 +33,11 @@ class PayrollGroup extends \yii\db\ActiveRecord
     {
         return [
             [['id'], 'required'],
-            [['id'], 'default', 'value' => null],
-            [['id'], 'integer'],
+            [['id', 'id_payroll_logic'], 'default', 'value' => null],
+            [['id', 'id_payroll_logic'], 'integer'],
             [['name'], 'string', 'max' => 50],
             [['id'], 'unique'],
+            [['id_payroll_logic'], 'exist', 'skipOnError' => true, 'targetClass' => PayrollLogic::className(), 'targetAttribute' => ['id_payroll_logic' => 'id']],
         ];
     }
 
@@ -46,16 +49,27 @@ class PayrollGroup extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'id_payroll_logic' => 'Id Payroll Logic',
         ];
     }
 
     /**
-     * Gets query for [[PayrollGroupEmployee]].
+     * Gets query for [[PayrollLogic]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPayrollGroupEmployee()
+    public function getPayrollLogic()
     {
-        return $this->hasOne(PayrollGroupEmployee::className(), ['id_payroll_group' => 'id']);
+        return $this->hasOne(PayrollLogic::className(), ['id' => 'id_payroll_logic']);
+    }
+
+    /**
+     * Gets query for [[PayrollGroupEmployees]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPayrollGroupEmployees()
+    {
+        return $this->hasMany(PayrollGroupEmployee::className(), ['id_payroll_group' => 'id']);
     }
 }

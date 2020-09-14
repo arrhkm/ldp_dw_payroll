@@ -40,6 +40,7 @@ use app\models\TimeshiftEmployeeSearch;
 use app\models\TimeshiftOption;
 use app\components\hkm\payroll\CetakPayroll;
 use app\models\Insentif;
+use app\models\PayrollDihitung;
 use DateTime;
 
 use yii\data\ArrayDataProvider;
@@ -1248,10 +1249,15 @@ class PeriodController extends Controller
         $payroll_group_employee = PayrollGroupEmployee::find()
             ->joinWith('employee a')
             ->where(['id_payroll_group'=>$id_payroll_group, 'a.is_active'=>TRUE])
-            
-            //->limit(2)
             ->orderBy(['a.reg_number'=>SORT_ASC])
             ->all();
+        
+        /*$payroll_group_employee = PayrollDihitung::find()
+        ->joinWith('employee a')
+        ->where(['a.is_active'=>TRUE])    
+            //->limit(2)
+            ->orderBy(['a.reg_number'=>SORT_ASC])
+            ->all();*/
    
         foreach ($payroll_group_employee as $group){
             $employee = Employee::findOne($group->id_employee);
@@ -1267,7 +1273,8 @@ class PeriodController extends Controller
                 $isDayOffNational = in_array($date_now, $ListDayOffNational)?TRUE:FALSE;
                 
                 $gaji = New GajiHarian(
-                    $employee->id, 
+                    $employee->id,
+                    $employee->is_permanent, 
                     $employee->basic_salary, 
                     $date_now, 
                     $employee->date_of_hired, 
@@ -1275,8 +1282,7 @@ class PeriodController extends Controller
                 );
                 
                 $data= [
-                    'date_now'=>$gaji->date_now,
-                    
+                    'date_now'=>$gaji->date_now,                    
                     'name_day'=>$gaji->getNameDay(),
                     'in'=>$gaji->att_login,
                     'out'=>$gaji->att_logout,
@@ -1330,14 +1336,122 @@ class PeriodController extends Controller
         
         return $this->render('coba',[
             'data_period'=>$data_period,
+            'id_period'=>$period->id,
+            'payroll_name'=>"{$PayrollGroup->name} - {$period->period_name}",
         ]);
-        /*
-        return $this->render('coba2', [
-            'data'=>$id_employee,
-            'ListDayOffNational'=>$ListDayOffNational,
-            'att_all'=>$attendance,
+      
+     
+    }
+
+    public function actionShowsummary($id, $id_payroll_group){
+        $period = Period::findOne($id);
+        $PayrollGroup = PayrollGroup::findOne($id_payroll_group);
+        //-----------------------------------------------data period-------------------------------------------------------
+        $data_period = [];
+        $ListDayOffNational=ArrayHelper::getColumn(Dayoff::find()
+            ->select(['date_dayoff'])
+            ->where(['BETWEEN', 'date_dayoff', $period->start_date, $period->end_date])
+            ->all(), 'date_dayoff');
+        $payroll_group_employee = PayrollGroupEmployee::find()
+            ->joinWith('employee a')
+            ->where(['id_payroll_group'=>$id_payroll_group, 'a.is_active'=>TRUE])
+            ->orderBy(['a.reg_number'=>SORT_ASC])
+            ->all();
+        /*$payroll_group_employee = PayrollDihitung::find()
+            ->joinWith('employee a')
+            ->where(['a.is_active'=>TRUE])
+            
+            //->limit(2)
+            ->orderBy(['a.reg_number'=>SORT_ASC])
+            ->all();
+        */
+        foreach ($payroll_group_employee as $group){
+            $employee = Employee::findOne($group->id_employee);
+            $EmpKasbon = New CppKasbon($employee->id, $id);
+            $DateRange = DateRange::getListDay($period->start_date, $period->end_date);
+            
+            //----------------------------------------------------------------------------
+            $attendance = [];
+            $Cetak = New CetakPayroll;
+            
+            foreach ($DateRange as $date_now){
+               
+                $isDayOffNational = in_array($date_now, $ListDayOffNational)?TRUE:FALSE;
+                
+                $gaji = New GajiHarian(
+                    /*$employee->id,                    
+                    $employee->basic_salary, 
+                    $date_now, 
+                    $employee->date_of_hired, 
+                    $isDayOffNational*/
+                    $employee->id,
+                    $employee->is_permanent, 
+                    $employee->basic_salary, 
+                    $date_now, 
+                    $employee->date_of_hired, 
+                    $isDayOffNational
+                );
+                
+                $data= [
+                    'date_now'=>$gaji->date_now,
+                    
+                    'name_day'=>$gaji->getNameDay(),
+                    'in'=>$gaji->att_login,
+                    'out'=>$gaji->att_logout,
+                    'office_start'=>$gaji->getOfficeStart(),
+                    'office_stop'=>$gaji->getOfficeStop(),
+                    'id_employee'=>$gaji->id_employee,            
+                    'date_now'=>$gaji->date_now,
+                    'office_duration'=>$gaji->shift_office_duration,
+                    'isDayOffNational'=>$gaji->isDayOffNational,
+                    'isDayOff'=>$gaji->shift_dayoff,
+                    'attendance'=> 0,//$gaji->getAttendance(),
+                    'ev'=>$gaji->getEffective(),
+                    'office_ev'=>$gaji->shift_office_duration,
+                    'ot'=>$gaji->getOverTime(),
+                    'telat'=>$gaji->getTelat(),
+                    'basic_salary'=>$gaji->getBasic(),
+                    't_masakerja'=>$gaji->getTmasakerja(),
+                    'ot_salary'=>$gaji->getSalaryOvertime(),
+                    'insentif'=>$gaji->insentif,                     
+                    'potongan'=>$gaji->getPotongan(),                    
+                    'ket'=>$gaji->getDscription(),
+                    'salary_day'=>$gaji->getSalaryDay(),       
+                ]; 
+                $Cetak->tambahData($gaji);
+                array_push($attendance, $data);
+            }
+            //--------------------------------------------------------------------------------
+            $CetakTotal = $Cetak->getSalaryPeriod();
+            $data_array = [
+                'id_period'=>$period->id,
+                'id_payroll_group'=>$PayrollGroup->id,
+                'payroll_name'=>"{$PayrollGroup->name} - {$period->period_name} ",
+                'id_employee'=>$employee->id,
+                'basic_salary'=>$employee->basic_salary,
+                'payroll_name'=>"{$PayrollGroup->name} - {$period->period_name} ",
+                'reg_number'=>$employee->reg_number,
+                'employee_name'=>$employee->name,
+                'bank_account'=>$employee->coreperson->bank_account,
+                'doh'=>$employee->date_of_hired,
+                //'list_hari'=>$attendance,
+                'salary_period'=>$CetakTotal['sal'],//$Cetak->getSalaryPeriod(),
+                'potongan_kasbon'=>$EmpKasbon->getPotonganKasbon(),
+                'salary_period_total'=>$CetakTotal['sal'] - $EmpKasbon->getPotonganKasbon(), //$Cetak->getSalaryPeriod()-$EmpKasbon->getPotonganKasbon(),
+                'wt'=>$CetakTotal['wt'],
+                'pt'=>$CetakTotal['pt'],
+                'insentif_dscription'=>InsentifEmployee::getKet($employee->id, $period->start_date, $period->end_date),
+                'kasbon_dscription'=>$EmpKasbon->getKet(),
+            ];
+            array_push($data_period, $data_array);
+        }
+        
+        return $this->render('show_summary_period',[
+            'data_period'=>$data_period,
+            'id_period'=>$period->id,
+            'payroll_name'=>"{$PayrollGroup->name} - {$period->period_name}",
         ]);
-       */
+      
      
     }
 

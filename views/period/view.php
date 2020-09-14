@@ -51,16 +51,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'id_period',      
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'=>'{setSchedule} {integration} {payroll} {archive} {posted} {pdf} {summarypdf}',
+                'template'=>'{setSchedule} {integration} {payroll} {show_summary} {archive} {posted} {pdf} {summarypdf}',
                 'buttons'=>[
                     'payroll'=>function($url, $data){
                         return Html::a(
                             'Show Payroll', 
                             ['tes', 'id'=>$data['id_period'], 'id_payroll_group'=>$data['id']],
                             ['class'=>'btn btn-primary']
-                        );
-                        
-                        //return Html::a('Show payroll', ['tes', 'id' => $data['id_period']], ['class' => 'btn btn-primary']);
+                        );                       
+                    },
+                    'show_summary'=>function($url, $data){
+                        return Html::a(
+                            'Show Summary', 
+                            ['showsummary', 'id'=>$data['id_period'], 'id_payroll_group'=>$data['id']],
+                            ['class'=>'btn btn-primary']
+                        );     
                     },
                     'archive'=>function($url, $data){
                         return Html::a(

@@ -3,7 +3,12 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
+
+$this->title = 'Show Payroll: ' .$payroll_name;
+$this->params['breadcrumbs'][] = ['label' => 'Payroll Periods', 'url' => ['view', 'id'=>$id_period]];
+
 ?>
+
 <table class="table">
 
     
@@ -38,14 +43,24 @@ use yii\grid\GridView;
     </tr> 
         <?php foreach ($dt['list_hari'] as $dtday){?>
         <?php 
+        $telat = explode(':', $dtday['telat']);
+        
         $bg="";
             if ($dtday['isDayOff']==TRUE || $dtday['isDayOffNational']==TRUE){
-                $bg="danger";
-            }else {
-                $bg="success";
+                $bg='#FF5733'; //"#2ECC71";//Hijau
+                
+            }
+            elseif($dtday['ot']>0){
+                $bg="#FFC300";//Kuning
+            }
+            elseif($telat[1]>=5){
+                $bg="#BB8FCE"; //Ungu;"
+            }
+            else {
+                $bg="";
             }
         ?>
-        <tr class=<?=$bg?>>
+        <tr style="background-color:<?php echo $bg;?>">
             <td  style="text-align:center;"><?=date_format(date_create($dtday['date_now']), 'Y-m-d')?></td>
             <td  style="text-align:center;"><?=$dtday['name_day']?></td>
             <td  style="text-align:center;"><?=$dtday['office_start']?date_format(date_create($dtday['office_start']), 'H'):NULL?></td>
@@ -59,7 +74,7 @@ use yii\grid\GridView;
             <td  style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dtday['t_masakerja'],'')?></td>
             <td  style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dtday['insentif'],'')?></td>
             <td  style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dtday['potongan'],'')?></td>
-            <td  style="text-align: center;"><?=$dtday['ket']?></td>
+            <td  style="text-align: center;"><?=$dtday['ket']." ".$dtday['telat']?></td>
             <td  style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dtday['salary_day'],'')?></td>
         </tr>
         <?php }?>

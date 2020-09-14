@@ -3,6 +3,7 @@
 use kartik\select2\Select2;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 use yii\widgets\ActiveForm;
 
@@ -58,12 +59,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        
     </div>
 
     <?php ActiveForm::end(); ?>
 
 </div>
-
+<p><?=Html::button('Delete Selected', ['class' => 'btn btn-danger btnAllDelete'])?></p>
 <?php 
 
 
@@ -71,8 +73,15 @@ $this->params['breadcrumbs'][] = $this->title;
 echo GridView::widget([
     'dataProvider'=>$providerGroup,
     //'filterModel'=>$searchModel,
+    'id'=>'grid',
     'columns'=>[
         ['class' => 'yii\grid\SerialColumn'],
+        [
+            'class'=>'yii\grid\CheckboxColumn',
+            'checkboxOptions'=>function($model){
+                return ['value'=>$model->id];
+            }
+        ],
             'id',
             'id_employee',
             'employee.coreperson.name',
@@ -90,9 +99,28 @@ echo GridView::widget([
     ],
 ]);
 
-if (isset($modelForm->id_employee)){
+/*if (isset($modelForm->id_employee)){
     //var_dump($modelForm->id_employee);
     foreach ($modelForm->id_employee as $dt){
         echo $modelForm->id_payroll_group." - ".$dt."<br>";
     }
-}
+}*/
+
+$urlAllDelete = Url::to(['deleteselect']);
+$js=<<<js
+$('.btnAllDelete').on('click', function(){
+    //var keys = $('#grid').yiiGridView('getSelectedRows');     
+    var keys = $('#grid').yiiGridView('getSelectedRows');
+    alert("Hello Kawan :"+keys);
+    $.ajax({
+        url     : "{$urlAllDelete}",
+        type    : "POST", 
+        data    : {item :selected_row}
+
+    });
+});
+
+
+js;
+$this->registerJs($js);
+

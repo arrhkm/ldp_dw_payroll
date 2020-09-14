@@ -9,6 +9,7 @@ use app\models\ComponentGroup;
 use app\models\DailyComponentDetil;
 use app\models\Dayoff;
 use app\models\Leave;
+use app\models\SakitLama;
 use app\models\Spkl;
 use app\models\TimeshiftEmployee;
 use DateInterval;
@@ -36,16 +37,21 @@ class GajiHarian {
     $is_annual_leave,
     $is_sick,
     $is_permit,
-    $is_sepecial_permit
+    $is_sepecial_permit,
+    $is_permanent,
+    $is_sakit_lama,
+    $start_sakit
     ;
 
-    public function __construct($id_employee, $basic, $date_now, $doh, $isDayOffNational)
+    public function __construct($id_employee, $is_permanent, $basic, $date_now, $doh, $isDayOffNational)
     {
         $this->id_employee = $id_employee;
+        $this->is_permanent = $is_permanent;
         $this->basic = $basic;
         $this->date_now = $date_now;
         $this->doh = $doh;
         $this->isDayOffNational = $isDayOffNational;
+        
 
         //Leave
         $DtLeave = Leave::find()->where(['id_employee'=>$id_employee, 'date_leave'=>$date_now]);
@@ -107,8 +113,23 @@ class GajiHarian {
         }
 
         $this->component_payroll = ComponentGroup::find()->where(['id_employee'=>$this->id_employee, 'id_component_payroll'=>1])->one();
-  
+        //sakit lama constructor
+        $sakit_lama = SakitLama::find()->where(['id_employee'=>$id_employee, 'is_close'=>FALSE])->all();
+        $start_sakit = null;
+        foreach ($sakit_lama as $list_sakit){
+            $start_sakit = $list_sakit['start_sakit'];
+        }
+        if (!empty($start_sakit)){
+            $this->is_sakit_lama=TRUE;         
+            $this->start_sakit = $start_sakit;
+        }else {
+            $this->is_sakit_lama = FALSE;
+            $this->start_sakit = NULL;
+        }
+        //------------------end constructor-------------------------------------
     }
+
+    //-----------------------------__END CONSTRUCTOR --------------------------------------------------------
 
     public function isDirumahkan(){
         //$dirumahkan = ComponentGroup::find()->where(['id_employee'=>$this->id_employee, 'id_component_payroll'=>1]);
@@ -177,8 +198,6 @@ class GajiHarian {
   
     //T Masakerja 
     public function getTmasakerja(){
-        
-        
         $today = date_create($this->date_now);
         $obj_doh = date_create($this->doh);
         $diff_doh = $obj_doh->diff($today);
@@ -190,16 +209,16 @@ class GajiHarian {
         {
             $n_kerja = 0;
             for ($i=0;$i<=$n;$i++){
-                
                 if ($i%2==0){
                     $n_kerja  ++;
-
                 }
             }
             $nilai = $n_kerja * 1000;
         
         }
-
+        if (!$this->is_permanent){
+            return 0;
+        }
         if ($this->shift_dayoff){
             if ($this->getOverTime()>0){
                 return  $nilai;
@@ -216,7 +235,7 @@ class GajiHarian {
             return 0;
         }
         elseif($this->att_logout==NULL || $this->att_logout == NULL){
-            if ($this->isDirumahkan()){
+            if ($this->isDirumahkan() || $this->isCovid25 || $this->isCovid80){
                 return round($nilai);
             }
             return 0;
@@ -224,10 +243,7 @@ class GajiHarian {
         else{
             return round($nilai);
         }
-        
         //return $nilai;
-        
-
     }
 
     public function getEffective(){
@@ -358,7 +374,7 @@ class GajiHarian {
 
     public function getTelat(){
         //$att = $this->getAttendance();
-        if ($this->shift_dayoff || empty($att['emp_in']) || empty($this->att_logout) || $this->isDayOffNational){
+        if ($this->shift_dayoff || empty($this->att_login) || empty($this->att_logout) || $this->isDayOffNational){
             $telat = "00:00:00";
         }else {
             $obj_p_in = New DateTime($this->att_login);
@@ -380,8 +396,12 @@ class GajiHarian {
     }
 
     public function getPotonganTelat(){
-        
-        $basic_hour = $this->basic / $this->shift_office_duration;
+        if (empty($this->shift_office_duration)){
+            $basic_hour=0;
+        }else{
+            $basic_hour = $this->basic / $this->shift_office_duration;
+        }
+        //$basic_hour = $this->basic / $this->shift_office_duration;
         $potongan = 0;
         $x = $this->getTelat();
         $y = explode(":", $x);
@@ -414,7 +434,7 @@ class GajiHarian {
             $potongan = $salary * 0.25;
         }
         elseif($this->isCovid80){
-            $potongan = $salary * 0.80;
+            $potongan = $salary * 0.8;
         }
         else {
             $potongan = 0;
@@ -443,7 +463,16 @@ class GajiHarian {
             if ($this->isDirumahkan()){
                 return $this->basic;
             }
-            return 0;
+            elseif($this->isCovid80 || $this->isCovid25){
+                return $this->basic;
+            }
+            elseif($this->is_sick || $this->is_annual_leave || $this->is_permit){
+                return $this->basic;
+            }
+            elseif ($this->is_sakit_lama){
+                $basic_calc = New CppSakitLama($this->start_sakit, $this->date_now, $this->basic);
+                return $basic_calc->getBasic();
+            }
         }else {
             return $this->basic;
         }
@@ -501,6 +530,9 @@ class GajiHarian {
         }
         if ($this->isDirumahkan()){
             $ket .= ' #Dirumahkan';
+        }
+        if ($this->is_sakit_lama){
+            $ket .= ' #SakitLama';
         }
         return $ket;
     }

@@ -59,7 +59,7 @@ AppAsset::register($this);
                 ['label' => 'Master Timeshift', 'url'=>['/timeshift']],
                 ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],                
                 ['label'=>'Dayoff', 'url'=>['/dayoff']],
-                
+                ['label'=>'Payroll Dihitung', 'url'=>['/payrolldihitung']],                
               
             ]],
            
@@ -67,14 +67,13 @@ AppAsset::register($this);
                 ['label' => 'Periode', 'url'=>['/period/']],
                 ['label'=>'Insentif', 'url'=>['/insentif/']],
             ]],
-            ['label' => 'INSENTIF', 'url'=>['#'], 'items'=>[
-                ['label'=>'Insentif Employee', 'url'=>['/insentif/']],
-            ]],
+            
             ['label' => 'SPK LEMBUR', 'url'=>['#'], 'items'=>[
                 ['label' => 'Surat Perintah Lembur(SPL)', 'url'=>['/spkl/']],
                 
             ]],
             ['label' => 'DEDUCTION', 'url'=>['#'], 'items'=>[
+                ['label'=>'Insentif Employee', 'url'=>['/insentif/']],
                 ['label' => 'Kasbon', 'url'=>['/kasbon/']],
                 ['label' => 'Kasbon Close', 'url'=>['/kasbon/close']],
                 ['label'=>'Component Pengurangan', 'url'=>['/componentpayroll']],
@@ -92,7 +91,10 @@ AppAsset::register($this);
                 ['label'=>'Set Pulang', 'url'=>['/absensi/setpulang']],
                 ['label'=>'Leaves', 'url'=>['/leave']],
             ]],
-            //['label' => 'Sales Order', 'url'=>['/salesorder/']],
+            ['label' => 'LEAVE', 'url'=>['#'], 'items'=>[
+                ['label' => 'Cuti & Sakit', 'url'=>['/leave']],
+                ['label' => 'Sakit Lama', 'url'=>['/sakitlama']],
+            ]],
            
             //['label' => 'Contact', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (

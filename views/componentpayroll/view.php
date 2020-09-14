@@ -4,7 +4,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
-use richardfan\widget\JSRegister;
+
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */

@@ -33,9 +33,10 @@ class Insentif extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
+            [['id', 'date_insentif', 'id_employee', 'id_insentif_master'], 'required'],
             [['id', 'id_insentif_master', 'id_employee'], 'default', 'value' => null],
             [['id', 'id_insentif_master', 'id_employee'], 'integer'],
+            
             [['date_insentif'], 'safe'],
             [['date_insentif', 'id_employee', 'id_insentif_master'], 'unique', 'targetAttribute' => ['date_insentif', 'id_employee', 'id_insentif_master']],
             [['id'], 'unique'],

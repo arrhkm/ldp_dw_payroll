@@ -1,4 +1,3 @@
-
 masalah Libur nasional dan libur hari minggu biasa 
 
 1. hari minggu 
@@ -65,34 +64,24 @@ tanggal 10 Sept 2020
 tanggal 11 sept 2020
 -----------------------------
 - menambahkan summary payrolll sebelum di archive untuk controll admin costproject -->OK
-- add Import CSV pada instentif Ketinggian dll. (sudah diwakili dengan input multiple date -->OK
-- insentif inputan nya kalenadar nya harus banyak item (multiple tanggal) / orang nilainya. -->OK
-- potongan telat P129 tgl 08-09-2020 telat 9 menit tidaka masuk potongan  -->OK
-
-- Khusus Insentif Cucui mobil nilainya berdasarkan nilai 1 jam dari basicsalary. --> OK
-
-
-- Tandai Kuning untuk jam Overtime (request FARIS) -->OK
-- Jika Kontrak masih PKWT, maka masakerja = 0, (FENDI hari kamis absen nya null).-->OK
-
-- Calculasi Cuti, ijin, sakit,  tidak masuk hitungan (gaji Basic saja yang dihitung), 
-  sedang ijin khusus (tidak dihitung semua) --> OK
-
-- Kasbon harus ada List kasbon master untuk schedul pemotongan gaji karyawan 
-(tenor kasbon tidak bisa diupdate setelah kesepakatan , hanya nilainya yang bisa diupdate).-->OK (belum connect)
-
--- ada di no 11. Penggajian orang yang sakit lama ? SAKIT KERAS : -->OK (sudah konek)
-    - 4 bulan sejak sakit = 100%;
-    - 4 bulan ke2 = 75%;
-    - 4 bulan ke3 = 50%
-    -  bulan ke4 = 25%;
-    -  >=Bulanke4 =  0% = metu ;
-
-
+- add Import CSV pada instentif Ketinggian dll.
+- potongan telat P129 tgl 08-09-2020 telat 9 menit tidaka masuk potongan 
+- Calculasi Cuti tidak masuk hitungan (gaji Basic).
 ----------------------------------------------------------------------------------------------
 - Timeshift seharusnya mengandung atrribute (id_employee, id_period, id_payroll_group) supaya 
    bisa menghitung periode gajian putus di tengah.
 ----------------------------------------------------------------------------------------------
- solusi : Grouping payroll berguna untuk mengelompokkan saja tanpa ada logika pembeda, sedangkan logika calclation disimpan dalam 
-            timeshift employee yang menempel pada individu employee masing masing ketika di set di timeshit dan bersifat harian. 
-            (menempel pada tanggal / hari , dan ID_Employe nya).
+- insentif inputan nya kalenadar nya harus banyak item (multiple tanggal) / orang nilainya.
+- Khusus Insentif Cucui mobil nilainya berdasarkan nilai 1 jam dari basicsalary. 
+- Kasbon harus ada List kasbon master untuk schedul pemotongan gaji karyawan (tenor kasbon tidak bisa diupdate setelah kesepakatan , hanya nilainya yang bisa diupdate).
+
+-- ada di no 11. Penggajian orang yang sakit lama ? SAKIT KERAS : 
+    - 4 bulan sejak sakit = 100%;
+    - 4 bulan ke2 = 75%;
+    - 4 bulan ke3 = 50%
+    -  bulan ke4 = 25%;
+    -           = 0% = metu ;
+
+- Tandai Kuning untuk jam Overtime (request FARIS) -->OK
+- Jika Kontrak masih PKWT, maka masakerja = 0 -->OK (FENDI hari kamis absen nya null).
+- 
