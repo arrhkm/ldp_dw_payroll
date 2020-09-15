@@ -24,6 +24,7 @@ echo GridView::widget([
         'start_hour', 
         'duration_hour',
         'is_dayoff:boolean',
+        'class_name_payroll_logic',
         [
             'class' => 'yii\grid\ActionColumn',
             'template'=>'{delete}',

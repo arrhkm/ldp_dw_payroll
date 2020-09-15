@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\commands\SmartIncrementKeyDb;
 use Yii;
 
 /**
@@ -15,6 +16,7 @@ use Yii;
  */
 class PayrollLogic extends \yii\db\ActiveRecord
 {
+    use SmartIncrementKeyDb;
     /**
      * {@inheritdoc}
      */

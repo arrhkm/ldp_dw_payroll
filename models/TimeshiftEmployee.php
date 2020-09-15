@@ -15,6 +15,7 @@ use Yii;
  * @property string|null $start_hour
  * @property int|null $duration_hour
  * @property bool|null $is_dayoff
+ * @property string|null $class_name_payroll_logic
  *
  * @property Employee $employee
  * @property Period $period
@@ -41,6 +42,7 @@ class TimeshiftEmployee extends \yii\db\ActiveRecord
             [['id', 'id_period', 'id_employee', 'duration_hour'], 'integer'],
             [['date_shift', 'start_hour'], 'safe'],
             [['is_dayoff'], 'boolean'],
+            [['class_name_payroll_logic'], 'string', 'max' => 100],
             [['id'], 'unique'],
             [['id_employee'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['id_employee' => 'id']],
             [['id_period'], 'exist', 'skipOnError' => true, 'targetClass' => Period::className(), 'targetAttribute' => ['id_period' => 'id']],
@@ -60,6 +62,7 @@ class TimeshiftEmployee extends \yii\db\ActiveRecord
             'start_hour' => 'Start Hour',
             'duration_hour' => 'Duration Hour',
             'is_dayoff' => 'Is Dayoff',
+            'class_name_payroll_logic' => 'Class Name Payroll Logic',
         ];
     }
 

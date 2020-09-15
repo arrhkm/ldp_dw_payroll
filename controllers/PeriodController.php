@@ -44,7 +44,7 @@ use app\models\PayrollDihitung;
 use DateTime;
 
 use yii\data\ArrayDataProvider;
-
+use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -156,12 +156,18 @@ class PeriodController extends Controller
         ]);
     }
 
-    public function actionSchedule($id){
+    public function actionSchedule($id, $id_payroll_group){
         $period = Period::findOne($id);
         $timeshiftOption = TimeshiftOption::find()->all();
         $date_range = DateRange::getListDay($period->start_date, $period->end_date);
         $dt_schedule = [];
-        foreach ($timeshiftOption as $to){
+        $group_payroll = PayrollGroupEmployee::find()->where(['id_payroll_group'=>$id_payroll_group])->all();
+        
+        //foreach ($timeshiftOption as $to){
+        foreach ($group_payroll as $emp){
+            $to = TimeshiftOption::find()->where(['id_employee'=>$emp->id_employee])->one();           
+            $group = PayrollGroup::findOne($id_payroll_group);
+           
 
             foreach ($date_range as $date_now){
                 $date_nows = date_create($date_now);
@@ -169,13 +175,7 @@ class PeriodController extends Controller
                 $tdetil_1 = TimeshiftDetil::find()->where(['id_timeshift'=>$to->id_timeshift, 'num_day'=>$num_day]);
                 if ($tdetil_1->exists()){
                     $tdetil = $tdetil_1->one();
-                    /*if ($tdetil->is_dayoff == 7){
-                        $d_off = 1;
-                    } else {
-                        $d_off = 0;
-                    }*/
-
-
+                   
                     $timeshift_employee = TimeshiftEmployee::find()->where([
                         'id_period'=>$id,
                         'id_employee'=>$to->id_employee,
@@ -189,12 +189,9 @@ class PeriodController extends Controller
                         $Te->start_hour = $tdetil->start_hour;
                         $Te->duration_hour = $tdetil->duration_hour;
                         $Te->is_dayoff = $tdetil->is_dayoff;
+                        $Te->class_name_payroll_logic = $group->payrollLogic->name;
                         $Te->save();
-
-                    }else {
-                        //$tdetil = TimeshiftDetil::findOne(['id_timeshift'=>$to->id_timeshift, 'num_day'=>1]);
-                       
-
+                    }else {                                              
                         $Te = New TimeshiftEmployee();
                         $Te->id = $Te->getLastId();
                         $Te->id_period = $id;
@@ -203,8 +200,8 @@ class PeriodController extends Controller
                         $Te->start_hour = $tdetil->start_hour;
                         $Te->duration_hour = $tdetil->duration_hour;
                         $Te->is_dayoff = $tdetil->is_dayoff;
+                        $Te->class_name_payroll_logic = $group->payrollLogic->name;
                         $Te->save();
-                        
                         array_push($dt_schedule,[
                             //$Te->id = $Te->getLastId();
                             
@@ -215,6 +212,7 @@ class PeriodController extends Controller
                             'start_hour' => $tdetil->start_hour,
                             'duration_hour' => $tdetil->duration_hour,
                             'is_dayoff' => $tdetil->is_dayoff,
+                            'lagic_name'=> $group->payrollLogic->name,
                             
                         ]);
                     }
@@ -235,6 +233,7 @@ class PeriodController extends Controller
     public function actionRemovetimeshift($id){
         //$this->findModel($id)->delete();
         TimeshiftEmployee::deleteAll(['id_period'=>$id]);
+
 
         return $this->redirect(['index']);
     }
@@ -445,7 +444,14 @@ class PeriodController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate() && !empty($period)){
             //Select Employee dalam group 
             $payroll_group = PayrollGroup::findOne($model->id_payroll_group);
-            $payroll_group_employee = PayrollGroupEmployee::find()->where(['id_payroll_group'=>$model->id_payroll_group])->all(); 
+            //$payroll_group_employee = PayrollGroupEmployee::find()->where(['id_payroll_group'=>$model->id_payroll_group])->all(); 
+
+            $payroll_group_employee = PayrollGroupEmployee::find()
+            ->joinWith('employee a')
+            ->where(['id_payroll_group'=>$model->__callid_payroll_group, 'a.is_active'=>TRUE])
+            ->orderBy(['a.reg_number'=>SORT_ASC])
+            ->all();
+            
             
            
             
@@ -1357,14 +1363,7 @@ class PeriodController extends Controller
             ->where(['id_payroll_group'=>$id_payroll_group, 'a.is_active'=>TRUE])
             ->orderBy(['a.reg_number'=>SORT_ASC])
             ->all();
-        /*$payroll_group_employee = PayrollDihitung::find()
-            ->joinWith('employee a')
-            ->where(['a.is_active'=>TRUE])
-            
-            //->limit(2)
-            ->orderBy(['a.reg_number'=>SORT_ASC])
-            ->all();
-        */
+       
         foreach ($payroll_group_employee as $group){
             $employee = Employee::findOne($group->id_employee);
             $EmpKasbon = New CppKasbon($employee->id, $id);
@@ -1378,12 +1377,7 @@ class PeriodController extends Controller
                
                 $isDayOffNational = in_array($date_now, $ListDayOffNational)?TRUE:FALSE;
                 
-                $gaji = New GajiHarian(
-                    /*$employee->id,                    
-                    $employee->basic_salary, 
-                    $date_now, 
-                    $employee->date_of_hired, 
-                    $isDayOffNational*/
+                $gaji = New GajiHarian(                   
                     $employee->id,
                     $employee->is_permanent, 
                     $employee->basic_salary, 

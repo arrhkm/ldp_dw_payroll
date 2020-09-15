@@ -10,6 +10,7 @@ use Yii;
 use app\models\PayrollGroup;
 use app\models\PayrollGroupEmployee;
 use app\models\PayrollGroupSearch;
+use app\models\PayrollLogic;
 use BlueM\Tree;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
@@ -117,9 +118,14 @@ class PayrollgroupController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
+    public function getLogicName(){
+        $x = PayrollLogic::find()->all();
+        return ArrayHelper::map($x, 'id', 'name');
+    }
     public function actionCreate()
     {
         $model = new PayrollGroup();
+        $model->id = $model->getLastId();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -127,6 +133,7 @@ class PayrollgroupController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'list_logic'=>$this->getLogicName(),
         ]);
     }
 
@@ -140,13 +147,14 @@ class PayrollgroupController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'list_logic' => $this->getLogicName()
         ]);
     }
 

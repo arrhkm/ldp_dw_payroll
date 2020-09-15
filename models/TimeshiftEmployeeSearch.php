@@ -20,7 +20,7 @@ class TimeshiftEmployeeSearch extends TimeshiftEmployee
     {
         return [
             [['id', 'id_period', 'id_employee', 'duration_hour'], 'integer'],
-            [['date_shift', 'start_hour', 'coreperson', 'employee'], 'safe'],
+            [['date_shift', 'start_hour', 'coreperson', 'employee', 'class_name_payroll_logic'], 'safe'],
             [['is_dayoff'], 'boolean'],
         ];
     }
@@ -45,7 +45,7 @@ class TimeshiftEmployeeSearch extends TimeshiftEmployee
     {
         $query = TimeshiftEmployee::find();
         $query->joinWith('employee')->join('left join', 'coreperson', 'coreperson.id = employee.id_coreperson');
-        $query->orderBy(['employee.reg_number'=>SORT_ASC,'date_shift'=>SORT_ASC]);
+        $query->orderBy(['id_period'=>SORT_DESC, 'employee.reg_number'=>SORT_ASC,'date_shift'=>SORT_ASC]);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -73,6 +73,7 @@ class TimeshiftEmployeeSearch extends TimeshiftEmployee
 
         $query->andFilterWhere(['ilike', 'coreperson.name', $this->coreperson]);
         $query->andFilterWhere(['ilike', 'employee.reg_number', $this->employee]);
+        $query->andWhere(['employee.is_active'=>true]);
 
         return $dataProvider;
     }
@@ -81,7 +82,8 @@ class TimeshiftEmployeeSearch extends TimeshiftEmployee
     {
         $query = TimeshiftEmployee::find();
         $query->joinWith('employee')->join('left join', 'coreperson', 'coreperson.id = employee.id_coreperson');
-        $query->orderBy(['employee.reg_number'=>SORT_ASC,'date_shift'=>SORT_ASC]);
+        $query->orderBy(['date_shift'=>SORT_ASC, 'employee.reg_number'=>SORT_ASC]);
+        
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -109,6 +111,7 @@ class TimeshiftEmployeeSearch extends TimeshiftEmployee
 
         $query->andFilterWhere(['ilike', 'coreperson.name', $this->coreperson]);
         $query->andFilterWhere(['ilike', 'employee.reg_number', $this->employee]);
+        $query->andWhere(['employee.is_active'=>true]);
 
         return $dataProvider;
     }

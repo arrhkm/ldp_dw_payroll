@@ -209,6 +209,11 @@ class Employee extends \yii\db\ActiveRecord
         return $this->hasOne(Location::className(), ['id' => 'id_location']);
     }
 
+    public function getPayrollGroupEmployee()
+    {
+        return $this->hasOne(PayrollGroupEmployee::className(),['id_employee'=>'id']);
+    }
+
     /**
      * Gets query for [[EmployeeDepartement]].
      *

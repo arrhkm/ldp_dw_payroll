@@ -2,17 +2,20 @@
 
 namespace app\controllers;
 
+use app\components\EmployeeList;
+use app\models\Cardlog;
 use Yii;
-use app\models\PayrollLogic;
-use app\models\PayrollLogicSearch;
+use app\models\Log;
+use app\models\LogSearch;
+use app\models\ModelFormLog;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * PayrolllogicController implements the CRUD actions for PayrollLogic model.
+ * LogController implements the CRUD actions for Log model.
  */
-class PayrolllogicController extends Controller
+class LogController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -30,12 +33,12 @@ class PayrolllogicController extends Controller
     }
 
     /**
-     * Lists all PayrollLogic models.
+     * Lists all Log models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new PayrollLogicSearch();
+        $searchModel = new LogSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -45,7 +48,7 @@ class PayrolllogicController extends Controller
     }
 
     /**
-     * Displays a single PayrollLogic model.
+     * Displays a single Log model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -58,14 +61,13 @@ class PayrolllogicController extends Controller
     }
 
     /**
-     * Creates a new PayrollLogic model.
+     * Creates a new Log model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PayrollLogic();
-        $model->id = $model->getLastId();
+        $model = new Log();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -76,8 +78,43 @@ class PayrolllogicController extends Controller
         ]);
     }
 
+    public function actionLogBaru(){
+        $model = New ModelFormLog();
+        
+        if ($model->load(Yii::$app->request->post())){
+            $card = Cardlog::findOne(['id_employee'=>$model->id_employee]);
+            $pin = $card->pin;            
+            $dt_timestamp = "{$model->date_log} {$model->time_log}";
+
+            $cek = Log::find()->where(['pin'=>$pin, 'timestamp'=>$dt_timestamp]);
+            if(!$cek->exists()){
+                $dt_log = New Log;
+                $dt_log->id = $dt_log->getLastId();
+                $dt_log->pin = $pin;
+                $dt_log->timestamp = $dt_timestamp;
+                $dt_log->status = 0;
+                $dt_log->verification = 100;
+                $dt_log->id_attmachine = 1;
+                if($dt_log->save()){
+                    return $this->render('_form-log',[
+                        'model'=>$model,
+                        'list_employee'=>EmployeeList::getEmployeeActive(),
+                        'pin'=>$pin,
+                        'dt_timestamp'=>$dt_timestamp,
+                        
+                    ]);
+                }
+            }
+            
+        }
+        return $this->render('_form-log', [
+            'model'=>$model,
+            'list_employee'=>EmployeeList::getEmployeeActive(),
+        ]);
+    }
+
     /**
-     * Updates an existing PayrollLogic model.
+     * Updates an existing Log model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -97,7 +134,7 @@ class PayrolllogicController extends Controller
     }
 
     /**
-     * Deletes an existing PayrollLogic model.
+     * Deletes an existing Log model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -111,15 +148,15 @@ class PayrolllogicController extends Controller
     }
 
     /**
-     * Finds the PayrollLogic model based on its primary key value.
+     * Finds the Log model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return PayrollLogic the loaded model
+     * @return Log the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PayrollLogic::findOne($id)) !== null) {
+        if (($model = Log::findOne($id)) !== null) {
             return $model;
         }
 

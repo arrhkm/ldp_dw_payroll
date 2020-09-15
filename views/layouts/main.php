@@ -59,7 +59,8 @@ AppAsset::register($this);
                 ['label' => 'Master Timeshift', 'url'=>['/timeshift']],
                 ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],                
                 ['label'=>'Dayoff', 'url'=>['/dayoff']],
-                ['label'=>'Payroll Dihitung', 'url'=>['/payrolldihitung']],                
+                ['label'=>'Payroll Dihitung', 'url'=>['/payrolldihitung']],
+                ['label'=>'Payroll Logic', 'url'=>['/payrolllogic']],                 
               
             ]],
            
@@ -90,6 +91,7 @@ AppAsset::register($this);
                 ['label'=>'Absensi', 'url'=>['/attendance']],
                 ['label'=>'Set Pulang', 'url'=>['/absensi/setpulang']],
                 ['label'=>'Leaves', 'url'=>['/leave']],
+                ['label'=>'Log', 'url'=>['/log/log-baru']],
             ]],
             ['label' => 'LEAVE', 'url'=>['#'], 'items'=>[
                 ['label' => 'Cuti & Sakit', 'url'=>['/leave']],

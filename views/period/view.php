@@ -113,6 +113,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'schedule',
                                 'id'=>$data['id_period'],
+                                'id_payroll_group'=>$data['id'],
                             ],
                             ['class'=>'btn btn-success']
                         );

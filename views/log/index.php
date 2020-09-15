@@ -4,18 +4,18 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\PayrollGroupSearch */
+/* @var $searchModel app\models\LogSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Payroll Groups';
+$this->title = 'Logs';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="payroll-group-index">
+<div class="log-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Payroll Group', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Log', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -27,11 +27,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'name',
-            [ 
-                'label'=>'Payroll Logic', 
-                'value'=>'payrollLogic.name',
-            ],
+            'pin',
+            'timestamp',
+            'status',
+            'id_attmachine',
+            //'verification',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
@@ -39,4 +39,3 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </div>
-

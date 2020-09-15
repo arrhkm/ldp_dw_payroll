@@ -25,9 +25,9 @@ class CppSakitLama
       - 4 bulan ke3 = 50%
       -  bulan ke4 = 25%;
       */
-      if ($this->getLamaBulan()>=4 AND $this->getLamaBulan() <8){
+      if ($this->getLamaBulan()>=3 AND $this->getLamaBulan() <7){
          $basic_basic = $this->basic *0.75;
-      }elseif($this->getLamaBulan()>=8 AND $this->getLamaBulan() < 16){
+      }elseif($this->getLamaBulan()>=7 AND $this->getLamaBulan() < 15){
          $basic_basic = $this->basic*0.5;
       }
       elseif($this->getLamaBulan()>=8 AND $this->getLamaBulan() < 16){

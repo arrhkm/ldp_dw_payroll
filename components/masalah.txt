@@ -96,3 +96,8 @@ tanggal 11 sept 2020
  solusi : Grouping payroll berguna untuk mengelompokkan saja tanpa ada logika pembeda, sedangkan logika calclation disimpan dalam 
             timeshift employee yang menempel pada individu employee masing masing ketika di set di timeshit dan bersifat harian. 
             (menempel pada tanggal / hari , dan ID_Employe nya).
+
+
+Tgl 15 Sep 2020
+- Log Import CSV / Log manual belum ada.
+- Perhitungan selisih bulan 4 bulan kok = 3 bulan perlu di cek fungsi class CppSakitLama()
