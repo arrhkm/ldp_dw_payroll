@@ -30,7 +30,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'dscription',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template'=>'{view} {update} {delete} {anggota}',
+                'buttons'=>[
+                    'anggota'=>function($url, $model){
+                        $text='anggota';
+                        $url = ['anggota', 'id_timeshift'=>$model->id];
+                        $options = ['class'=>'btn btn-success'];
+                        return Html::a($text, $url, $options);
+                    }
+                ]
+            ],
         ],
     ]); ?>
 

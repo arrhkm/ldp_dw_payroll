@@ -54,19 +54,24 @@ AppAsset::register($this);
             ['label' => 'CONFIG', 'url'=>['#'], 'items'=>[
                 //['label' => 'Jabatan', 'url'=>['/jabatan/']],
                 ['label'=>'Payroll Group', 'url'=>['/payrollgroup/']],
-                ['label' => 'Master Insentif', 'url'=>['/insentifmaster/']],
-                ['label'=>'Master Leave Type', 'url'=>['/leavetype']],
-                ['label' => 'Master Timeshift', 'url'=>['/timeshift']],
+                ['label'=>'Master', 'url'=>'#', 'items'=>[
+                    ['label' => 'Master Insentif', 'url'=>['/insentifmaster/']],
+                    ['label'=>'Master Leave Type', 'url'=>['/leavetype']],
+                    ['label' => 'Master Timeshift', 'url'=>['/timeshift']],
+                    ['label' => 'Master Contract Type', 'url'=>['/contracttype']],
+                ]],
+               
+                
                 ['label' => 'Setup Timeshift Option', 'url'=>['/timeshiftoption']],                
                 ['label'=>'Dayoff', 'url'=>['/dayoff']],
-                ['label'=>'Payroll Dihitung', 'url'=>['/payrolldihitung']],
+                //['label'=>'Payroll Dihitung', 'url'=>['/payrolldihitung']],
                 ['label'=>'Payroll Logic', 'url'=>['/payrolllogic']],                 
               
             ]],
            
-            ['label' => 'PERIOD', 'url'=>['/period/'], 'items'=>[
+            ['label' => 'PAYROLL', 'url'=>['/period/'], 'items'=>[
                 ['label' => 'Periode', 'url'=>['/period/']],
-                ['label'=>'Insentif', 'url'=>['/insentif/']],
+                
             ]],
             
             ['label' => 'SPK LEMBUR', 'url'=>['#'], 'items'=>[
@@ -75,11 +80,17 @@ AppAsset::register($this);
             ]],
             ['label' => 'DEDUCTION', 'url'=>['#'], 'items'=>[
                 ['label'=>'Insentif Employee', 'url'=>['/insentif/']],
-                ['label' => 'Kasbon', 'url'=>['/kasbon/']],
-                ['label' => 'Kasbon Close', 'url'=>['/kasbon/close']],
-                ['label'=>'Component Pengurangan', 'url'=>['/componentpayroll']],
-                ['label'=>'Component Daily Covid19','url'=>['/dailycomponent']],
+                ['label'=>'Kasbon', 'items'=>[
+                    ['label' => 'Active', 'url'=>['/kasbon']],
+                    ['label' => 'Close', 'url'=>['/kasbon/close']],
+                ]],
+                ['label'=>'Component Pengurangan', 'items'=>[
+                    ['label'=>'Component Pengurangan By duration', 'url'=>['/componentpayroll']],
+                    ['label'=>'Component Daily Covid19','url'=>['/dailycomponent']],
+                ]],
+               
                 ['label'=>'BPJS', 'url'=>['/bpjs']],
+                ['label'=>'Adjustment','url'=>['/adjustmentsalary/period']],
                 
                 
             ]],

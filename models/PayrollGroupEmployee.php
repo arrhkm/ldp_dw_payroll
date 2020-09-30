@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\commands\SmartIncrementKeyDb;
+use phpDocumentor\Reflection\Types\Self_;
 use Yii;
 
 /**
@@ -73,4 +74,14 @@ class PayrollGroupEmployee extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PayrollGroup::className(), ['id' => 'id_payroll_group']);
     }
+
+    public static function getEmployeeList($id_group){
+        $x =  Self::find()
+         ->select(['id_employee', 'employee.name'])
+         ->join('LEFT JOIN', 'employee', 'employee.id = id_employee')
+        ->where(['id_payroll_group'=>$id_group])->asArray()->all();
+            
+        return $x;
+    }
+
 }

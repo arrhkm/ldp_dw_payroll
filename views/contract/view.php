@@ -1,12 +1,13 @@
 <?php
 
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Contract */
 
-$this->title = $model->id;
+$this->title = $model->employee->coreperson->name." - REG : {$model->employee->reg_number}";
 $this->params['breadcrumbs'][] = ['label' => 'Contracts', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -31,6 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'start_contract',
+            'urutan_contract',
+            'end_contract', 
             'duration_contract',
             'id_contract_type',
             'id_employee',
@@ -47,3 +50,36 @@ $this->params['breadcrumbs'][] = $this->title;
     ]) ?>
 
 </div>
+<p><?= Html::a('Perpanjangan', ['perpanjangan', 'id' => $model->id], ['class' => 'btn btn-primary']) ?></p>
+<?php
+
+echo GridView::widget([
+    'dataProvider'=>$provider,
+    'columns'=>[
+        'number_contract', 
+        'start_contract', 
+        'end_contract', 
+        'duration_contract', 
+        'urutan_contract', 
+        'id_contract', 
+        'status_execute', 
+        [
+            'class'=>'yii\grid\ActionColumn',
+            'template'=>'{delete} {setDeffault}',
+            'buttons'=>[
+                'delete'=>function($url, $model){
+                    $url=['delete-detil', 'id'=>$model->id, 'id_contract'=>$model->id_contract];
+                    $text='remove';
+                    $options = ['class'=>'btn btn-danger'];
+                    return Html::a($text, $url, $options);
+                },
+                'setDeffault'=>function($url, $model){
+                    $url=['set-deffault', 'id'=>$model->id, 'id_contract'=>$model->id_contract];
+                    $text='Set';
+                    $options = ['class'=>'btn btn-primary'];
+                    return Html::a($text, $url, $options);
+                }
+            ]
+        ]
+    ]
+]);

@@ -62,6 +62,7 @@ class PayrollGroupSearch extends PayrollGroup
         ]);
 
         $query->andFilterWhere(['ilike', 'name', $this->name]);
+        
 
         return $dataProvider;
     }

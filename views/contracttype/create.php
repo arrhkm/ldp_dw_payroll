@@ -3,19 +3,18 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Spl */
+/* @var $model app\models\ContractType */
 
-$this->title = 'Create Spl';
-$this->params['breadcrumbs'][] = ['label' => 'Spls', 'url' => ['index']];
+$this->title = 'Create Contract Type';
+$this->params['breadcrumbs'][] = ['label' => 'Contract Types', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="spl-create">
+<div class="contract-type-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,
-        'data_so'=>$data_so,
     ]) ?>
 
 </div>

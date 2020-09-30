@@ -17,6 +17,7 @@ use Yii;
  */
 class TimeshiftOption extends \yii\db\ActiveRecord
 {
+    public $id_payroll_group;
     use SmartIncrementKeyDb;
     /**
      * {@inheritdoc}

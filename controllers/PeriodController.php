@@ -39,6 +39,7 @@ use app\models\TimeshiftEmployee;
 use app\models\TimeshiftEmployeeSearch;
 use app\models\TimeshiftOption;
 use app\components\hkm\payroll\CetakPayroll;
+use app\components\hkm\payroll\CppAdjustment;
 use app\models\Insentif;
 use app\models\PayrollDihitung;
 use DateTime;
@@ -96,7 +97,7 @@ class PeriodController extends Controller
     public function actionView($id)
     {
         $payroll_group = [];
-        foreach (PayrollGroup::find()->all() as $groups){
+        foreach (PayrollGroup::find()->orderBy(['id'=>SORT_ASC])->all() as $groups){
             array_push($payroll_group,[
                 'id_period'=>$id,
                 'id'=>$groups->id,
@@ -624,6 +625,7 @@ class PeriodController extends Controller
                         'o_ev'=>$shift->duration_hour,
                         'p_ev'=>$gaji->getDurationEvectifeHour(),
                         'ot'=>$gaji->getOvertime(),
+                        
                         'sal_ot'=>$gaji->getSalaryOverTime(),
                         'basic_salary'=>$gaji->getSalaryBasic(),
                         
@@ -726,11 +728,13 @@ class PeriodController extends Controller
             ->all();
    
         foreach ($payroll_group_employee as $group){
+            //data employee
             $employee = Employee::findOne($group->id_employee);
             $EmpKasbon = New CppKasbon($employee->id, $id);//kasbon
             $DateRange = DateRange::getListDay($period->start_date, $period->end_date);
-            
-            //----------------------------------------------------------------------------
+                       
+            //----------------------------Adjustmet-------------------------------------
+            $adjustment = New CppAdjustment($period->id, $employee->id);
 
             $attendance = [];
             $Cetak = New CetakPayroll;
@@ -739,8 +743,9 @@ class PeriodController extends Controller
                
                 $isDayOffNational = in_array($date_now, $ListDayOffNational)?TRUE:FALSE;
                 
-                $gaji = New GajiHarian(
-                    $employee->id, 
+                $gaji = New GajiHarian(                 
+                    $employee->id,
+                    $employee->is_permanent, 
                     $employee->basic_salary, 
                     $date_now, 
                     $employee->date_of_hired, 
@@ -792,7 +797,9 @@ class PeriodController extends Controller
                 'salary_period'=>$CetakTotal['sal'],//$Cetak->getSalaryPeriod(),
                 'potongan_kasbon'=>$EmpKasbon->getPotonganKasbon(),
                 'dscription_kasbon'=>$EmpKasbon->getKet(),
-                'salary_period_total'=>$CetakTotal['sal'] - $EmpKasbon->getPotonganKasbon(), //$Cetak->getSalaryPeriod()-$EmpKasbon->getPotonganKasbon(),
+                'kekurangan'=>$adjustment->getDebet(),
+                'kelebihan'=>$adjustment->getKredit(),
+                'salary_period_total'=>$CetakTotal['sal']+$adjustment->getDebet() - ($EmpKasbon->getPotonganKasbon()+$adjustment->getKredit()), //$Cetak->getSalaryPeriod()-$EmpKasbon->getPotonganKasbon(),
                 'wt'=>$CetakTotal['wt'],
                 'pt'=>$CetakTotal['pt'],
                 'insentif_dscription'=>InsentifEmployee::getKet($employee->id, $period->start_date, $period->end_date),
@@ -818,6 +825,9 @@ class PeriodController extends Controller
                 $modelPay->dscription_kasbon = $pays['dscription_kasbon'];               
                 $modelPay->basic_salary = $pays['basic_salary'];
                 $modelPay->no_rekening = $pays['no_rekening'];
+                $modelPay->pengurangan= $pays['kelebihan'];
+                $modelPay->penambahan = $pays['kekurangan'];
+                
                 $modelPay->save();
 
             }else{
@@ -839,6 +849,9 @@ class PeriodController extends Controller
                 $modelPay->dscription_kasbon = $pays['dscription_kasbon'];               
                 $modelPay->basic_salary = $pays['basic_salary'];
                 $modelPay->no_rekening = $pays['no_rekening'];
+                $modelPay->pengurangan= $pays['kelebihan'];
+                $modelPay->penambahan = $pays['kekurangan'];
+
                 $modelPay->save();
             }
 
@@ -1258,17 +1271,15 @@ class PeriodController extends Controller
             ->orderBy(['a.reg_number'=>SORT_ASC])
             ->all();
         
-        /*$payroll_group_employee = PayrollDihitung::find()
-        ->joinWith('employee a')
-        ->where(['a.is_active'=>TRUE])    
-            //->limit(2)
-            ->orderBy(['a.reg_number'=>SORT_ASC])
-            ->all();*/
-   
         foreach ($payroll_group_employee as $group){
             $employee = Employee::findOne($group->id_employee);
             $EmpKasbon = New CppKasbon($employee->id, $id);
             $DateRange = DateRange::getListDay($period->start_date, $period->end_date);
+            //----------------------------------------------------------------------------
+            
+            //------------------------------------Adjustment------------------------------
+            $adjustment = New CppAdjustment($id, $group->id_employee);
+
             
             //----------------------------------------------------------------------------
             $attendance = [];
@@ -1303,6 +1314,7 @@ class PeriodController extends Controller
                     'ev'=>$gaji->getEffective(),
                     'office_ev'=>$gaji->shift_office_duration,
                     'ot'=>$gaji->getOverTime(),
+                    'ot_real'=>$gaji->getOvertimeReal(),
                     'telat'=>$gaji->getTelat(),
                     'basic_salary'=>$gaji->getBasic(),
                     't_masakerja'=>$gaji->getTmasakerja(),
@@ -1331,11 +1343,13 @@ class PeriodController extends Controller
                 'list_hari'=>$attendance,
                 'salary_period'=>$CetakTotal['sal'],//$Cetak->getSalaryPeriod(),
                 'potongan_kasbon'=>$EmpKasbon->getPotonganKasbon(),
-                'salary_period_total'=>$CetakTotal['sal'] - $EmpKasbon->getPotonganKasbon(), //$Cetak->getSalaryPeriod()-$EmpKasbon->getPotonganKasbon(),
+                'salary_period_total'=>($CetakTotal['sal']+$adjustment->getDebet()) - ($EmpKasbon->getPotonganKasbon()+$adjustment->getKredit()), //$Cetak->getSalaryPeriod()-$EmpKasbon->getPotonganKasbon(),
                 'wt'=>$CetakTotal['wt'],
                 'pt'=>$CetakTotal['pt'],
                 'insentif_dscription'=>InsentifEmployee::getKet($employee->id, $period->start_date, $period->end_date),
                 'kasbon_dscription'=>$EmpKasbon->getKet(),
+                'kekurangan'=>$adjustment->getDebet(),
+                'kelebihan'=>$adjustment->getKredit(),
             ];
             array_push($data_period, $data_array);
         }
@@ -1369,6 +1383,8 @@ class PeriodController extends Controller
             $EmpKasbon = New CppKasbon($employee->id, $id);
             $DateRange = DateRange::getListDay($period->start_date, $period->end_date);
             
+            //-------------Adjustment-------------------------]
+            $adjustment = New CppAdjustment($id, $group->id_employee);
             //----------------------------------------------------------------------------
             $attendance = [];
             $Cetak = New CetakPayroll;
@@ -1403,6 +1419,7 @@ class PeriodController extends Controller
                     'ev'=>$gaji->getEffective(),
                     'office_ev'=>$gaji->shift_office_duration,
                     'ot'=>$gaji->getOverTime(),
+                    'ot2'=>2,
                     'telat'=>$gaji->getTelat(),
                     'basic_salary'=>$gaji->getBasic(),
                     't_masakerja'=>$gaji->getTmasakerja(),
@@ -1431,11 +1448,13 @@ class PeriodController extends Controller
                 //'list_hari'=>$attendance,
                 'salary_period'=>$CetakTotal['sal'],//$Cetak->getSalaryPeriod(),
                 'potongan_kasbon'=>$EmpKasbon->getPotonganKasbon(),
-                'salary_period_total'=>$CetakTotal['sal'] - $EmpKasbon->getPotonganKasbon(), //$Cetak->getSalaryPeriod()-$EmpKasbon->getPotonganKasbon(),
+                'salary_period_total'=>($CetakTotal['sal']+$adjustment->getDebet()) - ($EmpKasbon->getPotonganKasbon()+$adjustment->getKredit()),//$CetakTotal['sal'] - $EmpKasbon->getPotonganKasbon(),
                 'wt'=>$CetakTotal['wt'],
                 'pt'=>$CetakTotal['pt'],
                 'insentif_dscription'=>InsentifEmployee::getKet($employee->id, $period->start_date, $period->end_date),
                 'kasbon_dscription'=>$EmpKasbon->getKet(),
+                'kekurangan'=>$adjustment->getDebet(),
+                'kelebihan'=>$adjustment->getKredit(),
             ];
             array_push($data_period, $data_array);
         }

@@ -13,10 +13,19 @@ use yii\widgets\ActiveForm;
 
 <div class="log-form">
 
+<?= Html::a('Create Masal', ['setmasal'], ['class' => 'btn btn-success']) ?>
+
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'id_employee')->widget(Select2::className(),[
        'data'=>$list_employee,
+       'options' => [
+           'placeholder' => 'Select Employee ...', 'autocomplete' => 'on', 
+            'multiple'=>false,
+        ],
+       'pluginOptions'=>[
+
+       ]
     ]) ?>
 
     <?= $form->field($model, 'date_log')->widget(DatePicker::className(),[

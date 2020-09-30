@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'date_kasbon',
-            'nilai_kasbon',
+            'nilai_kasbon:currency',
             'is_active:boolean',
             'employee.name',
             'dscription',
@@ -44,8 +44,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             'id',
             'tgl_cicilan', 
-            'nilai_cicilan', 
-            'id_kasbon',
+            [
+                'attribute'=>'nilai_cicilan',
+                'format'=>'currency', 
+            ],
+                'id_kasbon',
             [
                 'class'=> 'yii\grid\ActionColumn',
                 'template'=>'{update} {delete}',

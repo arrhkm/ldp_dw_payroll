@@ -12,6 +12,9 @@ use app\models\PayrollGroupEmployee;
  */
 class PayrollGroupEmployeeSearch extends PayrollGroupEmployee
 {
+    public $employee;
+    public $group;
+
     use SmartIncrementKeyDb;
     /**
      * {@inheritdoc}
@@ -20,6 +23,7 @@ class PayrollGroupEmployeeSearch extends PayrollGroupEmployee
     {
         return [
             [['id', 'id_employee', 'id_payroll_group'], 'integer'],
+            [['employee', 'group'], 'safe'],
         ];
     }
 
@@ -41,7 +45,10 @@ class PayrollGroupEmployeeSearch extends PayrollGroupEmployee
      */
     public function search($params)
     {
-        $query = PayrollGroupEmployee::find();
+        $query = PayrollGroupEmployee::find()
+        ->joinWith('employee a')
+        ->join('JOIN', 'payroll_group b', 'b.id= id_payroll_group')
+        ;
 
         // add conditions that should always apply here
 
@@ -63,6 +70,9 @@ class PayrollGroupEmployeeSearch extends PayrollGroupEmployee
             'id_employee' => $this->id_employee,
             'id_payroll_group' => $this->id_payroll_group,
         ]);
+
+        $query->andFilterWhere(['ilike', 'a.name', $this->employee])
+            ->andFilterWhere( ['ilike', 'b.name', $this->group]);
 
         return $dataProvider;
     }

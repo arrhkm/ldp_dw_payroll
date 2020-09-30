@@ -6,7 +6,8 @@ use yii\helpers\ArrayHelper;
 
 class CppContractType {
     static function getType(){
-        $ContractType= ContractType::find()           
+        $ContractType= ContractType::find() 
+            ->where(['NOT IN', 'name_contract', 'PKWTT'])          
             ->all();               
         /*$list = ArrayHelper::toArray($emp, [
             'app\models\Employee'=>[

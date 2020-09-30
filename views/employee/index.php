@@ -24,13 +24,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            //['class' => 'yii\grid\SerialColumn'],
 
             'id',
             'reg_number',
             [
                 'attribute'=>'person_name',
                 'value'=>'coreperson.name',
+                'contentOptions' => ['style' => 'width:200px; white-space: normal;'],
             ],
            
             'basic_salary',
@@ -52,7 +53,11 @@ $this->params['breadcrumbs'][] = $this->title;
             //'name',
             
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'contentOptions' => ['style' => 'width:75px; white-space: normal;'],
+                'template'=>'{view} {update} {delete}'
+            ],
         ],
     ]); ?>
 

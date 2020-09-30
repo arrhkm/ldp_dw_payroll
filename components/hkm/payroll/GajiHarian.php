@@ -278,52 +278,56 @@ class GajiHarian {
         return $ev;
     }
 
+    public function getOvertimeReal(){      
+        $ot= 0;
+        if ($this->shift_dayoff || $this->isDayOffNational){
+            if (!empty($this->att_login) || !empty($this->att_logout)){
+                
+                $obj_person_in = New DateTime($this->att_login);
+                $obj_person_out = New DateTime($this->att_logout);
+                $diff_ot = $obj_person_in->diff($obj_person_out);
+                $ot = $diff_ot->format('%h');
+                
+            }
+        }
+        elseif($this->getEffective() > 0) { //$this->shift_office_ev){
+            if (!empty($this->att_login) || !empty($this->att_logout)){
+                $obj_office_stop = new DateTime($this->getOfficeStop());
+                $obj_person_out = New DateTime($this->att_logout);
+                $diff_ot = $obj_office_stop->diff($obj_person_out);
+                $ot = $diff_ot->format('%h');
+                //return $ot;
+            }
+            
+        }
+        return $ot;
+    }
+
     public function getOverTimeApprove(){      
         return $this->overtime_approve; 
     }
 
     //Overtime
     public function getOverTime(){
+        $ot=0;
         $spkl= $this->getOverTimeApprove();
               
-        if($spkl>0){
-            if ($this->shift_dayoff || $this->isDayOffNational){
-                if (!empty($this->att_login) || !empty($this->att_logout)){
-                    //$obj_office_stop = new DateTime($this->getOfficeStop());
-                    $obj_person_in = New DateTime($this->att_login);
-                    $obj_person_out = New DateTime($this->att_logout);
-                    $diff_ot = $obj_person_in->diff($obj_person_out);
-                    $ot = $diff_ot->format('%h');
-                    
-                }else {
-                    $ot =0;
-                }
-            }
+        if($spkl>0){           
            
-            elseif($this->getEffective() > 0) { //$this->shift_office_ev){
-                if (!empty($this->att_login) || !empty($this->att_logout)){
-                    $obj_office_stop = new DateTime($this->getOfficeStop());
-                    $obj_person_out = New DateTime($this->att_logout);
-                    $diff_ot = $obj_office_stop->diff($obj_person_out);
-                    $ot = $diff_ot->format('%h');
-                    //return $ot;
-                }else {
-                    $ot = 0;
-                }
-                
-            }else {
-                $ot = 0;
-            }
+            $ot = $this->getOvertimeReal();
+
         }else {
             $ot = 0;
         }
-
+        
         if ($spkl < $ot){
             $policy_ot = $this->overtime_approve;
         }else {
             $policy_ot = $ot;
         }
         return $policy_ot;
+        
+        //return $ot;
     }
 
     public function getSalaryOvertime(){
@@ -399,7 +403,7 @@ class GajiHarian {
         if (empty($this->shift_office_duration)){
             $basic_hour=0;
         }else{
-            $basic_hour = $this->basic / $this->shift_office_duration;
+            $basic_hour = $this->basic / 7; //$this->shift_office_duration;
         }
         //$basic_hour = $this->basic / $this->shift_office_duration;
         $potongan = 0;
@@ -413,7 +417,7 @@ class GajiHarian {
                 //potongan 2 * jam ;
                 $potongan = 2* $basic_hour; //$this->getBasicHour();
             }
-        }elseif($y[0]==1){
+        }elseif($y[0]>=1 && $y[0]<2){
             //potongan 2 jam;
             $potongan = 2* $basic_hour; //$this->getBasicHour()*2;
         }elseif($y[0]>=2){
@@ -532,7 +536,9 @@ class GajiHarian {
             $ket .= ' #Dirumahkan';
         }
         if ($this->is_sakit_lama){
-            $ket .= ' #SakitLama';
+            $x_sakit = New CppSakitLama($this->start_sakit, $this->date_now, $this->basic);
+            $nil_x = $x_sakit->getLamaBulan();
+            $ket .= ' #SakitLama '.$nil_x.' bulan';
         }
         return $ket;
     }

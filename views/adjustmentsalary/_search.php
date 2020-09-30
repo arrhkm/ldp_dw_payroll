@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\SplSearch */
+/* @var $model app\models\AdjustmentSalarySearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="spl-search">
+<div class="adjustment-salary-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -17,21 +17,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'date_spl') ?>
+    <?= $form->field($model, 'date_adjustment') ?>
 
-    <?= $form->field($model, 'start_lembur') ?>
+    <?= $form->field($model, 'value_adjustment') ?>
 
-    <?= $form->field($model, 'end_lembur') ?>
+    <?= $form->field($model, 'code_adjustment') ?>
 
-    <?= $form->field($model, 'so') ?>
+    <?= $form->field($model, 'description') ?>
 
-    <?php // echo $form->field($model, 'nama_pekerjaan') ?>
-
-    <?php // echo $form->field($model, 'qty') ?>
-
-    <?php // echo $form->field($model, 'satuan') ?>
-
-    <?php // echo $form->field($model, 'employee_emp_id') ?>
+    <?php // echo $form->field($model, 'id_employee') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

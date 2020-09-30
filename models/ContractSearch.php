@@ -21,8 +21,19 @@ class ContractSearch extends Contract
     public function rules()
     {
         return [
-            [['id', 'duration_contract', 'id_contract_type', 'id_employee', 'id_department', 'id_job_alocation', 'id_jobtitle', 'id_jobrole', 'id_division'], 'integer'],
-            [['start_contract', 'number_contract', 'doh', 'employee_name', 'contract_type', 'employee_reg_number'], 'safe'],
+            [['id', 'duration_contract', 'id_contract_type', 'id_employee', 'id_department', 'id_job_alocation', 'id_jobtitle', 'id_jobrole', 'id_division', 'urutan_contract'], 'integer'],
+            [
+                [
+                    'start_contract', 
+                    'number_contract', 
+                    'doh', 
+                    'employee_name', 
+                    'contract_type', 
+                    'employee_reg_number', 
+                    'urutan_contract'
+                ], 
+                'safe'
+            ],
             [['basic_salary'], 'number'],
             [['is_active'], 'boolean'],
         ];
@@ -86,7 +97,8 @@ class ContractSearch extends Contract
         $query->andFilterWhere(['ilike', 'a.name', $this->employee_name]);
         $query->andFilterWhere(['ilike', 'a.reg_number', $this->employee_reg_number]);
         $query->andFilterWhere(['b.name_contract'=>$this->contract_type]);
-
+        
+        $query->orderBy(['a.reg_number'=>SORT_ASC]);
 
         return $dataProvider;
     }

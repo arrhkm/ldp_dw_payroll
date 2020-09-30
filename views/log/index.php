@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Log', ['create'], ['class' => 'btn btn-success']) ?>
+       
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

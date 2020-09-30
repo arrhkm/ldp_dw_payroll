@@ -56,7 +56,7 @@ class Payroll extends \yii\db\ActiveRecord
             [['id', 'id_payroll_group', 'id_period', 'no_rekening', 'id_employee', 'wt', 'pt'], 'default', 'value' => null],
             [['id', 'id_payroll_group', 'id_period', 'no_rekening', 'id_employee', 'wt', 'pt'], 'integer'],
             [['tg_all', 't_msker', 'i_um', 'i_tidak_tetap', 'cicilan_kasbon', 'pot_safety', 'pengurangan', 'penambahan', 'pot_bpjs_kes', 'grand_total_salary', 'basic_salary'], 'number'],
-            [['reg_number'], 'string', 'max' => 20],
+            [['reg_number'], 'string', 'max' => 25],
             [['payroll_name', 'jabatan', 'employee_name'], 'string', 'max' => 50],
             [['dscription_kasbon'], 'string', 'max' => 100],
             [['id'], 'unique'],
@@ -121,7 +121,7 @@ class Payroll extends \yii\db\ActiveRecord
     {
         return $this->hasOne(PayrollGroup::className(), ['id' => 'id_payroll_group']);
     }
-
+    
     public static function getTotal($provider, $fieldName)
     {
         $total = 0;
@@ -132,4 +132,5 @@ class Payroll extends \yii\db\ActiveRecord
 
         return $total;
     }
+
 }

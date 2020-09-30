@@ -79,11 +79,7 @@ class EmployeeController extends Controller
     public function actionCreate()
     {
         $model = new Employee();
-        $model->id = $model->getLastId();
-        
-        
-        
-
+        $model->id = $model->getLastId();   
         if ($model->load(Yii::$app->request->post())) {
             $model->name = Coreperson::findOne($model->id_coreperson)->name;
             if ($model->save()){
@@ -110,7 +106,7 @@ class EmployeeController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) ) {
-            $model->name = Coreperson::findOne($model->id_coreperson)->name;
+            //$model->name = Coreperson::findOne($model->id_coreperson)->name;
             if ($model->save()){
                 return $this->redirect(['view', 'id' => $model->id]);
             }

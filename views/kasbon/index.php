@@ -28,9 +28,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'date_kasbon',
-            'nilai_kasbon',
+            [
+                'attribute'=>'nilai_kasbon',
+                'format'=>'currency',
+            ],
             'is_active:boolean',
-            //'id_employee',
             [
                 'attribute'=>'employee',
                 'value'=>'employee.name',

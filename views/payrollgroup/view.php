@@ -75,12 +75,12 @@ echo GridView::widget([
     //'filterModel'=>$searchModel,
     'id'=>'grid',
     'columns'=>[
-        ['class' => 'yii\grid\SerialColumn'],
+        //['class' => 'yii\grid\SerialColumn'],
         [
             'class'=>'yii\grid\CheckboxColumn',
-            'checkboxOptions'=>function($model){
-                return ['value'=>$model->id];
-            }
+            'checkboxOptions'=>function($data){
+                return ['value'=>$data->id];
+            },
         ],
             'id',
             'id_employee',
@@ -109,13 +109,16 @@ echo GridView::widget([
 $urlAllDelete = Url::to(['deleteselect']);
 $js=<<<js
 $('.btnAllDelete').on('click', function(){
-    //var keys = $('#grid').yiiGridView('getSelectedRows');     
-    var keys = $('#grid').yiiGridView('getSelectedRows');
-    alert("Hello Kawan :"+keys);
+          //var keys = $('#grid').yiiGridView('getSelectedRows');     
+    var selected_row = $('#grid').yiiGridView('getSelectedRows');
+    alert("items :"+selected_row);
     $.ajax({
         url     : "{$urlAllDelete}",
         type    : "POST", 
-        data    : {item :selected_row}
+        data    : {
+            item :selected_row, 
+            id_group : "{$modelForm->id_payroll_group}"
+        }
 
     });
 });

@@ -1,6 +1,15 @@
 
 masalah Libur nasional dan libur hari minggu biasa 
 
+start Mulai coding 
+- tgl 4 juni 2020 program sudah 80 % namun terjadi kerusakan pada hardisk PC sehingga data nya rusak.
+
+- tgl 4 Juni 2020
+- Author: arrhkm <arrafhakam@gmail.com>
+  Date:   Thu Jun 11 08:49:59 2020 +0700
+
+//--------------------------------------------------------------------------
+
 1. hari minggu 
 - Kondisi Overtime : 
     * T masakerja ada
@@ -101,3 +110,28 @@ tanggal 11 sept 2020
 Tgl 15 Sep 2020
 - Log Import CSV / Log manual belum ada.
 - Perhitungan selisih bulan 4 bulan kok = 3 bulan perlu di cek fungsi class CppSakitLama()
+
+Tgl Sep 22
+- Kasbon pemotongan inputan nilai Potongan kasbon dan Jumlah kasbon saja pembagian 
+
+- 2-1-2 --> 2thn  kontrak pertama()  - 1 thn perpajangan kontrak jedah off 30 hari atau kesepakatan- 2thn  pembahruan max(2thn)
+- remainder kontrak 
+   30 hr - 45 = remainder 
+   30- 1 = Over do
+   <0 = Leat.
+
+- Kontrak ada berapa macam :
+  kontrak PKWTT
+  kontrak project (dikasih remainder  1 tahun)
+  kontrak pkwtt
+
+- tampilan menu yang dibutuhkan saja 
+
+
+Tanggal 23 Sep 2020
+- Temukan perbedaan role payroll LSF dan LDP 
+- Target selesai hari senin. tgl 28 sep 
+
+Tanggal 29 Sep 2020
+- Kontrak urutan dikunci sesuai tabel 212 
+- kontrak 

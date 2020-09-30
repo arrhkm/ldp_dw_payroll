@@ -15,6 +15,16 @@ use kartik\select2\Select2;
 
     <?= $form->field($model, 'reg_number')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'id_coreperson')->widget(Select2::className(),[
+        'data'=>$employee_list,
+       
+        'options' => ['placeholder' => 'Select a state ...'],
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+        'pluginLoading'=>True,
+    ]); ?>
+
     <?= $form->field($model, 'no_bpjstk')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'basic_salary')->textInput(['maxlength' => true]) ?>
@@ -35,9 +45,7 @@ use kartik\select2\Select2;
 
     <?= $form->field($model, 'id_department')->textInput() ?>
 
-    <?= $form->field($model, 'id_coreperson')->widget(Select2::className(),[
-        'data'=>$employee_list,
-    ]); ?>
+  
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 

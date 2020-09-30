@@ -133,6 +133,43 @@ class LogController extends Controller
         ]);
     }
 
+    public function actionSetmasal(){
+        $model = New ModelFormLog();
+        
+        if ($model->load(Yii::$app->request->post())){
+            $dt_timestamp = "{$model->date_log} {$model->time_log}";
+
+            foreach ($model->id_employee as $id_emp){
+                $card = Cardlog::findOne(['id_employee'=>$id_emp]);
+                $pin = $card->pin;            
+               
+                $cek = Log::find()->where(['pin'=>$pin, 'timestamp'=>$dt_timestamp]);
+                if(!$cek->exists()){
+                    $dt_log = New Log;
+                    $dt_log->id = $dt_log->getLastId();
+                    $dt_log->pin = $pin;
+                    $dt_log->timestamp = $dt_timestamp;
+                    $dt_log->status = 0;
+                    $dt_log->verification = 100;
+                    $dt_log->id_attmachine = 1;
+                    $dt_log->save();
+                        /*return $this->render('_form-log-masal',[
+                            'model'=>$model,
+                            'list_employee'=>EmployeeList::getEmployeeActive(),
+                            'pin'=>$pin,
+                            'dt_timestamp'=>$dt_timestamp,
+                            
+                        ]);
+                    */
+                }
+            }
+        }
+        return $this->render('_form-log-masal', [
+            'model'=>$model,
+            'list_employee'=>EmployeeList::getEmployeeActive(),
+        ]);
+    }
+
     /**
      * Deletes an existing Log model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

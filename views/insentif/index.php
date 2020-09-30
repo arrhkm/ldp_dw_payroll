@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Insentif', ['create'], ['class' => 'btn btn-success']) ?>
+        <!-- ?= Html::a('Create Insentif', ['create'], ['class' => 'btn btn-success']) ? -->
         <!-- a class="btn btn-info btnCreate" value="<?= Url::to(['create']) ?>">Create Modal</a -->
         <a class="btn btn-success btnMulti" value="<?= Url::to(['createmultiple']) ?>">Create Insentif With Multiple Date</a>
         <a class="btn btn-danger btnDeleteMultiple">Delete Selected</a>
@@ -27,11 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        /*'rowOptions'=>function($model){
-            if($a == $b){
-                return ['class' => 'danger'];
-            }
-        },*/
+      
         'filterModel' => $searchModel,
         'id'=>'grid',
         
@@ -129,13 +125,17 @@ $js=<<<js
 
     $('.btnDeleteMultiple').on('click', function(){
         var selected_row = $('#grid').yiiGridView('getSelectedRows');
-        alert('data :' +selected_row);
-        $.ajax({
-            url     : "{$urlDelete}",
-            type    : "POST", 
-            data    : {item :selected_row}
+        //alert('data :' +selected_row);
+        var r = confirm("Delete data :"+ selected_row +"Press a button!");
+        if(r==true)
+        {
+            $.ajax({
+                url     : "{$urlDelete}",
+                type    : "POST", 
+                data    : {item :selected_row}
 
-        });
+            });
+        }
     });
 
     

@@ -50,11 +50,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Payroll Periods', 'url' => ['view'
                 $bg='#FF5733'; //"#2ECC71";//Hijau
                 
             }
-            elseif($dtday['ot']>0){
-                $bg="#FFC300";//Kuning
+            elseif($dtday['ot_real']>0){
+                $bg="#BB8FCE";//Ungu
             }
             elseif($telat[1]>=5){
-                $bg="#BB8FCE"; //Ungu;"
+                $bg="#FFC300"; //Kuning;"
             }
             else {
                 $bg="";
@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Payroll Periods', 'url' => ['view'
             <td  style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dtday['t_masakerja'],'')?></td>
             <td  style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dtday['insentif'],'')?></td>
             <td  style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dtday['potongan'],'')?></td>
-            <td  style="text-align: center;"><?=$dtday['ket']." ".$dtday['telat']?></td>
+            <td  style="text-align: center;"><?=$dtday['ket']//." ".$dtday['telat']?></td>
             <td  style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dtday['salary_day'],'')?></td>
         </tr>
         <?php }?>
@@ -90,6 +90,16 @@ $this->params['breadcrumbs'][] = ['label' => 'Payroll Periods', 'url' => ['view'
         <td colspan="12"></td>
         <td colspan="2">Potongan Kasbon</td>
         <td colspan="" style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dt['potongan_kasbon'],'')?></td>
+    </tr>
+    <tr>
+        <td colspan="12"></td>
+        <td colspan="2">Kekurangan </td>
+        <td colspan="" style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dt['kekurangan'],'')?></td>
+    </tr>
+    <tr>
+        <td colspan="12"></td>
+        <td colspan="2">kelbihan</td>
+        <td colspan="" style="text-align: right;"><?=Yii::$app->formatter->asCurrency($dt['kelebihan'],'')?></td>
     </tr>
     <tr class="table-dark text-dark">
         <th colspan="12"></th>

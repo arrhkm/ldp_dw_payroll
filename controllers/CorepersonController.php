@@ -69,7 +69,9 @@ class CorepersonController extends Controller
         $model = new Coreperson();
         $model->id = $model->getLastId();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->name = strtoupper($model->name);
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -89,7 +91,9 @@ class CorepersonController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->name = strtoupper($model->name);
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

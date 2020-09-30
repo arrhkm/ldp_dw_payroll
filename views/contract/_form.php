@@ -17,7 +17,9 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'id')->textInput() ?>
+    <?= $form->field($model, 'id')->textInput(['disabled'=>true]) ?>
+
+    <?=$form->field($model, 'urutan_contract')->textInput(['disabled'=>TRUE])?>
 
     <?= $form->field($model, 'start_contract')->widget(DatePicker::className(),[
         'pluginOptions'=>[
@@ -25,8 +27,7 @@ use yii\widgets\ActiveForm;
             'format'=>'yyyy-mm-dd',
             
             'autoclose' => true,
-            'todayBtn'=>true,
-            
+            'todayBtn'=>true,            
         ]
     ]) ?>
 
@@ -37,24 +38,32 @@ use yii\widgets\ActiveForm;
     ]) ?>
 
     <?= $form->field($model, 'id_employee')->widget(Select2::className(),[
-        'data'=>EmployeeList::getEmployee(),
+        'data'=>EmployeeList::getEmployeeisNotContract(),//getEmployeeActive(),
     ]) ?>
 
-    <?= $form->field($model, 'id_department')->textInput() ?>
+    <?php //= $form->field($model, 'id_department')->textInput() ?>
 
-    <?= $form->field($model, 'id_job_alocation')->textInput() ?>
+    <?php //= $form->field($model, 'id_job_alocation')->textInput() ?>
 
-    <?= $form->field($model, 'id_jobtitle')->textInput() ?>
+    <?php //= $form->field($model, 'id_jobtitle')->textInput() ?>
 
-    <?= $form->field($model, 'id_jobrole')->textInput() ?>
+    <?php //= $form->field($model, 'id_jobrole')->textInput() ?>
 
-    <?= $form->field($model, 'id_division')->textInput() ?>
+    <?php //= $form->field($model, 'id_division')->textInput() ?>
 
     <?= $form->field($model, 'number_contract')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'basic_salary')->textInput() ?>
 
-    <?= $form->field($model, 'doh')->textInput() ?>
+    <?= $form->field($model, 'doh')->widget(DatePicker::className(),[
+        'pluginOptions'=>[
+            'todayHighlight'=>TRUE,
+            'format'=>'yyyy-mm-dd',
+            'todayBtn'=>true,
+            'autoclose'=>True,
+
+        ]
+    ]) ?>
 
     <?= $form->field($model, 'is_active')->checkbox() ?>
 

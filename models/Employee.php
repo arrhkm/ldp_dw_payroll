@@ -66,7 +66,7 @@ class Employee extends \yii\db\ActiveRecord
             [['id_jobtitle', 'id_division', 'id_jobrole', 'id_department', 'id_coreperson', 'id_location', 'id_job_alocation'], 'default', 'value' => null],
             [['id_jobtitle', 'id_division', 'id_jobrole', 'id_department', 'id_coreperson', 'id_location', 'id_job_alocation'], 'integer'],
             [['basic_salary'], 'number'],
-            [['reg_number'], 'string', 'max' => 9],
+            [['reg_number'], 'string', 'max' => 25],
             [['no_bpjstk', 'no_bpjskes'], 'string', 'max' => 20],
             [['type'], 'string', 'max' => 7],
             [['email'], 'string', 'max' => 100],

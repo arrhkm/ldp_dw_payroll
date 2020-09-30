@@ -12,6 +12,7 @@ use app\models\PayrollGroupEmployee;
 use app\models\PayrollGroupSearch;
 use app\models\PayrollLogic;
 use BlueM\Tree;
+use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -63,7 +64,8 @@ class PayrollgroupController extends Controller
     {
         $employee_saved = PayrollGroupEmployee::find()->where([
             'id_payroll_group'=>$id,
-        ])->orderBy(['id'=>SORT_ASC])->all();
+        ])->orderBy(['id'=>SORT_ASC]);
+        //->all();
 
     
         //$employee = Employee::find()->where(['is_active'=>True])->all();
@@ -72,8 +74,8 @@ class PayrollgroupController extends Controller
         $modelForm = New ModelFormEmployee();
         $modelForm->id_payroll_group = $id;
 
-        $providerGroup = New ArrayDataProvider([
-            'allModels'=>$employee_saved,
+        $providerGroup = New ActiveDataProvider([
+            'query'=>$employee_saved,
             'pagination'=>[
                 'pageSize'=>1000,
             ]
@@ -181,6 +183,17 @@ class PayrollgroupController extends Controller
             'view',
             'id'=>$id_group,
         ]);
+    }
+
+    public function actionDeleteselect(){
+        if (Yii::$app->request->isAjax){
+            $x= Yii::$app->request->post();
+            /*foreach($x['item'] as $dt){
+                
+            }*/
+            PayrollGroupEmployee::deleteAll(['id'=>$x['item']]);
+            return $this->redirect(['view', 'id'=>$x['id_group']]);
+        }
     }
 
     /**
